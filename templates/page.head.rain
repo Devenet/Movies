@@ -1,0 +1,12 @@
+<meta charset="utf-8" />
+<title>{$page_title} &middot; Movies</title>
+
+<meta name="author" content="Nicolas Devenet" />
+<meta name="robots" content="noindex, noarchive, nofollow" />
+
+<link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico" />
+<link rel="icon" type="image/png" href="assets/favicon.png" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="assets/css/bootstrap.css" rel="stylesheet" type="text/css" />
+<link href="assets/css/movies.css" rel="stylesheet" type="text/css" />

@@ -1,0 +1,10 @@
+<!doctype html>
+<html>
+<head>
+{include="page.head"}
+</head>
+<body>
+
+{include="page.foot"}
+</body>
+</html>

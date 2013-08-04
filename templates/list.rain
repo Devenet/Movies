@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+{include="page.head"}
+</head>
+<body>
+{include="page.menu"}
+
+<div class="container">
+<div class="row">
+{loop="movie"}
+<article class="movie col-lg-6">
+	<h2><a href="{$value.id|Path::movie}" title="{$value.title}">{$value.title}</a>{if="$value.original_title != NULL"} <small>{$value.original_title}</small>{/if}</h2>
+
+	<ul class="infos list-inline text-muted">
+		<li class="status">{$value.status|displayStatus}</li>
+		{if="$value.duration != NULL"}<li>{$value.duration} min</li>{/if}
+		{if="$value.date != NULL"}<li><i class="icon-calendar"></i> {$value.date}</li>{/if}
+		{if="$value.country != NULL"}<li>{$value.country|displayFlag}</li>{/if}
+		<!--{if="$value.links.more != NULL"}<li><a href="{$value.links.more}" rel="external" class="normal text-muted tip" title="More infos online" data-placement="bottom"><i class="icon-film"></i></a></li>{/if}-->
+	</ul>
+
+	<div class="row">
+	<div class="col-12 col-sm-2 col-lg-4">
+		<div class="text-center">
+			<img src="{if="$value.links.image != NULL"}{$value.links.image}{else}assets/img/movie.jpg{/if}" alt="{$value.title}" class="img-responsive img-thumbnail" width="160" height="213" />
+			{$value.note|displayNote}
+		</div>
+	</div>
+	<div class="col-12 col-sm-10 col-lg-8">
+		<p class="description">{$value.description|displayDescription}</p>
+		<ul class="list-inline text-muted">
+			{$value.kind|displayKinds}
+		</ul>
+	</div>
+	</div>
+</article>
+{if="$counter%2"}<div class="clearfix"></div>{/if}
+{/loop}
+</div>
+</div>
+
+{include="page.foot"}
+<script>
+$(function() {
+	$('span.more-content').slideToggle(0);
+	$('div.more-button').show(0);
+	$('span.more-dots').show(0);
+	$('div.more-button').click(function() {
+		$(this).parent().children('p').children('span').children('span.more-content').slideToggle();
+		$(this).parent().children('p').children('span').children('span.more-dots').toggle();
+	});
+})
+</script>
+</body>
+</html>

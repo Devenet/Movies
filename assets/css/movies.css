@@ -1,0 +1,28 @@
+/*!
+ * Movies 
+ *
+ * Copyright 2013 Nicolas Devenet
+ */
+
+header {margin: 20px 0 0;}
+
+.navbar li.rss a:hover {color: #FF7A4D;}
+a.normal {text-decoration: none;}
+
+article.movie {margin-bottom: 20px;}
+article.movie h2 a {text-decoration: none;}
+article.movie h2 small {display: block; font-size: 14px;}
+article.movie .row {margin-top: 20px;}
+article.movie .kinds {font-size: 12px;}
+article.movie .stars {margin: 10px auto; font-size: 16px;}
+.stars.stars-0 {}
+.stars.stars-1 {}
+.stars.stars-2 {}
+.stars.stars-3 {}
+.stars.stars-4 {color: #357ebd;}
+.stars.stars-5 {color: #4cae4c;}
+
+@media(max-width: 767px) {
+	header {margin: 0;}
+	header .navbar {border-radius: 0 !important;}
+}
