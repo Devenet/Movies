@@ -151,7 +151,7 @@ abstract class Path {
 		return $result.'">'.$name."</a>".($tpl ? '</li>' : NULL);
 	}
 	static function menu($active) {
-		return self::url('home', 'Home', $active).self::url('favorite', 'Favorites', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss"><i class="icon-feed"></i></a></li>'.PHP_EOL;
+		return self::url('home', 'Home', $active).self::url('favorite', 'Favorites', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss"><i class="icon-rss"></i></a></li>'.PHP_EOL;
 	}
 	static function movie($id) {
 		global $_CONFIG;
