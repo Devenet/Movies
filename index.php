@@ -1,6 +1,7 @@
 <?php
 
 date_default_timezone_set('Europe/Paris');
+//error_reporting(0);
 
 global $_CONFIG;
 $_CONFIG['data'] = 'data';
@@ -18,6 +19,16 @@ $_CONFIG['flags'] = array(
 define('PHPPREFIX','<?php /* '); 
 define('PHPSUFFIX',' */ ?>');
 define('MOVIES_VERSION', '0.1 bêta');
+define('INACTIVITY_TIMEOUT', 3600);
+
+// Force cookie path (but do not change lifetime)
+$cookie = session_get_cookie_params();
+$cookiedir = ''; if(dirname($_SERVER['SCRIPT_NAME'])!='/') $cookiedir=dirname($_SERVER["SCRIPT_NAME"]).'/';
+session_set_cookie_params($cookie['lifetime'],$cookiedir,$_SERVER['HTTP_HOST']);
+ini_set('session.use_cookies', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.use_trans_sid', FALSE);
+
 
 if (!is_dir($_CONFIG['data'])) { mkdir($_CONFIG['data'],0705); chmod($_CONFIG['data'],0705); }
 if (!is_dir($_CONFIG['cache'])) { mkdir($_CONFIG['cache'],0705); chmod($_CONFIG['cache'],0705); }
@@ -26,7 +37,7 @@ if (!is_dir($_CONFIG['images'])) { mkdir($_CONFIG['images'],0705); chmod($_CONFI
 //ob_start();
 $tpl = new RainTPL();
 
-if (!is_file($_CONFIG['settings'])) install($tpl);
+if (!is_file($_CONFIG['settings'])) {define('TITLE', $_CONFIG['title']); install($tpl);}
 require($_CONFIG['settings']);
 define('TITLE', $_CONFIG['title']);
 
@@ -166,6 +177,7 @@ abstract class Path {
 /**
  * Toolbox functions
  */
+// save settings of users (ID, password, title)
 function writeSettings() {
 	global $_CONFIG;
 	if (is_file($_CONFIG['settings']) && !isLogged()) die('You are not authorized to change config.');
@@ -177,6 +189,56 @@ function writeSettings() {
 	$file .= PHP_EOL.'?>';
 	if (!file_put_contents($_CONFIG['settings'], $file)) die('Impossible to write the configuration file. Please verify the webapplication has rights to write.');
 }
+
+// log actions into file
+function writeLog($message) {
+	$t = strval(date('Y/m/d H:i:s')).' - '.$_SERVER["REMOTE_ADDR"].' - '.strval($message)."\n";
+	file_put_contents($GLOBALS['config']['DATADIR'].'/log.txt',$t,FILE_APPEND);
+}
+
+/**
+ * Session managment (thanks to Sébastien Sauvage with Shaarli!)
+ */
+// Get state if user is logged in or not
+function isLogged() {
+	global $_CONFIG;
+	if (!isset($_CONFIG['login'])) { return false; }
+	// If session does not exist on server side, or IP address has changed, or session has expired, logout.
+	if (empty($_SESSION['uid']) || $_SESSION['ip'] != currentIP() || time() >= $_SESSION['expires_on']) {
+		logout();
+		return false;
+	}
+	$_SESSION['expires_on'] = time() + INACTIVITY_TIMEOUT;
+	return true;
+}
+
+// Logout user
+function logout() { if(isset($_SESSION)) { unset($_SESSION['uid']); unset($_SESSION['ip']); unset($_SESSION['expires_on']); } }
+
+// Returns the IP address of the client (Used to prevent session cookie hijacking.)
+function currentIP() {
+    $ip = $_SERVER["REMOTE_ADDR"];
+    // Then we use more HTTP headers to prevent session hijacking from users behind the same proxy
+    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) { $ip=$ip.'_'.$_SERVER['HTTP_X_FORWARDED_FOR']; }
+    if (isset($_SERVER['HTTP_CLIENT_IP'])) { $ip=$ip.'_'.$_SERVER['HTTP_CLIENT_IP']; }
+    return $ip;
+}
+
+// Check that user/password is correct.
+function check_auth($login, $password) {
+	global $_CONFIG;
+	$hash = sha1($login.$password.$_CONFIG['salt']);
+	if ($login == $_CONFIG['login'] && $hash = =$_CONFIG['hash']) {
+		$_SESSION['uid'] = sha1(uniqid('',true).'_'.mt_rand());
+		$_SESSION['ip'] = cuurentIP();
+		$_SESSION['expires_on'] = time()+INACTIVITY_TIMEOUT;
+		writeLog('Login successful');
+		return True;
+	}
+	writeLog('Login failed for user '.$login);
+	return False;
+}
+
 
 /**
  * Display functions
@@ -255,7 +317,7 @@ function install($tpl) {
 		$_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']);
 		$_CONFIG['title'] = empty($_POST['title']) ? 'Movies' : htmlspecialchars($_POST['title']);
 		writeSettings();
-		header('Location: '.$_SEREVR['REQUEST_URI']);
+		header('Location: '.$_SERVER['REQUEST_URI']);
 		exit();
 	}
 
