@@ -5,6 +5,7 @@ date_default_timezone_set('Europe/Paris');
 global $_CONFIG;
 $_CONFIG['data'] = 'data';
 $_CONFIG['database'] = $_CONFIG['data'].'/movies.php';
+$_CONFIG['settings'] = $_CONFIG['data'].'/settings.php';
 $_CONFIG['images'] = $_CONFIG['data'].'/images';
 $_CONFIG['cache'] = 'cache';
 $_CONFIG['title'] = 'Movies';
@@ -21,6 +22,13 @@ define('MOVIES_VERSION', '0.1 bêta');
 if (!is_dir($_CONFIG['data'])) { mkdir($_CONFIG['data'],0705); chmod($_CONFIG['data'],0705); }
 if (!is_dir($_CONFIG['cache'])) { mkdir($_CONFIG['cache'],0705); chmod($_CONFIG['cache'],0705); }
 if (!is_dir($_CONFIG['images'])) { mkdir($_CONFIG['images'],0705); chmod($_CONFIG['images'],0705); }
+
+//ob_start();
+$tpl = new RainTPL();
+
+if (!is_file($_CONFIG['settings'])) install($tpl);
+require($_CONFIG['settings']);
+define('TITLE', $_CONFIG['title']);
 
 /**
  * Rain class
@@ -41,84 +49,84 @@ class Movie {
  * Database class
  */
 class Movies implements Iterator, Countable, ArrayAccess {
-    private $data;
-    private $keys;
-    private $current; 
-    private $logged;
+	private $data;
+	private $keys;
+	private $current; 
+	private $logged;
 
-    function __construct($logged = FALSE) {
-        $this->logged = $logged;
-        $this->check();
-        $this->read();
-    }
+	function __construct($logged = FALSE) {
+		$this->logged = $logged;
+		$this->check();
+		$this->read();
+	}
 
-    // Countable interface implementation
-    public function count() { return count($this->data); }
+	// Countable interface implementation
+	public function count() { return count($this->data); }
 
-    // ArrayAccess interface implementation
-    public function offsetSet($offset, $value)
-    {
-        if (!$this->loggedin) die('You are not authorized to add a movie.');
-        if (empty($value['id'])) die('Internal Error: A movie should always have a date id.');
-        if (empty($offset)) die('You must specify a key.');
-        $this->data[$offset] = $value;
-    }
-    public function offsetExists($offset) { return array_key_exists($offset,$this->data); }
-    public function offsetUnset($offset)
-    {
-        if (!$this->loggedin) die('You are not authorized to delete a movie.');
-        unset($this->data[$offset]);
-    }
-    public function offsetGet($offset) { return isset($this->data[$offset]) ? $this->data[$offset] : null; }
+	// ArrayAccess interface implementation
+	public function offsetSet($offset, $value)
+	{
+		if (!$this->loggedin) die('You are not authorized to add a movie.');
+		if (empty($value['id'])) die('Internal Error: A movie should always have a date id.');
+		if (empty($offset)) die('You must specify a key.');
+		$this->data[$offset] = $value;
+	}
+	public function offsetExists($offset) { return array_key_exists($offset,$this->data); }
+	public function offsetUnset($offset)
+	{
+		if (!$this->loggedin) die('You are not authorized to delete a movie.');
+		unset($this->data[$offset]);
+	}
+	public function offsetGet($offset) { return isset($this->data[$offset]) ? $this->data[$offset] : null; }
 
-    // Iterator interface implementation
-    function rewind() { $this->keys=array_keys($this->data); rsort($this->keys); $this->current=0; } 
-    function key() { return $this->keys[$this->current]; } 
-    function current() { return $this->data[$this->keys[$this->current]]; } 
-    function next() { ++$this->current; } 
-    function valid() { return isset($this->keys[$this->current]); } 
+	// Iterator interface implementation
+	function rewind() { $this->keys=array_keys($this->data); rsort($this->keys); $this->current=0; } 
+	function key() { return $this->keys[$this->current]; } 
+	function current() { return $this->data[$this->keys[$this->current]]; } 
+	function next() { ++$this->current; } 
+	function valid() { return isset($this->keys[$this->current]); } 
 
-    // Check if db directory and file exists
-    private function check() {
+	// Check if db directory and file exists
+	private function check() {
 		global $_CONFIG;
-        if (!file_exists($_CONFIG['database']))  {
-            $this->data = array();
-            $movie = array('id' => 1375621919,'title' => 'Moi, moche et méchant','original_title' => 'Despicable me','date' => '2010-10-06','country' => 'USA','kind' => 'animation, comédie, famille','duration' => 95,'description' => 'Dans un charmant quartier résidentiel délimité par des clôtures de bois blanc et orné de rosiers fleurissants se dresse une bâtisse noire entourée d’une pelouse en friche. Cette façade sinistre cache un secret : Gru, un méchant vilain, entouré d’une myriade de sous-fifres et armé jusqu’aux dents, qui, à l’insu du voisinage, complote le plus gros casse de tous les temps : voler la lune (Oui, la lune !)...<br />Gru affectionne toutes sortes de sales joujoux. Il possède une multitude de véhicules de combat aérien et terrestre et un arsenal de rayons immobilisants et rétrécissants avec lesquels il anéantit tous ceux qui osent lui barrer la route... jusqu’au jour où il tombe nez à nez avec trois petites orphelines qui voient en lui quelqu’un de tout à fait différent : un papa.<br />Le plus grand vilain de tous les temps se retrouve confronté à sa plus dure épreuve : trois fillettes prénommées Margo, Edith et Agnes','links' => array('image' => NULL,'more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=140623.html'),'status' => Movie::SEEN,'note' => 4.5);
-            $this->data[$movie['id']] = $movie;
-            $movie = array('id' => 1375621921,'title' => 'Mission Impossible: Protocole Fantôme','original_title' => NULL,'date' => '2012-03-31','country' => 'USA','kind' => 'action','duration' => 75,'description' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL);
-            $this->data[$movie['id']] = $movie;
-            $movie = array('id' => 1375621920,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable me 2','date' => '2013-06-26','country' => 'USA','kind' => 'animation','duration' => 98,'description' => 'Ayant abandonné la super-criminalité et mis de côté ses activités funestes pour se consacrer à la paternité et élever Margo, Édith et Agnès, Gru, et avec lui, le Professeur Néfario et les Minions, doivent se trouver de nouvelles occupations. Alors qu’il commence à peine à s’adapter à sa nouvelle vie tranquille de père de famille, une organisation ultrasecrète, menant une lutte acharnée contre le Mal à l’échelle planétaire, vient frapper à sa porte. Soudain, c’est à Gru, et à sa nouvelle coéquipière Lucy, que revient la responsabilité de résoudre une série de méfaits spectaculaires. Après tout, qui mieux que l’ex plus méchant méchant de tous les temps, pourrait attraper celui qui rivalise pour lui voler la place qu’il occupait encore récemment.<br />Rejoignant nos héros, on découvre : Floyd, le propriétaire du salon Eagle Postiche Club pour hommes et suspect numéro 1 du crime le plus abject jamais perpétré depuis le départ de Gru à la retraite ; Silas de Lamolefès, le super-espion à la tête de l’Agence Vigilance de Lynx, patron de Lucy, dont le nom de famille est une source inépuisable d’amusement pour les Minions ; Antonio, le si mielleux objet de l’affection naissante de Margo, et Eduardo Perez, le père d’Antonio, propriétaire du restaurant Salsa & Salsa et l’homme qui se cache peut-être derrière le masque d’El Macho, le plus impitoyable et, comme son nom l’indique, méchant macho que la terre ait jamais porté.','links' => array('image' => 'data/images/1375621920.jpg','more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::SEEN,'note' => 4);
-            $this->data[$movie['id']] = $movie;
-            $movie = array('id' => 1375621923,'title' => 'De fleurs et d’ombres : retour sur la grande Avira','original_title' => NULL,'date' => '2012-03-31','country' => 'USA','kind' => 'action','duration' => 75,'description' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL);
-            $this->data[$movie['id']] = $movie;            
-            file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
-        }
-    }
+		if (!file_exists($_CONFIG['database']))  {
+			$this->data = array();
+			$movie = array('id' => 1375621919,'title' => 'Moi, moche et méchant','original_title' => 'Despicable me','date' => '2010-10-06','country' => 'USA','kind' => 'animation, comédie, famille','duration' => 95,'description' => 'Dans un charmant quartier résidentiel délimité par des clôtures de bois blanc et orné de rosiers fleurissants se dresse une bâtisse noire entourée d’une pelouse en friche. Cette façade sinistre cache un secret : Gru, un méchant vilain, entouré d’une myriade de sous-fifres et armé jusqu’aux dents, qui, à l’insu du voisinage, complote le plus gros casse de tous les temps : voler la lune (Oui, la lune !)...<br />Gru affectionne toutes sortes de sales joujoux. Il possède une multitude de véhicules de combat aérien et terrestre et un arsenal de rayons immobilisants et rétrécissants avec lesquels il anéantit tous ceux qui osent lui barrer la route... jusqu’au jour où il tombe nez à nez avec trois petites orphelines qui voient en lui quelqu’un de tout à fait différent : un papa.<br />Le plus grand vilain de tous les temps se retrouve confronté à sa plus dure épreuve : trois fillettes prénommées Margo, Edith et Agnes','links' => array('image' => NULL,'more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=140623.html'),'status' => Movie::SEEN,'note' => 4.5, 'acquired' => TRUE);
+			$this->data[$movie['id']] = $movie;
+			$movie = array('id' => 1375621921,'title' => 'Mission Impossible: Protocole Fantôme','original_title' => NULL,'date' => '2012-03-31','country' => 'USA','kind' => 'action','duration' => 75,'description' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'acquired' => TRUE);
+			$this->data[$movie['id']] = $movie;
+			$movie = array('id' => 1375621920,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable me 2','date' => '2013-06-26','country' => 'USA','kind' => 'animation','duration' => 98,'description' => 'Ayant abandonné la super-criminalité et mis de côté ses activités funestes pour se consacrer à la paternité et élever Margo, Édith et Agnès, Gru, et avec lui, le Professeur Néfario et les Minions, doivent se trouver de nouvelles occupations. Alors qu’il commence à peine à s’adapter à sa nouvelle vie tranquille de père de famille, une organisation ultrasecrète, menant une lutte acharnée contre le Mal à l’échelle planétaire, vient frapper à sa porte. Soudain, c’est à Gru, et à sa nouvelle coéquipière Lucy, que revient la responsabilité de résoudre une série de méfaits spectaculaires. Après tout, qui mieux que l’ex plus méchant méchant de tous les temps, pourrait attraper celui qui rivalise pour lui voler la place qu’il occupait encore récemment.<br />Rejoignant nos héros, on découvre : Floyd, le propriétaire du salon Eagle Postiche Club pour hommes et suspect numéro 1 du crime le plus abject jamais perpétré depuis le départ de Gru à la retraite ; Silas de Lamolefès, le super-espion à la tête de l’Agence Vigilance de Lynx, patron de Lucy, dont le nom de famille est une source inépuisable d’amusement pour les Minions ; Antonio, le si mielleux objet de l’affection naissante de Margo, et Eduardo Perez, le père d’Antonio, propriétaire du restaurant Salsa & Salsa et l’homme qui se cache peut-être derrière le masque d’El Macho, le plus impitoyable et, comme son nom l’indique, méchant macho que la terre ait jamais porté.','links' => array('image' => 'data/images/1375621920.jpg','more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::SEEN,'note' => 4, 'acquired' => FALSE);
+			$this->data[$movie['id']] = $movie;
+			$movie = array('id' => 1375621923,'title' => 'De fleurs et d’ombres : retour sur la grande Avira','original_title' => NULL,'date' => '2012-03-31','country' => 'France','kind' => 'action','duration' => 75,'description' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'acquired' => FALSE);
+			$this->data[$movie['id']] = $movie;            
+			file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
+		}
+	}
 
-    // Read database from disk to memory
-    private function read() {
-    	global $_CONFIG;
-        $this->data=(file_exists($_CONFIG['database']) ? unserialize(gzinflate(base64_decode(substr(file_get_contents($_CONFIG['database']),strlen(PHPPREFIX),-strlen(PHPSUFFIX))))) : array() );
-    }
+	// Read database from disk to memory
+	private function read() {
+		global $_CONFIG;
+		$this->data=(file_exists($_CONFIG['database']) ? unserialize(gzinflate(base64_decode(substr(file_get_contents($_CONFIG['database']),strlen(PHPPREFIX),-strlen(PHPSUFFIX))))) : array() );
+	}
 
-    // Save database from memory to disk
-    public function save() {
-    	global $_CONFIG;
-        if (!$this->loggedin) die('You are not authorized to change the database.');
-        file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
-    }
+	// Save database from memory to disk
+	public function save() {
+		global $_CONFIG;
+		if (!$this->loggedin) die('You are not authorized to change the database.');
+		file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
+	}
 
-    // last movies inserted
-    public function lastMovies() {
-    	return $this->data;
-    }
+	// last movies inserted
+	public function lastMovies() {
+		return $this->data;
+	}
 }
 
 /**
  * Get link to a page
  */
 abstract class Path {
-	static function url($url, $name, $tpl = FALSE) {
+	private static function url($url, $name, $tpl = FALSE) {
 		global $_CONFIG;
 		$result = '';
 		if ($tpl) {
@@ -140,12 +148,31 @@ abstract class Path {
 		return $result.'">'.$name."</a>".($tpl ? '</li>' : NULL);
 	}
 	static function menu($active) {
-		return self::url('home', 'Home', $active).self::url('favorite', 'Favorites', $active).self::url(NULL, 'Link', $active).PHP_EOL;
+		return self::url('home', 'Home', $active).self::url('favorite', 'Favorites', $active).self::url(NULL, 'Link', $active).'<li class="rss"><a href="./movies.rss"><i class="icon-feed"></i></a></li>'.PHP_EOL;
 	}
 	static function movie($id) {
 		global $_CONFIG;
 		return '.'.($_CONFIG['url_rewriting'] ? '/movie/' : '/?movie=').$id;
 	}
+	static function admin() {
+		global $_CONFIG;
+		return '.'.($_CONFIG['url_rewriting'] ? '/admin' : '/?admin');	
+	}
+}
+
+/**
+ * Toolbox functions
+ */
+function writeSettings() {
+	global $_CONFIG;
+	if (is_file($_CONFIG['settings']) && !isLogged()) die('You are not authorized to change config.');
+	$file  = '<?php'.PHP_EOL;
+	$file .= '$_CONFIG[\'login\']='.var_export($_CONFIG['login'],true).'; ';
+	$file .= '$_CONFIG[\'hash\']='.var_export($_CONFIG['hash'],true).'; ';
+	$file .= '$_CONFIG[\'salt\']='.var_export($_CONFIG['salt'],true).'; ';
+	$file .= '$_CONFIG[\'title\']='.var_export($_CONFIG['title'],true).'; ';
+	$file .= PHP_EOL.'?>';
+	if (!file_put_contents($_CONFIG['settings'], $file)) die('Impossible to write the configuration file. Please verify the webapplication has rights to write.');
 }
 
 /**
@@ -198,7 +225,7 @@ function displayStatus($status) {
 			$result .= 'ok-sign';
 			break;
 		case Movie::TO_SEE:
-			$result .= 'screenshot';
+			$result .= 'circle-blank';
 			break;
 		default:
 			$result .= 'question-sign';
@@ -215,10 +242,30 @@ function displayFlag($country) {
  * Script begin here
  */
 
-//ob_start();
+// installation: get user's ID
+function install($tpl) {
+	// get informations to save
+	if (!empty($_POST['login']) && !empty($_POST['password'])) {
+		global $_CONFIG;
+		$_CONFIG['login'] = htmlspecialchars($_POST['login']);
+		$_CONFIG['salt'] = sha1(uniqid('',true).'_'.mt_rand());
+		$_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']);
+		$_CONFIG['title'] = empty($_POST['title']) ? 'Movies' : htmlspecialchars($_POST['title']);
+		writeSettings();
+		header('Location: '.$_SEREVR['REQUEST_URI']);
+		exit();
+	}
 
-$tpl = new RainTPL();
-$tpl->assign('title', $_CONFIG['title']);
+	$tpl->assign('page_title', 'Installation');	
+	$tpl->assign('menu_links', NULL);
+	$tpl->draw('install');
+	exit();
+}
+
+// administration pages
+function administration() {
+
+}
 
 $movies = new Movies();
 $tpl->assign('movie', $movies->lastMovies());

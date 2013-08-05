@@ -17,7 +17,12 @@
 		{if="$value.duration != NULL"}<li>{$value.duration} min</li>{/if}
 		{if="$value.date != NULL"}<li><i class="icon-calendar"></i> {$value.date}</li>{/if}
 		{if="$value.country != NULL"}<li>{$value.country|displayFlag}</li>{/if}
-		<!--{if="$value.links.more != NULL"}<li><a href="{$value.links.more}" rel="external" class="normal text-muted tip" title="More infos online" data-placement="bottom"><i class="icon-film"></i></a></li>{/if}-->
+		<li class="pull-right">
+		<ul class="list-inline">
+			{if="$value.acquired"}<li><span class="tip" data-title="Movie acquired" data-placement="bottom"><i class="icon-film"></i></span></li>{/if}
+			{if="$value.links.more != NULL"}<li><a href="{$value.links.more}" rel="external" class="normal text-muted tip" title="More infos online" data-placement="bottom"><i class="icon-globe"></i></a></li>{/if}
+		</ul>
+		</li>
 	</ul>
 
 	<div class="row">
@@ -29,9 +34,11 @@
 	</div>
 	<div class="col-12 col-sm-10 col-lg-8">
 		<p class="description">{$value.description|displayDescription}</p>
+		{if="$value.status == Movie::SEEN"}
 		<ul class="list-inline text-muted">
 			{$value.kind|displayKinds}
 		</ul>
+		{/if}
 	</div>
 	</div>
 </article>

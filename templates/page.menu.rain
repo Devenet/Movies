@@ -6,14 +6,14 @@
 	<span class="icon-bar"></span>
 	<span class="icon-bar"></span>
 	</button>
-	<a class="navbar-brand" href="."><img src="assets/img/movies.png" alt="logo" /> {$title}</a>
+	<a class="navbar-brand" href="."><img src="assets/img/movies.png" alt="logo" /> {#TITLE}</a>
 
 	<div class="nav-collapse collapse navbar-responsive-collapse">
 		<ul class="nav navbar-nav">
 			{$menu_links}
 		</ul>
 		<ul class="nav navbar-nav pull-right">
-			<li class="rss"><a href="./movies.rss" rel="external"><i class="icon-rss"></i></a></li>
+			<li><a href="{""|Path::admin}"><i class="icon-lock"></i></a></li>
 		</ul>
 	</div>
 </div>

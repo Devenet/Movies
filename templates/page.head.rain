@@ -1,5 +1,5 @@
 <meta charset="utf-8" />
-<title>{$page_title} &middot; Movies</title>
+<title>{$page_title} &middot; {#TITLE#}</title>
 
 <meta name="author" content="Nicolas Devenet" />
 <meta name="robots" content="noindex, noarchive, nofollow" />

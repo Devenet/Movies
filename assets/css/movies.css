@@ -4,10 +4,17 @@
  * Copyright 2013 Nicolas Devenet
  */
 
-header {margin: 20px 0 0;}
+header {margin: 20px 0 10px;}
 
 .navbar li.rss a:hover {color: #FF7A4D;}
 a.normal {text-decoration: none;}
+.tip {cursor: default;}
+a.tip {cursor: pointer;}
+
+.form-controls {border-top: 1px solid rgb(200,200,200); padding: 15px 0; margin: 30px 0 20px; background: rgb(245,245,245);}
+.espace-top {margin-top: 20px;}
+.espace-top-big {margin-top: 40px;}
+.espace-left {margin-left: 20px;}
 
 article.movie {margin-bottom: 20px;}
 article.movie h2 a {text-decoration: none;}
@@ -15,6 +22,7 @@ article.movie h2 small {display: block; font-size: 14px;}
 article.movie .row {margin-top: 20px;}
 article.movie .kinds {font-size: 12px;}
 article.movie .stars {margin: 10px auto; font-size: 16px;}
+article.movie .stars i {margin-right: 2px;}
 .stars.stars-0 {}
 .stars.stars-1 {}
 .stars.stars-2 {}
