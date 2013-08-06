@@ -5,6 +5,7 @@
  */
 
 header {margin: 20px 0 10px;}
+footer {margin: 40px auto 10px;}
 
 .navbar li.rss a:hover {color: #FF7A4D;}
 a.normal {text-decoration: none;}
@@ -29,8 +30,11 @@ article.movie .stars i {margin-right: 2px;}
 .stars.stars-3 {}
 .stars.stars-4 {color: #357ebd;}
 .stars.stars-5 {color: #4cae4c;}
+.movie .movie-tools {display: block; font-size: 16px; position: absolute; left: -5px;}
+.movie .movie-tools a {display: block;}
 
 @media(max-width: 767px) {
 	header {margin: 0;}
 	header .navbar {border-radius: 0 !important;}
+	.movie .movie-tools {position: relative; float: left;}
 }

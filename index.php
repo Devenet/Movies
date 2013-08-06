@@ -7,6 +7,7 @@ global $_CONFIG;
 $_CONFIG['data'] = 'data';
 $_CONFIG['database'] = $_CONFIG['data'].'/movies.php';
 $_CONFIG['settings'] = $_CONFIG['data'].'/settings.php';
+$_CONFIG['log'] = $_CONFIG['data'].'/area_51.txt';
 $_CONFIG['images'] = $_CONFIG['data'].'/images';
 $_CONFIG['cache'] = 'cache';
 $_CONFIG['title'] = 'Movies';
@@ -15,6 +16,9 @@ $_CONFIG['flags'] = array(
 	'USA' => 'us',
 	'France' => 'fr'
 );
+$_CONFIG['ban'] = $_CONFIG['data'].'/jail.php';
+$_CONFIG['ban_after'] = 4;
+$_CONFIG['ban_duration'] = 1800;
 
 define('PHPPREFIX','<?php /* '); 
 define('PHPSUFFIX',' */ ?>');
@@ -28,11 +32,14 @@ session_set_cookie_params($cookie['lifetime'],$cookiedir,$_SERVER['HTTP_HOST']);
 ini_set('session.use_cookies', 1);
 ini_set('session.use_only_cookies', 1);
 ini_set('session.use_trans_sid', FALSE);
+session_name('movies');
+session_start();
 
 
 if (!is_dir($_CONFIG['data'])) { mkdir($_CONFIG['data'],0705); chmod($_CONFIG['data'],0705); }
 if (!is_dir($_CONFIG['cache'])) { mkdir($_CONFIG['cache'],0705); chmod($_CONFIG['cache'],0705); }
 if (!is_dir($_CONFIG['images'])) { mkdir($_CONFIG['images'],0705); chmod($_CONFIG['images'],0705); }
+if (!is_file($_CONFIG['ban'])) { file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export(array('failures'=>array(),'banned'=>array()), TRUE).';'.PHP_EOL.'?>'); }
 
 //ob_start();
 $tpl = new RainTPL();
@@ -83,8 +90,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		$this->data[$offset] = $value;
 	}
 	public function offsetExists($offset) { return array_key_exists($offset,$this->data); }
-	public function offsetUnset($offset)
-	{
+	public function offsetUnset($offset) {
 		if (!$this->loggedin) die('You are not authorized to delete a movie.');
 		unset($this->data[$offset]);
 	}
@@ -102,13 +108,13 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		global $_CONFIG;
 		if (!file_exists($_CONFIG['database']))  {
 			$this->data = array();
-			$movie = array('id' => 1375621919,'title' => 'Moi, moche et méchant','original_title' => 'Despicable me','date' => '2010-10-06','country' => 'USA','kind' => 'animation, comédie, famille','duration' => 95,'description' => 'Dans un charmant quartier résidentiel délimité par des clôtures de bois blanc et orné de rosiers fleurissants se dresse une bâtisse noire entourée d’une pelouse en friche. Cette façade sinistre cache un secret : Gru, un méchant vilain, entouré d’une myriade de sous-fifres et armé jusqu’aux dents, qui, à l’insu du voisinage, complote le plus gros casse de tous les temps : voler la lune (Oui, la lune !)...<br />Gru affectionne toutes sortes de sales joujoux. Il possède une multitude de véhicules de combat aérien et terrestre et un arsenal de rayons immobilisants et rétrécissants avec lesquels il anéantit tous ceux qui osent lui barrer la route... jusqu’au jour où il tombe nez à nez avec trois petites orphelines qui voient en lui quelqu’un de tout à fait différent : un papa.<br />Le plus grand vilain de tous les temps se retrouve confronté à sa plus dure épreuve : trois fillettes prénommées Margo, Edith et Agnes','links' => array('image' => NULL,'more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=140623.html'),'status' => Movie::SEEN,'note' => 4.5, 'acquired' => TRUE);
+			$movie = array('id' => 1375621919,'title' => 'Moi, moche et méchant','original_title' => 'Despicable me','date' => '2010-10-06','country' => 'USA','kind' => 'animation, comédie, famille','duration' => 95,'description' => 'Dans un charmant quartier résidentiel délimité par des clôtures de bois blanc et orné de rosiers fleurissants se dresse une bâtisse noire entourée d’une pelouse en friche. Cette façade sinistre cache un secret : Gru, un méchant vilain, entouré d’une myriade de sous-fifres et armé jusqu’aux dents, qui, à l’insu du voisinage, complote le plus gros casse de tous les temps : voler la lune (Oui, la lune !)...<br />Gru affectionne toutes sortes de sales joujoux. Il possède une multitude de véhicules de combat aérien et terrestre et un arsenal de rayons immobilisants et rétrécissants avec lesquels il anéantit tous ceux qui osent lui barrer la route... jusqu’au jour où il tombe nez à nez avec trois petites orphelines qui voient en lui quelqu’un de tout à fait différent : un papa.<br />Le plus grand vilain de tous les temps se retrouve confronté à sa plus dure épreuve : trois fillettes prénommées Margo, Edith et Agnes','links' => array('image' => NULL,'more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=140623.html'),'status' => Movie::SEEN,'note' => 4.5, 'owned' => TRUE);
 			$this->data[$movie['id']] = $movie;
-			$movie = array('id' => 1375621921,'title' => 'Mission Impossible: Protocole Fantôme','original_title' => NULL,'date' => '2012-03-31','country' => 'USA','kind' => 'action','duration' => 75,'description' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'acquired' => TRUE);
+			$movie = array('id' => 1375621921,'title' => 'Mission Impossible: Protocole Fantôme','original_title' => NULL,'date' => '2012-03-31','country' => 'USA','kind' => 'action','duration' => 75,'description' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'owned' => TRUE);
 			$this->data[$movie['id']] = $movie;
-			$movie = array('id' => 1375621920,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable me 2','date' => '2013-06-26','country' => 'USA','kind' => 'animation','duration' => 98,'description' => 'Ayant abandonné la super-criminalité et mis de côté ses activités funestes pour se consacrer à la paternité et élever Margo, Édith et Agnès, Gru, et avec lui, le Professeur Néfario et les Minions, doivent se trouver de nouvelles occupations. Alors qu’il commence à peine à s’adapter à sa nouvelle vie tranquille de père de famille, une organisation ultrasecrète, menant une lutte acharnée contre le Mal à l’échelle planétaire, vient frapper à sa porte. Soudain, c’est à Gru, et à sa nouvelle coéquipière Lucy, que revient la responsabilité de résoudre une série de méfaits spectaculaires. Après tout, qui mieux que l’ex plus méchant méchant de tous les temps, pourrait attraper celui qui rivalise pour lui voler la place qu’il occupait encore récemment.<br />Rejoignant nos héros, on découvre : Floyd, le propriétaire du salon Eagle Postiche Club pour hommes et suspect numéro 1 du crime le plus abject jamais perpétré depuis le départ de Gru à la retraite ; Silas de Lamolefès, le super-espion à la tête de l’Agence Vigilance de Lynx, patron de Lucy, dont le nom de famille est une source inépuisable d’amusement pour les Minions ; Antonio, le si mielleux objet de l’affection naissante de Margo, et Eduardo Perez, le père d’Antonio, propriétaire du restaurant Salsa & Salsa et l’homme qui se cache peut-être derrière le masque d’El Macho, le plus impitoyable et, comme son nom l’indique, méchant macho que la terre ait jamais porté.','links' => array('image' => 'data/images/1375621920.jpg','more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::SEEN,'note' => 4, 'acquired' => FALSE);
+			$movie = array('id' => 1375621920,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable me 2','date' => '2013-06-26','country' => 'USA','kind' => 'animation','duration' => 98,'description' => 'Ayant abandonné la super-criminalité et mis de côté ses activités funestes pour se consacrer à la paternité et élever Margo, Édith et Agnès, Gru, et avec lui, le Professeur Néfario et les Minions, doivent se trouver de nouvelles occupations. Alors qu’il commence à peine à s’adapter à sa nouvelle vie tranquille de père de famille, une organisation ultrasecrète, menant une lutte acharnée contre le Mal à l’échelle planétaire, vient frapper à sa porte. Soudain, c’est à Gru, et à sa nouvelle coéquipière Lucy, que revient la responsabilité de résoudre une série de méfaits spectaculaires. Après tout, qui mieux que l’ex plus méchant méchant de tous les temps, pourrait attraper celui qui rivalise pour lui voler la place qu’il occupait encore récemment.<br />Rejoignant nos héros, on découvre : Floyd, le propriétaire du salon Eagle Postiche Club pour hommes et suspect numéro 1 du crime le plus abject jamais perpétré depuis le départ de Gru à la retraite ; Silas de Lamolefès, le super-espion à la tête de l’Agence Vigilance de Lynx, patron de Lucy, dont le nom de famille est une source inépuisable d’amusement pour les Minions ; Antonio, le si mielleux objet de l’affection naissante de Margo, et Eduardo Perez, le père d’Antonio, propriétaire du restaurant Salsa & Salsa et l’homme qui se cache peut-être derrière le masque d’El Macho, le plus impitoyable et, comme son nom l’indique, méchant macho que la terre ait jamais porté.','links' => array('image' => 'data/images/1375621920.jpg','more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::SEEN,'note' => 4, 'owned' => FALSE);
 			$this->data[$movie['id']] = $movie;
-			$movie = array('id' => 1375621923,'title' => 'De fleurs et d’ombres : retour sur la grande Avira','original_title' => NULL,'date' => '2012-03-31','country' => 'France','kind' => 'action','duration' => 75,'description' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'acquired' => FALSE);
+			$movie = array('id' => 1375621923,'title' => 'De fleurs et d’ombres : retour sur la grande Avira','original_title' => NULL,'date' => '2012-03-31','country' => 'France','kind' => 'action','duration' => 75,'description' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'owned' => FALSE);
 			$this->data[$movie['id']] = $movie;            
 			file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
 		}
@@ -162,7 +168,7 @@ abstract class Path {
 		return $result.'">'.$name."</a>".($tpl ? '</li>' : NULL);
 	}
 	static function menu($active) {
-		return self::url('home', 'Home', $active).self::url('favorite', 'Favorites', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss"><i class="icon-rss"></i></a></li>'.PHP_EOL;
+		return self::url('home', 'Home', $active).self::url('favorite', 'Favorites', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
 	}
 	static function movie($id) {
 		global $_CONFIG;
@@ -171,6 +177,14 @@ abstract class Path {
 	static function admin() {
 		global $_CONFIG;
 		return '.'.($_CONFIG['url_rewriting'] ? '/admin' : '/?admin');	
+	}
+	static function signin() {
+		global $_CONFIG;
+		return '.'.($_CONFIG['url_rewriting'] ? '/signin' : '/?signin');
+	}
+	static function signout() {
+		global $_CONFIG;
+		return '.'.($_CONFIG['url_rewriting'] ? '/signout' : '/?signout');
 	}
 }
 
@@ -192,8 +206,20 @@ function writeSettings() {
 
 // log actions into file
 function writeLog($message) {
-	$t = strval(date('Y/m/d H:i:s')).' - '.$_SERVER["REMOTE_ADDR"].' - '.strval($message)."\n";
-	file_put_contents($GLOBALS['config']['DATADIR'].'/log.txt',$t,FILE_APPEND);
+	global $_CONFIG;
+	$log = strval(date('Y-m-d H:i:s')).' ['.$_SERVER["REMOTE_ADDR"].'] '.strval($message)."\n";
+	file_put_contents($_CONFIG['log'], $log, FILE_APPEND);
+}
+
+// function message error page
+function errorPage($message, $title) {
+	global $tpl;
+	$tpl->assign('page_title', 'Error');
+	$tpl->assign('menu_links', Path::menu('error'));
+	$tpl->assign('error_title', $title);
+	$tpl->assign('error_content', $message.'<div class="espace-top">Please <a href="'.$_SERVER['REQUEST_URI'].'">try again</a>.</div>');
+	$tpl->draw('error');
+	exit();
 }
 
 /**
@@ -202,14 +228,14 @@ function writeLog($message) {
 // Get state if user is logged in or not
 function isLogged() {
 	global $_CONFIG;
-	if (!isset($_CONFIG['login'])) { return false; }
+	if (!isset($_CONFIG['login'])) { return FALSE; }
 	// If session does not exist on server side, or IP address has changed, or session has expired, logout.
 	if (empty($_SESSION['uid']) || $_SESSION['ip'] != currentIP() || time() >= $_SESSION['expires_on']) {
 		logout();
-		return false;
+		return FALSE;
 	}
 	$_SESSION['expires_on'] = time() + INACTIVITY_TIMEOUT;
-	return true;
+	return TRUE;
 }
 
 // Logout user
@@ -217,11 +243,11 @@ function logout() { if(isset($_SESSION)) { unset($_SESSION['uid']); unset($_SESS
 
 // Returns the IP address of the client (Used to prevent session cookie hijacking.)
 function currentIP() {
-    $ip = $_SERVER["REMOTE_ADDR"];
-    // Then we use more HTTP headers to prevent session hijacking from users behind the same proxy
-    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) { $ip=$ip.'_'.$_SERVER['HTTP_X_FORWARDED_FOR']; }
-    if (isset($_SERVER['HTTP_CLIENT_IP'])) { $ip=$ip.'_'.$_SERVER['HTTP_CLIENT_IP']; }
-    return $ip;
+	$ip = $_SERVER["REMOTE_ADDR"];
+	// Then we use more HTTP headers to prevent session hijacking from users behind the same proxy
+	if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) { $ip=$ip.'_'.$_SERVER['HTTP_X_FORWARDED_FOR']; }
+	if (isset($_SERVER['HTTP_CLIENT_IP'])) { $ip=$ip.'_'.$_SERVER['HTTP_CLIENT_IP']; }
+	return $ip;
 }
 
 // Check that user/password is correct.
@@ -229,16 +255,82 @@ function check_auth($login, $password) {
 	global $_CONFIG;
 	$hash = sha1($login.$password.$_CONFIG['salt']);
 	if ($login == $_CONFIG['login'] && $hash == $_CONFIG['hash']) {
-		$_SESSION['uid'] = sha1(uniqid('',true).'_'.mt_rand());
-		$_SESSION['ip'] = cuurentIP();
-		$_SESSION['expires_on'] = time()+INACTIVITY_TIMEOUT;
-		writeLog('Login successful');
+		$_SESSION['uid'] = sha1(uniqid('', TRUE).'_'.mt_rand());
+		$_SESSION['ip'] = currentIP();
+		$_SESSION['expires_on'] = time() + INACTIVITY_TIMEOUT;
+		writeLog('Login successful for user '.htmlspecialchars($login));
 		return True;
 	}
-	writeLog('Login failed for user '.$login);
+	writeLog('Login failed for user '.htmlspecialchars($login));
 	return False;
 }
 
+// Token are attached to the session
+if (!isset($_SESSION['tokens'])) $_SESSION['tokens']=array();
+
+// Returns a token
+function getToken() {
+	$token = sha1(uniqid('',true).'_'.mt_rand());
+	$_SESSION['tokens'][$token] = 1;
+	return $token;
+}
+
+// Tells if a token is ok and destroy it in case of success
+function acceptToken($token) {
+	if (isset($_SESSION['tokens'][$token])) {
+		unset($_SESSION['tokens'][$token]);
+		return TRUE;
+	}
+	writeLog('Invalid token given');
+	return FALSE;
+}
+
+// Several consecutive failed logins will ban the IP address for 1 hour.
+include $_CONFIG['ban'];
+// in case of failed login
+function loginFailed() {
+	global $_CONFIG;
+	$ip = $_SERVER['REMOTE_ADDR'];
+	$ban = $_CONFIG['ban_ip'];
+	if (!isset($ban['failures'][$ip])) {$ban['failures'][$ip] = 0;}
+	$ban['failures'][$ip]++;
+	if ($ban['failures'][$ip] > ($_CONFIG['ban_after']-1)) {
+		$ban['banned'][$ip] = time() + $_CONFIG['ban_duration'];
+		writeLog('IP address banned from login');
+	}
+	$_CONFIG['ban_ip'] = $ban;
+	file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
+}
+
+// Signals a successful login. Resets failed login counter.
+function loginSucceeded() {
+	global $_CONFIG;
+	$ip = $_SERVER["REMOTE_ADDR"];
+	$ban = $_CONFIG['ban_ip'];
+	unset($ban['failures'][$ip]);
+	unset($ban['banned'][$ip]);
+	$_CONFIG['ban_ip'] = $ban;
+	file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
+}
+
+// Checks if the user CAN login. If 'true', the user can try to login.
+function canLogin() {
+	global $_CONFIG;
+	$ip = $_SERVER["REMOTE_ADDR"];
+	$ban = $_CONFIG['ban_ip'];
+	if (isset($ban['banned'][$ip])) {
+		// User is banned. Check if the ban has expired:
+		if ($ban['banned'][$ip] <= time()) {
+			writeLog('Ban lifted');
+			unset($ban['failures'][$ip]);
+			unset($ban['banned'][$ip]);
+			file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
+			return TRUE;
+		}
+		return FALSE;
+	}
+	return TRUE;
+}
 
 /**
  * Display functions
@@ -329,14 +421,96 @@ function install($tpl) {
 
 // administration pages
 function administration() {
+	if (!isLogged()) {
+		header('Location: '.Path::signin());
+		exit();
+	}
+	global $tpl;
 
+	// default page of administration
+	$tpl->assign('page_title', 'Administration');
+	$tpl->assign('menu_links', Path::menu('admin'));
+	$tpl->draw('admin');
+	exit();
 }
 
-$movies = new Movies();
-$tpl->assign('movie', $movies->lastMovies());
-$tpl->assign('page_title', 'Home');
+// signout controller
+function signout() {
+	logout();
+	session_destroy();
+	header('Location: ./');
+	exit();
+}
 
-$tpl->assign('menu_links', Path::menu('home'));
-$tpl->draw('list');
+// login page (and process to log user)
+function signin() {
+	// user already logged in
+	if (isLogged()) {
+		header('Location: '.Path::admin());
+		exit();
+	}
+	global $tpl;
+
+	if (!canLogin()) {
+		global $tpl;
+		$tpl->assign('page_title', 'Error');
+		$tpl->assign('menu_links', Path::menu('error'));
+		$tpl->assign('error_title', 'You’re in jail');
+		$tpl->assign('error_content', 'You have been banned after too many bad attemps. <div class="espace-top">Please try later.</div>');
+		$tpl->draw('error');
+		exit();
+	}
+
+	if (!empty($_POST['login']) && !empty($_POST['password'])) {
+		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
+			if (check_auth(htmlspecialchars($_POST['login']), $_POST['password'])) {
+				loginSucceeded();
+				$cookiedir = '';
+				if(dirname($_SERVER['SCRIPT_NAME'])!='/') { $cookiedir=dirname($_SERVER["SCRIPT_NAME"]).'/'; }
+				// 0 means "When browser closes"
+				session_set_cookie_params(0, $cookiedir, $_SERVER['HTTP_HOST']);
+				session_regenerate_id(TRUE);
+				header('Location: '.Path::admin());
+				exit();
+			}
+			loginFailed();
+			errorPage('The given username or password was wrong. <br />If you do not remberer your login informations, just delete the file <code>data/settings.php</code>.', 'Invalid username or password');
+		}
+		loginFailed();
+		errorPage('The given token was empty or invalid.', 'Invalid token');
+	}
+	
+	$tpl->assign('page_title', 'Sign in');
+	$tpl->assign('menu_links', Path::menu('signin'));
+	$tpl->assign('token', getToken());
+	$tpl->draw('signin');
+	exit();
+}
+
+/**
+ * Process to display (loading...)
+ */
+// home asked
+if ($_SERVER['CONTEXT_PREFIX'] == $_SERVER['REQUEST_URI'] || $_SERVER['CONTEXT_PREFIX'].'index.php' == $_SERVER['REQUEST_URI'] || isset($_GET['page'])) {
+	$movies = new Movies();
+	$tpl->assign('movie', $movies->lastMovies());
+	$tpl->assign('page_title', 'Home');
+
+	$tpl->assign('menu_links', Path::menu('home'));
+	$tpl->draw('list');
+	exit();
+}
+// admin asked
+if (isset($_GET['admin'])) {administration();}
+// logout asked
+if (isset($_GET['signout'])) {signout();}
+// login asked
+if (isset($_GET['signin'])) {signin();}
+
+// nothing to do: 404 error
+header('HTTP/1.1 404 Not Found', true, 404);
+$tpl->assign('page_title', 'Error 404');
+$tpl->assign('menu_links', Path::menu('error'));
+$tpl->draw('404');
 
 ?>

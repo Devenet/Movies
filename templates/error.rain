@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+{include="page.head"}
+</head>
+<body>
+{include="page.menu"}
+
+<div class="container">
+<div class="row">
+<div class="col-lg-8 col-offset-2">
+	<h2>Shit happened!</h2>
+
+	<div class="panel panel-danger espace-top-big">
+		<div class="panel-heading">{$error_title}</div>
+		{$error_content}
+	</div>
+</div>
+</div>
+</div>
+
+{include="page.foot"}
+</body>
+</html>

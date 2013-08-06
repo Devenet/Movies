@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+{include="page.head"}
+</head>
+<body>
+{include="page.menu"}
+
+<div class="container">
+<div class="row">
+<div class="col-lg-8 col-offset-2">
+	<h2>Error 404</h2>
+
+	<div class="panel panel-danger espace-top">
+		<div class="panel-heading">Not Found</div>
+		The requested URL was not found on this server.
+	</div>
+</div>
+</div>
+</div>
+
+{include="page.foot"}
+</body>
+</html>

@@ -13,7 +13,11 @@
 			{$menu_links}
 		</ul>
 		<ul class="nav navbar-nav pull-right">
+			{if="isLogged()"}
+			<li><a href="{""|Path::signout}" title="Sign out" class="tip" data-placement="bottom"><i class="icon-unlock"></i></a></li>
+			{else}
 			<li><a href="{""|Path::admin}"><i class="icon-lock"></i></a></li>
+			{/if}
 		</ul>
 	</div>
 </div>

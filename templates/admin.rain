@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+{include="page.head"}
+</head>
+<body>
+{include="page.menu"}
+
+<div class="container">
+<div class="row">
+<div class="col-lg-12">
+	Admin area
+</div>
+</div>
+</div>
+
+{include="page.foot"}
+</body>
+</html>

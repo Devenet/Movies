@@ -10,7 +10,11 @@
 <div class="row">
 {loop="movie"}
 <article class="movie col-lg-6">
-	<h2><a href="{$value.id|Path::movie}" title="{$value.title}">{$value.title}</a>{if="$value.original_title != NULL"} <small>{$value.original_title}</small>{/if}</h2>
+	<h2>
+		{if="isLogged()"}<span class="movie-tools"><a href="#" class="text-success"><i class="icon-pencil"></i></a> <a href="#" class="text-danger"><i class="icon-trash"></i></a></span>{/if}
+		<a href="{$value.id|Path::movie}" title="{$value.title}">{$value.title}</a>
+		{if="$value.original_title != NULL"} <small>{$value.original_title}</small>{/if}
+	</h2>
 
 	<ul class="infos list-inline text-muted">
 		<li class="status">{$value.status|displayStatus}</li>
@@ -19,7 +23,7 @@
 		{if="$value.country != NULL"}<li>{$value.country|displayFlag}</li>{/if}
 		<li class="pull-right">
 		<ul class="list-inline">
-			{if="$value.acquired"}<li><span class="tip" data-title="Movie acquired" data-placement="bottom"><i class="icon-film"></i></span></li>{/if}
+			{if="$value.owned"}<li><span class="tip" data-title="Movie owned" data-placement="bottom"><i class="icon-film"></i></span></li>{/if}
 			{if="$value.links.more != NULL"}<li><a href="{$value.links.more}" rel="external" class="normal text-muted tip" title="More infos online" data-placement="bottom"><i class="icon-globe"></i></a></li>{/if}
 		</ul>
 		</li>
