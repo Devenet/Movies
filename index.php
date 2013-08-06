@@ -228,7 +228,7 @@ function currentIP() {
 function check_auth($login, $password) {
 	global $_CONFIG;
 	$hash = sha1($login.$password.$_CONFIG['salt']);
-	if ($login == $_CONFIG['login'] && $hash = =$_CONFIG['hash']) {
+	if ($login == $_CONFIG['login'] && $hash == $_CONFIG['hash']) {
 		$_SESSION['uid'] = sha1(uniqid('',true).'_'.mt_rand());
 		$_SESSION['ip'] = cuurentIP();
 		$_SESSION['expires_on'] = time()+INACTIVITY_TIMEOUT;
