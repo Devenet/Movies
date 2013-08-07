@@ -14,7 +14,9 @@
 		</ul>
 		<ul class="nav navbar-nav pull-right">
 			{if="isLogged()"}
-			<li><a href="{""|Path::signout}" title="Sign out" class="tip" data-placement="bottom"><i class="icon-unlock"></i></a></li>
+			<li><a href="{""|Path::add}"><i class="icon-plus"></i> Movie</a></li>
+			<li><a href="{""|Path::admin}"><i class="icon-cog"></i> Admin</a></li>
+			<li><a href="{""|Path::signout}" title="Sign&nbsp;out" class="tip" data-placement="bottom"><i class="icon-unlock"></i></a></li>
 			{else}
 			<li><a href="{""|Path::admin}"><i class="icon-lock"></i></a></li>
 			{/if}

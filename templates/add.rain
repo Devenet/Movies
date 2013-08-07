@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+{include="page.head"}
+</head>
+<body>
+{include="page.menu"}
+
+<div class="container">
+<div class="row">
+<div class="col-lg-12">
+	<h3>Add a new movie</h3>
+	<hr />
+</div>
+</div>
+
+<div class="row">
+<form class="espace-top" method="post" action="{""|Path::add}">
+<fieldset>
+<div class="col-lg-6">
+	<div class="form-group">
+		<label for="title">Title</label>
+		<input type="text" class="form-control" id="title" name="Title" placeholder="Moi, moche et méchant" />
+	</div>
+	<div class="form-group">
+		<label for="synopsis" class="control-label">Synopsis</label>
+		<textarea class="form-control" id="synopsis" name="synopsis" rows="8" placeholder="The beautiful story"></textarea>
+	</div>
+</div>
+<div class="col-lg-6">
+	<div class="form-group">
+		<label for="original-title"><small>Original title</small></label>
+		<input type="text" class="form-control input-sm" id="original-title" name="original-title" placeholder="Despicable Me" />
+	</div>
+	<div class="form-group">
+		<label for="duration">Duration (minutes)</label>
+		<input type="number" class="form-control slider slider-minutes" id="duration" name="duration" placeholder="0" data-slider-min="0" data-slider-max="300" data-slider-step="1" data-slider-value="-5" />
+	</div>
+	<div class="form-group">
+		<label for="release-date">Release date</label>
+		<div class="input-group">
+			<span class="input-group-addon text-muted"><i class="icon-calendar"></i></span>
+			<input type="text" class="form-control datepicker-release" data-date-format="yyyy-mm-dd" data-date="{$today}" data-date-viewmode="years" id="release-date" name="release-date" placeholder="{$today}" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label for=""></label>
+		<input type="text" class="form-control" id="" name="" placeholder="" />
+	</div>
+</div>
+<div class="col-lg-12">
+	<div class="form-group form-controls">
+		<div class="col-lg-12">
+			<button type="submit" class="btn btn-primary">Save</button>
+			<a href="./" class="btn btn-default">Cancel</a>
+		</div>
+	</div>
+</div>
+</fieldset>
+</form>
+</div>
+</div>
+
+{include="page.foot"}
+</body>
+</html>

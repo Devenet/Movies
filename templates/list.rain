@@ -24,7 +24,7 @@
 		<li class="pull-right">
 		<ul class="list-inline">
 			{if="$value.owned"}<li><span class="tip" data-title="Movie owned" data-placement="bottom"><i class="icon-film"></i></span></li>{/if}
-			{if="$value.links.more != NULL"}<li><a href="{$value.links.more}" rel="external" class="normal text-muted tip" title="More infos online" data-placement="bottom"><i class="icon-globe"></i></a></li>{/if}
+			{if="$value.links.more != NULL"}<li><a href="{$value.links.more}" rel="external" class="normal text-muted tip" title="More&nbsp;infos&nbsp;online" data-placement="bottom"><i class="icon-globe"></i></a></li>{/if}
 		</ul>
 		</li>
 	</ul>
@@ -37,7 +37,7 @@
 		</div>
 	</div>
 	<div class="col-12 col-sm-10 col-lg-8">
-		<p class="description">{$value.description|displayDescription}</p>
+		<p class="description">{$value.synopsis|displaySynopsis}</p>
 		{if="$value.status == Movie::SEEN"}
 		<ul class="list-inline text-muted">
 			{$value.kind|displayKinds}
@@ -52,16 +52,5 @@
 </div>
 
 {include="page.foot"}
-<script>
-$(function() {
-	$('span.more-content').slideToggle(0);
-	$('div.more-button').show(0);
-	$('span.more-dots').show(0);
-	$('div.more-button').click(function() {
-		$(this).parent().children('p').children('span').children('span.more-content').slideToggle();
-		$(this).parent().children('p').children('span').children('span.more-dots').toggle();
-	});
-})
-</script>
 </body>
 </html>

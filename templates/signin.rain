@@ -14,7 +14,7 @@
 </div>
 </div>
 
-<form class="form-horizontal espace-top" method="post" action="{""|Path::signin}">
+<form class="form-horizontal espace-top" method="post" action="{""|Path::signin}{if="$target!=NULL"}&amp;target={$target}{/if}">
 <fieldset>
 	<div class="form-group">
 		<label for="login" class="control-label col-lg-2">Login</label>
@@ -30,7 +30,7 @@
 	</div>
 	<input type="hidden" name="token" value="{$token}" />
 	<div class="form-group form-controls">
-		<div class="col-lg-6 col-offset-2">
+		<div class="col-lg-6 col-lg-offset-2">
 			<button type="submit" class="btn btn-primary">Sign in</button>
 		</div>
 	</div>

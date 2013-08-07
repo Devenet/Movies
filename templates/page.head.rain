@@ -10,3 +10,4 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link href="assets/css/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="assets/css/movies.css" rel="stylesheet" type="text/css" />
+{if="isLogged()"}<link href="assets/css/movies-admin.css" rel="stylesheet" type="text/css" />{/if}
