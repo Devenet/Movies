@@ -6,8 +6,7 @@ $('span.more-content').slideToggle(0); $('div.more-button').show(0); $('span.mor
 $('div.more-button').click(function() {
 	$(this).parent().children('p').children('span').children('span.more-content').slideToggle();
 	$(this).parent().children('p').children('span').children('span.more-dots').toggle();
-	if($(this).text() == 'More')
-		$(this).text('Less');
-	else $(this).text('More');
+	if($(this).text() == 'More') {$(this).text('Less');}
+	else {$(this).text('More');}
 });
 });

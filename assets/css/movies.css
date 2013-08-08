@@ -14,8 +14,9 @@ a.tip {cursor: pointer;}
 
 .form-controls {border-top: 1px solid rgb(200,200,200); padding: 15px 0; margin: 30px 0 20px; background: rgb(245,245,245); overflow: hidden;}
 .espace-top {margin-top: 20px;}
-.espace-top-big {margin-top: 40px;}
+.espace-top-lg {margin-top: 40px;}
 .espace-left {margin-left: 20px;}
+.espace-left-sm {margin-left: 10px;}
 
 article.movie {margin-bottom: 20px;}
 article.movie h2 a {text-decoration: none;}

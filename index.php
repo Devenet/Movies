@@ -12,9 +12,12 @@ $_CONFIG['images'] = $_CONFIG['data'].'/images';
 $_CONFIG['cache'] = 'cache';
 $_CONFIG['title'] = 'Movies';
 $_CONFIG['url_rewriting'] = FALSE;
-$_CONFIG['flags'] = array(
-	'USA' => 'us',
-	'France' => 'fr'
+$_CONFIG['countries'] = array(
+	'us' => 'United States of America',
+	'fr' => 'France',
+	'de' => 'Germany',
+	'gb' => 'United Kingdom',
+	'be' => 'Belgique'
 );
 $_CONFIG['ban'] = $_CONFIG['data'].'/jail.php';
 $_CONFIG['ban_after'] = 4;
@@ -41,7 +44,7 @@ if (!is_dir($_CONFIG['data'])) { mkdir($_CONFIG['data'],0705); chmod($_CONFIG['d
 if (!is_file($_CONFIG['data'].'/.htaccess')) { file_put_contents($_CONFIG['data'].'/.htaccess', 'deny from all'); }
 if (!is_file($_CONFIG['data'].'/.htaccess')) die('<p style="text-align:center;"><span style="color:red;">*ERROR*</span><br />Application does not have the right to write in its own directory <code>'.realpath(dirname(__FILE__)).'</code>.</p>');
 if (!is_dir($_CONFIG['cache'])) { mkdir($_CONFIG['cache'],0705); chmod($_CONFIG['cache'],0705); }
-if (!is_dir($_CONFIG['images'])) { mkdir($_CONFIG['images'],0705); chmod($_CONFIG['images'],0705); }
+//if (!is_dir($_CONFIG['images'])) { mkdir($_CONFIG['images'],0705); chmod($_CONFIG['images'],0705); }
 if (!is_file($_CONFIG['ban'])) { file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export(array('failures'=>array(),'banned'=>array()), TRUE).';'.PHP_EOL.'?>'); }
 
 //ob_start();
@@ -111,13 +114,13 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		global $_CONFIG;
 		if (!file_exists($_CONFIG['database']))  {
 			$this->data = array();
-			$movie = array('id' => 1375621919,'title' => 'Moi, moche et méchant','original_title' => 'Despicable me','date' => '2010-10-06','country' => 'USA','kind' => 'animation, comédie, famille','duration' => 95,'synopsis' => 'Dans un charmant quartier résidentiel délimité par des clôtures de bois blanc et orné de rosiers fleurissants se dresse une bâtisse noire entourée d’une pelouse en friche. Cette façade sinistre cache un secret : Gru, un méchant vilain, entouré d’une myriade de sous-fifres et armé jusqu’aux dents, qui, à l’insu du voisinage, complote le plus gros casse de tous les temps : voler la lune (Oui, la lune !)...<br />Gru affectionne toutes sortes de sales joujoux. Il possède une multitude de véhicules de combat aérien et terrestre et un arsenal de rayons immobilisants et rétrécissants avec lesquels il anéantit tous ceux qui osent lui barrer la route... jusqu’au jour où il tombe nez à nez avec trois petites orphelines qui voient en lui quelqu’un de tout à fait différent : un papa.<br />Le plus grand vilain de tous les temps se retrouve confronté à sa plus dure épreuve : trois fillettes prénommées Margo, Edith et Agnes','links' => array('image' => NULL,'more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=140623.html'),'status' => Movie::SEEN,'note' => 4.5, 'owned' => TRUE);
+			$movie = array('id' => 1375621919,'title' => 'Moi, moche et méchant','original_title' => 'Despicable me','date' => '2010-10-06','country' => 'us','genres' => 'animation, comédie, famille','duration' => 95,'synopsis' => 'Dans un charmant quartier résidentiel délimité par des clôtures de bois blanc et orné de rosiers fleurissants se dresse une bâtisse noire entourée d’une pelouse en friche. Cette façade sinistre cache un secret : Gru, un méchant vilain, entouré d’une myriade de sous-fifres et armé jusqu’aux dents, qui, à l’insu du voisinage, complote le plus gros casse de tous les temps : voler la lune (Oui, la lune !)...<br />Gru affectionne toutes sortes de sales joujoux. Il possède une multitude de véhicules de combat aérien et terrestre et un arsenal de rayons immobilisants et rétrécissants avec lesquels il anéantit tous ceux qui osent lui barrer la route... jusqu’au jour où il tombe nez à nez avec trois petites orphelines qui voient en lui quelqu’un de tout à fait différent : un papa.<br />Le plus grand vilain de tous les temps se retrouve confronté à sa plus dure épreuve : trois fillettes prénommées Margo, Edith et Agnes','links' => array('image' => NULL,'more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=140623.html'),'status' => Movie::SEEN,'note' => 4.5, 'owned' => TRUE);
 			$this->data[$movie['id']] = $movie;
-			$movie = array('id' => 1375621921,'title' => 'Mission Impossible: Protocole Fantôme','original_title' => NULL,'date' => '2012-03-31','country' => 'USA','kind' => 'action','duration' => 75,'synopsis' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'owned' => TRUE);
+			$movie = array('id' => 1375621921,'title' => 'Mission Impossible: Protocole Fantôme','original_title' => NULL,'date' => '2012-03-31','country' => 'us','genres' => 'action','duration' => 75,'synopsis' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'owned' => TRUE);
 			$this->data[$movie['id']] = $movie;
-			$movie = array('id' => 1375621920,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable me 2','date' => '2013-06-26','country' => 'USA','kind' => 'animation','duration' => 98,'synopsis' => 'Ayant abandonné la super-criminalité et mis de côté ses activités funestes pour se consacrer à la paternité et élever Margo, Édith et Agnès, Gru, et avec lui, le Professeur Néfario et les Minions, doivent se trouver de nouvelles occupations. Alors qu’il commence à peine à s’adapter à sa nouvelle vie tranquille de père de famille, une organisation ultrasecrète, menant une lutte acharnée contre le Mal à l’échelle planétaire, vient frapper à sa porte. Soudain, c’est à Gru, et à sa nouvelle coéquipière Lucy, que revient la responsabilité de résoudre une série de méfaits spectaculaires. Après tout, qui mieux que l’ex plus méchant méchant de tous les temps, pourrait attraper celui qui rivalise pour lui voler la place qu’il occupait encore récemment.<br />Rejoignant nos héros, on découvre : Floyd, le propriétaire du salon Eagle Postiche Club pour hommes et suspect numéro 1 du crime le plus abject jamais perpétré depuis le départ de Gru à la retraite ; Silas de Lamolefès, le super-espion à la tête de l’Agence Vigilance de Lynx, patron de Lucy, dont le nom de famille est une source inépuisable d’amusement pour les Minions ; Antonio, le si mielleux objet de l’affection naissante de Margo, et Eduardo Perez, le père d’Antonio, propriétaire du restaurant Salsa & Salsa et l’homme qui se cache peut-être derrière le masque d’El Macho, le plus impitoyable et, comme son nom l’indique, méchant macho que la terre ait jamais porté.','links' => array('image' => NULL,'more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::SEEN,'note' => 4, 'owned' => FALSE);
+			$movie = array('id' => 1375621920,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable me 2','date' => '2013-06-26','country' => 'us','genres' => 'animation','duration' => 98,'synopsis' => 'Ayant abandonné la super-criminalité et mis de côté ses activités funestes pour se consacrer à la paternité et élever Margo, Édith et Agnès, Gru, et avec lui, le Professeur Néfario et les Minions, doivent se trouver de nouvelles occupations. Alors qu’il commence à peine à s’adapter à sa nouvelle vie tranquille de père de famille, une organisation ultrasecrète, menant une lutte acharnée contre le Mal à l’échelle planétaire, vient frapper à sa porte. Soudain, c’est à Gru, et à sa nouvelle coéquipière Lucy, que revient la responsabilité de résoudre une série de méfaits spectaculaires. Après tout, qui mieux que l’ex plus méchant méchant de tous les temps, pourrait attraper celui qui rivalise pour lui voler la place qu’il occupait encore récemment.<br />Rejoignant nos héros, on découvre : Floyd, le propriétaire du salon Eagle Postiche Club pour hommes et suspect numéro 1 du crime le plus abject jamais perpétré depuis le départ de Gru à la retraite ; Silas de Lamolefès, le super-espion à la tête de l’Agence Vigilance de Lynx, patron de Lucy, dont le nom de famille est une source inépuisable d’amusement pour les Minions ; Antonio, le si mielleux objet de l’affection naissante de Margo, et Eduardo Perez, le père d’Antonio, propriétaire du restaurant Salsa & Salsa et l’homme qui se cache peut-être derrière le masque d’El Macho, le plus impitoyable et, comme son nom l’indique, méchant macho que la terre ait jamais porté.','links' => array('image' => NULL,'more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::SEEN,'note' => 4, 'owned' => FALSE);
 			$this->data[$movie['id']] = $movie;
-			$movie = array('id' => 1375621923,'title' => 'De fleurs et d’ombres : retour sur la grande Avira','original_title' => NULL,'date' => '2012-03-31','country' => 'France','kind' => 'action','duration' => 75,'synopsis' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'owned' => FALSE);
+			$movie = array('id' => 1375621923,'title' => 'De fleurs et d’ombres : retour sur la grande Avira','original_title' => NULL,'date' => '2012-03-31','country' => 'fr','genres' => 'action','duration' => 75,'synopsis' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'owned' => FALSE);
 			$this->data[$movie['id']] = $movie;            
 			file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
 		}
@@ -165,13 +168,47 @@ abstract class Path {
 			case 'soon':
 				$result .= $prefix.'soon';
 				break;
+			case 'add':
+				$result .= $prefix.'add';
+				break;
+			case 'movie':
+				$result .= $prefix.'movie';
+				break;
 			default:
 				$result .= '#';
 		}
 		return $result.'">'.$name."</a>".($tpl ? '</li>' : NULL);
 	}
+	private static function url_admin($url, $name, $tpl = FALSE) {
+		global $_CONFIG;
+		$result = '';
+		if ($tpl) {
+			$result .= '<li';
+			if ($url == $tpl) {$result .= ' class="active"';}
+			$result .= '>';
+		}
+		$prefix = $_CONFIG['url_rewriting'] ? '/' : '/?';
+		$result .= '<a href=".';
+		$icon = NULL;
+		switch ($url) {
+			case 'add':
+				$result .= $prefix.'add';
+				$icon = 'plus';
+				break;
+			case 'admin':
+				$result .= $prefix.'admin';
+				$icon = 'cog';
+				break;
+			default:
+				$result .= '#';
+		}
+		return $result.'">'.($icon != NULL ? '<i class="icon-'.$icon.'"></i>' : NULL).' '.$name."</a>".($tpl ? '</li>' : NULL);
+	}
 	static function menu($active) {
 		return self::url('home', 'Home', $active).self::url('favorite', 'Favorites', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
+	}
+	static function menuAdmin($active) {
+		return self::url_admin('add', 'Add movie', $active).self::url_admin('admin', 'Admin', $active).PHP_EOL;
 	}
 	static function movie($id) {
 		global $_CONFIG;
@@ -223,6 +260,7 @@ function errorPage($message, $title) {
 	global $tpl;
 	$tpl->assign('page_title', 'Error');
 	$tpl->assign('menu_links', Path::menu('error'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('error'));
 	$tpl->assign('error_title', $title);
 	$tpl->assign('error_content', $message.'<div class="espace-top">Please <a href="'.$_SERVER['REQUEST_URI'].'">try again</a>.</div>');
 	$tpl->draw('error');
@@ -343,11 +381,11 @@ function canLogin() {
  * Display functions
  */
 // kinks in <li></li>
-function displayKinds($kinds) {
-	$kind = explode(",", $kinds);
+function displayGenres($genres) {
+	$genre = explode(",", $genres);
 	$result = '';
-	foreach ($kind as $value)
-		$result .= '<li><i class="icon-tag"></i> '.mb_convert_case($value, MB_CASE_TITLE, "UTF-8").'</li>';
+	foreach ($genre as $value)
+		$result .= '<li><i class="icon-tag"></i> '.trim(mb_convert_case($value, MB_CASE_TITLE, "UTF-8")).'</li>';
 	return $result.PHP_EOL;
 }
 // shortcut the synopsis (= summary) of the movie with <span class="more"></span>
@@ -361,13 +399,18 @@ function displaySynopsis($synopsis, $size = 400) {
 }
 // Convert note into stars
 function displayNote($note) {
+	if ($note == NULL)
+		return '';
 	$stars = $note % 5;
 	$half_star = ceil($note) - $stars;
-	$result = '<div class="stars stars-'.ceil($note).'">';
+	$result = '<div class="stars stars-'.ceil($note).' tip" data-title="Rated '.(2*$note).' out of 10" data-placement="bottom">';
 	for ($i=0; $i<$stars; $i++)
 		$result .= '<i class="icon-star"></i>';
 	if ($half_star != 0)
-		$result .= '<i class="icon-star-half"></i>';
+		$result .= '<i class="icon-star-half-empty"></i>';
+	$stars = 5 - $stars - $half_star;
+	for ($i=0; $i<$stars; $i++)
+		$result .= '<i class="icon-star-empty"></i>';
 	return $result.'</div>'.PHP_EOL;
 }
 // remplace status by icon
@@ -386,10 +429,10 @@ function displayStatus($status) {
 	$result .= '" data-placement="bottom"><i class="icon-';
 	switch($status) {
 		case Movie::SEEN:
-			$result .= 'ok-sign';
+			$result .= 'ok-sign text-success';
 			break;
 		case Movie::TO_SEE:
-			$result .= 'circle-blank';
+			$result .= 'screenshot text-warning';
 			break;
 		default:
 			$result .= 'question-sign';
@@ -399,9 +442,20 @@ function displayStatus($status) {
 // remplace country name by a flag
 function displayFlag($country) {
 	global $_CONFIG;
-	return '<span class="tip" data-title="'.$country.'" data-placement="bottom"><span class="flag flag-'.$_CONFIG['flags'][$country].'" width="16" height="11"></span></span>';
+	return '<span class="tip" data-title="'.$_CONFIG['countries'][$country].'" data-placement="bottom"><span class="flag flag-'.$country.'" width="16" height="11"></span></span>';
 }
-
+// display option of each contry (for form.movie.rain)
+function displayCountryOptions($active = FALSE) {
+	global $_CONFIG;
+	asort($_CONFIG['countries']);
+	$result = '<option value="o">Unknown</option>';
+	foreach($_CONFIG['countries'] as $code => $name) {
+		$result .= '<option value="'.$code.'"';
+		if ($name == $active) {$result .= ' selected="selected"';}
+		$result .= '>'.$name.'</option>';
+	}
+	return $result;
+}
 // list of url allowed to be redirected
 function targetIsAllowed($target) {
 	$allowed = array('admin', 'add');
@@ -428,7 +482,7 @@ function install($tpl) {
 
 	$tpl->assign('page_title', 'Installation');	
 	$tpl->assign('menu_links', NULL);
-	$tpl->draw('install');
+	$tpl->draw('form.install');
 	exit();
 }
 
@@ -443,6 +497,7 @@ function administration() {
 	// default page of administration
 	$tpl->assign('page_title', 'Administration');
 	$tpl->assign('menu_links', Path::menu('admin'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('admin'));
 	$tpl->draw('admin');
 	exit();
 }
@@ -460,9 +515,10 @@ function addMovie() {
 
 	$tpl->assign('page_title', 'New movie');
 	$tpl->assign('menu_links', Path::menu('add'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('add'));
 	$tpl->assign('today', date('Y-m-d'));
 	$tpl->assign('token', getToken());
-	$tpl->draw('add');
+	$tpl->draw('form.movie');
 	exit();
 }
 
@@ -516,7 +572,7 @@ function signin() {
 	$tpl->assign('menu_links', Path::menu('signin'));
 	$tpl->assign('target', (isset($_GET['target']) && targetIsAllowed($_GET['target'])) ? htmlspecialchars($_GET['target']) : NULL);
 	$tpl->assign('token', getToken());
-	$tpl->draw('signin');
+	$tpl->draw('form.signin');
 	exit();
 }
 
@@ -530,6 +586,7 @@ if (empty($_GET) || isset($_GET['page'])) {
 	$tpl->assign('page_title', 'Home');
 
 	$tpl->assign('menu_links', Path::menu('home'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('home'));
 	$tpl->draw('list');
 	exit();
 }
@@ -546,6 +603,7 @@ if (isset($_GET['add'])) {addMovie();}
 header('HTTP/1.1 404 Not Found', true, 404);
 $tpl->assign('page_title', 'Error 404');
 $tpl->assign('menu_links', Path::menu('error'));
+$tpl->assign('menu_links_admin', Path::menuAdmin('error'));
 $tpl->draw('404');
 
 ?>

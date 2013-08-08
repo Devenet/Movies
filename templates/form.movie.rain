@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+{include="page.head"}
+</head>
+<body>
+{include="page.menu"}
+
+<div class="container">
+<div class="row">
+<div class="col-lg-12">
+	<h3>Add a new movie</h3>
+	<hr />
+</div>
+</div>
+
+<div class="row">
+<form class="espace-top" method="post" action="{""|Path::add}">
+<fieldset>
+<div class="col-lg-6">
+	<div class="form-group">
+		<label for="title">Title</label>
+		<input type="text" class="form-control" id="title" name="Title" placeholder="Moi, moche et méchant" />
+	</div>
+	<div class="form-group">
+		<label for="synopsis" class="control-label">Synopsis</label>
+		<textarea class="form-control" id="synopsis" name="synopsis" rows="8" placeholder="The beautiful story in few words"></textarea>
+	</div>
+	<div class="form-group">
+		<label for="genre">Genre</label>
+		<input type="text" class="form-control" id="genre" name="genre" placeholder="Action, Comedy" />
+	</div>
+
+	<div class="form-group checkbox espace-top-lg">
+		<label for="status">
+		<input type="checkbox" name="status" id="status" /> Movie seen 	<span class="espace-left-sm"><i class="icon-ok-sign"></i></span>
+		</label>
+	</div>
+	<div class="form-group form-group-note">
+		<label for="note">Rating (ouf of 10)</label>
+		<input type="number" class="form-control slider slider-note" id="note" name="note" min="0" max="10" step="1" value="5" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="5" />
+	</div>
+	<div class="form-group checkbox">
+		<label for="owned">
+		<input type="checkbox" name="owned" id="owned" /> Movie owned <span class="espace-left-sm"><i class="icon-film"></i></span>
+		</label>
+	</div>
+</div>
+<div class="col-lg-6">
+	<div class="form-group">
+		<label for="original-title"><span class="text-muted">Original title</span></label>
+		<input type="text" class="form-control" id="original-title" name="original-title" placeholder="Despicable Me" />
+	</div>
+	<div class="form-group">
+		<label for="duration">Duration (minutes)</label>
+		<input type="number" class="form-control slider slider-minutes" id="duration" name="duration"  min="0" max="300" step="1" placeholder="90" data-slider-min="0" data-slider-max="300" data-slider-step="1" data-slider-value="-5" />
+	</div>
+	<div class="form-group">
+		<label for="release-date">Release date</label>
+		<div class="input-group">
+			<span class="input-group-addon text-muted"><i class="icon-calendar"></i></span>
+			<input type="text" class="form-control datepicker-release" data-date-format="yyyy-mm-dd" data-date="{$today}" data-date-viewmode="years" id="release-date" name="release-date" placeholder="{$today}" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="country">Country</label>
+		<select class="form-control" id="country" name="country">
+			{""|displayCountryOptions}
+		</select>
+	</div>
+	<div class="form-group">
+		<label for="links-more">More infos online</label>
+		<div class="input-group">
+			<span class="input-group-addon text-muted">http://</span>
+			<input type="text" class="form-control" id="links-more" name="links-more" placeholder="www.allocine.fr/film/fichefilm_gen_cfilm=140623.html" />
+		</div>
+	</div>
+</div>
+<div class="col-lg-12">
+	<input type="hidden" name="token" value="{$token}" />
+	<div class="form-group form-controls">
+		<div class="col-lg-12">
+			<button type="submit" class="btn btn-primary">Save</button>
+			<a href="./" class="btn btn-default">Cancel</a>
+		</div>
+	</div>
+</div>
+</fieldset>
+</form>
+</div>
+</div>
+
+{include="page.foot"}
+<script>
+$(function() {
+$('input.slider-minutes').slider({ formater: function(v){return v+' minute'+(v>1 ? 's' : '');}, handle: 'triangle' });
+$('input.slider-note').slider({ formater: function(v){return v+' out of 10';} });
+$('.datepicker-release').datepicker();
+$('select#country option').prepend(function() {return '<span class="flag flag-option flag-'+$(this).val()+'"></span> ';} );
+if($('input#status').attr('checked') == undefined) { $('.form-group-note').slideToggle(0); }
+$('input#status').change(function(){ $('.form-group-note').slideToggle(250); });
+});
+</script>
+</body>
+</html>

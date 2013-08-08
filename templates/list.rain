@@ -19,7 +19,7 @@
 	<ul class="infos list-inline text-muted">
 		<li class="status">{$value.status|displayStatus}</li>
 		{if="$value.duration != NULL"}<li>{$value.duration} min</li>{/if}
-		{if="$value.date != NULL"}<li><i class="icon-calendar"></i> {$value.date}</li>{/if}
+		{if="$value.date != NULL"}<li><span class="tip" data-title="Release date" data-placement="bottom"><i class="icon-calendar"></i> {$value.date}</span></li>{/if}
 		{if="$value.country != NULL"}<li>{$value.country|displayFlag}</li>{/if}
 		<li class="pull-right">
 		<ul class="list-inline">
@@ -32,7 +32,7 @@
 	<div class="row">
 	<div class="col-12 col-sm-2 col-lg-4">
 		<div class="text-center">
-			<img src="{if="$value.links.image != NULL"}{$value.links.image}{else}assets/img/movie.jpg{/if}" alt="{$value.title}" class="img-responsive img-thumbnail" width="160" height="213" />
+			<a href="{$value.id|Path::movie}" class="thumbnail"><img src="{if="$value.links.image != NULL"}{$value.links.image}{else}assets/img/movie.jpg{/if}" alt="{$value.title}" class="img-responsive" width="160" height="213" /></a>
 			{$value.note|displayNote}
 		</div>
 	</div>
@@ -40,7 +40,7 @@
 		<p class="description">{$value.synopsis|displaySynopsis}</p>
 		{if="$value.status == Movie::SEEN"}
 		<ul class="list-inline text-muted">
-			{$value.kind|displayKinds}
+			{$value.genres|displayGenres}
 		</ul>
 		{/if}
 	</div>

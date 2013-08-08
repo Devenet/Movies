@@ -29,7 +29,7 @@
 		</div>
 	</div>
 
-	<div class="form-group espace-top-big">
+	<div class="form-group espace-top-lg">
 		<label for="title" class="control-label col-lg-2">Title page</label>
 		<div class="col-lg-6">
 			<input type="text" class="form-control" id="title" placeholder="Movies" name="title" value="Movies" />
