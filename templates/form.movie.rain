@@ -92,7 +92,7 @@
 			<span class="input-group-addon text-muted">http://</span>
 			<input type="text" class="form-control" id="link_image" name="link_image" placeholder="movies.com/images/despicable-me.jpg" {if="!empty($inputs['link_image'])"}value="{$inputs['link_image']}"{/if}/>
 		</div>
-		<div class="espace-top-sm"><label for="link_image_import" class="normal"><input type="checkbox" name="link_image_import" id="link_image_import" {if="!empty($inputs['link_image_import'])"}checked="checked"{/if}/> Try to import</label></div>
+		<div class="espace-top-sm"><label for="link_image_import" class="normal"><input type="checkbox" name="link_image_import" id="link_image_import" {if="!empty($inputs['link_image_import'])"}checked="checked"{/if}/> Try to import image</label></div>
 	</div>
 	<!--
 	<div class="form-group">

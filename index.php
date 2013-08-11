@@ -660,7 +660,7 @@ function addMovie() {
 				// check if we need to get the image given with url
 				if ($inputs['link_image_import']) {
 					importImage($inputs['link_image'], $movie['id']);
-					$inputs['link_image'] = $_CONFIG['images'].'/'.$id.'.jpg';
+					$inputs['link_image'] = $_CONFIG['images'].'/'.$movie['id'].'.jpg';
 				}
 				unset($inputs['link_image_import']);
 
