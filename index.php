@@ -7,8 +7,8 @@ global $_CONFIG;
 $_CONFIG['data'] = 'data';
 $_CONFIG['database'] = $_CONFIG['data'].'/movies.php';
 $_CONFIG['settings'] = $_CONFIG['data'].'/settings.php';
-$_CONFIG['log'] = $_CONFIG['data'].'/area_51.txt';
-$_CONFIG['images'] = $_CONFIG['data'].'/images';
+$_CONFIG['log'] = $_CONFIG['data'].'/area-51.txt';
+$_CONFIG['images'] = 'images';
 $_CONFIG['cache'] = 'cache';
 $_CONFIG['title'] = 'Movies';
 $_CONFIG['url_rewriting'] = FALSE;
@@ -22,6 +22,7 @@ $_CONFIG['countries'] = array(
 $_CONFIG['ban'] = $_CONFIG['data'].'/jail.php';
 $_CONFIG['ban_after'] = 4;
 $_CONFIG['ban_duration'] = 1800;
+$_CONFIG['pagination'] = 20;
 
 define('PHPPREFIX','<?php /* '); 
 define('PHPSUFFIX',' */ ?>');
@@ -44,7 +45,9 @@ if (!is_dir($_CONFIG['data'])) { mkdir($_CONFIG['data'],0705); chmod($_CONFIG['d
 if (!is_file($_CONFIG['data'].'/.htaccess')) { file_put_contents($_CONFIG['data'].'/.htaccess', 'deny from all'); }
 if (!is_file($_CONFIG['data'].'/.htaccess')) die('<p style="text-align:center;"><span style="color:red;">*ERROR*</span><br />Application does not have the right to write in its own directory <code>'.realpath(dirname(__FILE__)).'</code>.</p>');
 if (!is_dir($_CONFIG['cache'])) { mkdir($_CONFIG['cache'],0705); chmod($_CONFIG['cache'],0705); }
-//if (!is_dir($_CONFIG['images'])) { mkdir($_CONFIG['images'],0705); chmod($_CONFIG['images'],0705); }
+if (!is_file($_CONFIG['cache'].'/.htaccess')) { file_put_contents($_CONFIG['cache'].'/.htaccess', 'deny from all'); }
+if (!is_dir($_CONFIG['images'])) { mkdir($_CONFIG['images'],0705); chmod($_CONFIG['images'],0705); }
+if (!is_file($_CONFIG['images'].'/.htaccess')) { file_put_contents($_CONFIG['images'].'/.htaccess', 'options -indexes'); }
 if (!is_file($_CONFIG['ban'])) { file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export(array('failures'=>array(),'banned'=>array()), TRUE).';'.PHP_EOL.'?>'); }
 
 //ob_start();
@@ -53,6 +56,7 @@ $tpl = new RainTPL();
 if (!is_file($_CONFIG['settings'])) {define('TITLE', $_CONFIG['title']); install($tpl);}
 require($_CONFIG['settings']);
 define('TITLE', $_CONFIG['title']);
+define('PAGINATION', $_CONFIG['pagination']);
 
 /**
  * Rain class
@@ -64,9 +68,8 @@ class RainTPL {static $tpl_dir="templates/";static $cache_dir="cache/";static $b
  * Movie class
  */
 class Movie {
-	const SEEN = 1;
-	const TO_SEE = 2;
-	const UNKNOWN = NULL;
+	const SEEN = TRUE;
+	const NOT_SEEN = NULL;
 }
 
 /**
@@ -90,17 +93,17 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	// ArrayAccess interface implementation
 	public function offsetSet($offset, $value)
 	{
-		if (!$this->loggedin) die('You are not authorized to add a movie.');
+		if (!$this->logged) die('You are not authorized to add a movie.');
 		if (empty($value['id'])) die('Internal Error: A movie should always have a date id.');
 		if (empty($offset)) die('You must specify a key.');
 		$this->data[$offset] = $value;
 	}
 	public function offsetExists($offset) { return array_key_exists($offset,$this->data); }
 	public function offsetUnset($offset) {
-		if (!$this->loggedin) die('You are not authorized to delete a movie.');
+		if (!$this->logged) die('You are not authorized to delete a movie.');
 		unset($this->data[$offset]);
 	}
-	public function offsetGet($offset) { return isset($this->data[$offset]) ? $this->data[$offset] : null; }
+	public function offsetGet($offset) { return isset($this->data[$offset]) ? $this->data[$offset] : NULL; }
 
 	// Iterator interface implementation
 	function rewind() { $this->keys=array_keys($this->data); rsort($this->keys); $this->current=0; } 
@@ -114,14 +117,10 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		global $_CONFIG;
 		if (!file_exists($_CONFIG['database']))  {
 			$this->data = array();
-			$movie = array('id' => 1375621919,'title' => 'Moi, moche et méchant','original_title' => 'Despicable me','date' => '2010-10-06','country' => 'us','genres' => 'animation, comédie, famille','duration' => 95,'synopsis' => 'Dans un charmant quartier résidentiel délimité par des clôtures de bois blanc et orné de rosiers fleurissants se dresse une bâtisse noire entourée d’une pelouse en friche. Cette façade sinistre cache un secret : Gru, un méchant vilain, entouré d’une myriade de sous-fifres et armé jusqu’aux dents, qui, à l’insu du voisinage, complote le plus gros casse de tous les temps : voler la lune (Oui, la lune !)...<br />Gru affectionne toutes sortes de sales joujoux. Il possède une multitude de véhicules de combat aérien et terrestre et un arsenal de rayons immobilisants et rétrécissants avec lesquels il anéantit tous ceux qui osent lui barrer la route... jusqu’au jour où il tombe nez à nez avec trois petites orphelines qui voient en lui quelqu’un de tout à fait différent : un papa.<br />Le plus grand vilain de tous les temps se retrouve confronté à sa plus dure épreuve : trois fillettes prénommées Margo, Edith et Agnes','links' => array('image' => NULL,'more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=140623.html'),'status' => Movie::SEEN,'note' => 4.5, 'owned' => TRUE);
+			$movie = array('id' => 1375621919,'title' => 'Moi, moche et méchant','original_title' => 'Despicable me','release_date' => '2010-10-06','country' => 'us','genre' => 'animation, comédie, famille','duration' => 95,'synopsis' => 'Dans un charmant quartier résidentiel délimité par des clôtures de bois blanc et orné de rosiers fleurissants se dresse une bâtisse noire entourée d’une pelouse en friche. Cette façade sinistre cache un secret : Gru, un méchant vilain, entouré d’une myriade de sous-fifres et armé jusqu’aux dents, qui, à l’insu du voisinage, complote le plus gros casse de tous les temps : voler la lune (Oui, la lune !)...<br />Gru affectionne toutes sortes de sales joujoux. Il possède une multitude de véhicules de combat aérien et terrestre et un arsenal de rayons immobilisants et rétrécissants avec lesquels il anéantit tous ceux qui osent lui barrer la route... jusqu’au jour où il tombe nez à nez avec trois petites orphelines qui voient en lui quelqu’un de tout à fait différent : un papa.<br />Le plus grand vilain de tous les temps se retrouve confronté à sa plus dure épreuve : trois fillettes prénommées Margo, Edith et Agnes','link_image' => NULL,'link_website' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=140623.html','status' => Movie::SEEN,'note' => 9, 'owned' => TRUE);
 			$this->data[$movie['id']] = $movie;
-			$movie = array('id' => 1375621921,'title' => 'Mission Impossible: Protocole Fantôme','original_title' => NULL,'date' => '2012-03-31','country' => 'us','genres' => 'action','duration' => 75,'synopsis' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'owned' => TRUE);
+			$movie = array('id' => 1375621920,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable me 2','release_date' => '2013-06-26','country' => 'us','genre' => 'animation','duration' => 98,'synopsis' => 'Ayant abandonné la super-criminalité et mis de côté ses activités funestes pour se consacrer à la paternité et élever Margo, Édith et Agnès, Gru, et avec lui, le Professeur Néfario et les Minions, doivent se trouver de nouvelles occupations. Alors qu’il commence à peine à s’adapter à sa nouvelle vie tranquille de père de famille, une organisation ultrasecrète, menant une lutte acharnée contre le Mal à l’échelle planétaire, vient frapper à sa porte. Soudain, c’est à Gru, et à sa nouvelle coéquipière Lucy, que revient la responsabilité de résoudre une série de méfaits spectaculaires. Après tout, qui mieux que l’ex plus méchant méchant de tous les temps, pourrait attraper celui qui rivalise pour lui voler la place qu’il occupait encore récemment.<br />Rejoignant nos héros, on découvre : Floyd, le propriétaire du salon Eagle Postiche Club pour hommes et suspect numéro 1 du crime le plus abject jamais perpétré depuis le départ de Gru à la retraite ; Silas de Lamolefès, le super-espion à la tête de l’Agence Vigilance de Lynx, patron de Lucy, dont le nom de famille est une source inépuisable d’amusement pour les Minions ; Antonio, le si mielleux objet de l’affection naissante de Margo, et Eduardo Perez, le père d’Antonio, propriétaire du restaurant Salsa & Salsa et l’homme qui se cache peut-être derrière le masque d’El Macho, le plus impitoyable et, comme son nom l’indique, méchant macho que la terre ait jamais porté.','link_image' => NULL,'link_website' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=190299.html','status' => Movie::NOT_SEEN,'note' => NULL, 'owned' => FALSE);
 			$this->data[$movie['id']] = $movie;
-			$movie = array('id' => 1375621920,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable me 2','date' => '2013-06-26','country' => 'us','genres' => 'animation','duration' => 98,'synopsis' => 'Ayant abandonné la super-criminalité et mis de côté ses activités funestes pour se consacrer à la paternité et élever Margo, Édith et Agnès, Gru, et avec lui, le Professeur Néfario et les Minions, doivent se trouver de nouvelles occupations. Alors qu’il commence à peine à s’adapter à sa nouvelle vie tranquille de père de famille, une organisation ultrasecrète, menant une lutte acharnée contre le Mal à l’échelle planétaire, vient frapper à sa porte. Soudain, c’est à Gru, et à sa nouvelle coéquipière Lucy, que revient la responsabilité de résoudre une série de méfaits spectaculaires. Après tout, qui mieux que l’ex plus méchant méchant de tous les temps, pourrait attraper celui qui rivalise pour lui voler la place qu’il occupait encore récemment.<br />Rejoignant nos héros, on découvre : Floyd, le propriétaire du salon Eagle Postiche Club pour hommes et suspect numéro 1 du crime le plus abject jamais perpétré depuis le départ de Gru à la retraite ; Silas de Lamolefès, le super-espion à la tête de l’Agence Vigilance de Lynx, patron de Lucy, dont le nom de famille est une source inépuisable d’amusement pour les Minions ; Antonio, le si mielleux objet de l’affection naissante de Margo, et Eduardo Perez, le père d’Antonio, propriétaire du restaurant Salsa & Salsa et l’homme qui se cache peut-être derrière le masque d’El Macho, le plus impitoyable et, comme son nom l’indique, méchant macho que la terre ait jamais porté.','links' => array('image' => NULL,'more' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::SEEN,'note' => 4, 'owned' => FALSE);
-			$this->data[$movie['id']] = $movie;
-			$movie = array('id' => 1375621923,'title' => 'De fleurs et d’ombres : retour sur la grande Avira','original_title' => NULL,'date' => '2012-03-31','country' => 'fr','genres' => 'action','duration' => 75,'synopsis' => 'En reposa dans une prison russe, le gentil bonhomme va devoir parer à de nouvelles avantures, mais cette fois ci, sans aide de sa direction !','links' => array('image' => NULL,'more' => 'http://www.more.fr/film/fichefilm_gen_cfilm=190299.html'),'status' => Movie::TO_SEE,'note' => NULL, 'owned' => FALSE);
-			$this->data[$movie['id']] = $movie;            
 			file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
 		}
 	}
@@ -135,13 +134,14 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	// Save database from memory to disk
 	public function save() {
 		global $_CONFIG;
-		if (!$this->loggedin) die('You are not authorized to change the database.');
-		file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
+		if (!$this->logged) die('You are not authorized to change the database.');
+		file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);		
 	}
 
 	// last movies inserted
-	public function lastMovies() {
-		return $this->data;
+	public function lastMovies($begin = 0) {
+		krsort($this->data);
+		return array_slice($this->data, $begin, PAGINATION, TRUE);
 	}
 }
 
@@ -193,11 +193,11 @@ abstract class Path {
 		switch ($url) {
 			case 'add':
 				$result .= $prefix.'add';
-				$icon = 'plus';
+				$icon = '';
 				break;
 			case 'admin':
 				$result .= $prefix.'admin';
-				$icon = 'cog';
+				$icon = '';
 				break;
 			default:
 				$result .= '#';
@@ -229,6 +229,18 @@ abstract class Path {
 	static function add() {
 		global $_CONFIG;
 		return '.'.($_CONFIG['url_rewriting'] ? '/add' : '/?add');
+	}
+	static function edit($id) {
+		global $_CONFIG;
+		return '.'.($_CONFIG['url_rewriting'] ? '/edit/' : '/?edit=').$id;
+	}
+	static function delete($id) {
+		global $_CONFIG;
+		return '.'.($_CONFIG['url_rewriting'] ? '/delete/' : '/?delete=').$id;
+	}
+	static function logs() {
+		global $_CONFIG;
+		return '.'.($_CONFIG['url_rewriting'] ? '/logs' : '/?logs');	
 	}
 }
 
@@ -265,6 +277,95 @@ function errorPage($message, $title) {
 	$tpl->assign('error_content', $message.'<div class="espace-top">Please <a href="'.$_SERVER['REQUEST_URI'].'">try again</a>.</div>');
 	$tpl->draw('error');
 	exit();
+}
+
+// keep nl2br in synospis content
+function checkSynopsis($html) {
+	return nl2br(htmlspecialchars($html));
+}
+
+// check if a note give is correct
+function checkRatingNote($note, $status) {
+	if ($status != Movie::SEEN) { return NULL; }
+	$note = (int) $note+0;
+	if ($note >= 0 && $note <= 10)
+		return $note;
+	return 5;
+}
+
+// check if duration input is a positif integer
+function checkDuration($duration) {
+	$duration = (int) $duration+0;
+	if ($duration > 0 && $duration <= 300)
+		return $duration;
+	return NULL;
+}
+
+// check if release date input is a date (but not if the date exists)
+function checkReleaseDate($date) {
+	if (empty($date)) { return NULL; }
+	list($y, $m, $d) = explode('-', htmlspecialchars($date));
+	$y = (int) $y+0; $m = (int) $m+0; $d = (int) $d+0;
+	if (! $y > 0) { return NULL; }
+	if (! ($m > 0 && $m <= 12)) { return NULL; }
+	if (! ($d > 0 && $d <= 31)) { return NULL; }
+	return implode('-', array($y, str_pad($m, 2, '0', STR_PAD_LEFT), str_pad($d, 2, '0', STR_PAD_LEFT)));
+}
+
+// check if country given is in list
+function checkContry($country) {
+	if (empty($country) || $country == 'o') { return NULL; }
+	global $_CONFIG;
+	if (array_key_exists($country, $_CONFIG['countries'])) { return htmlspecialchars($country) ;}
+	return NULL;
+}
+
+// check if input is a link, and if prefix was added or not
+function checkLink($url) {
+	global $_CONFIG;
+	if (empty($url)) { return NULL; }
+	// in case of local link to images folder
+	if (substr( $url, 0, strlen($_CONFIG['images'].'/') ) === $_CONFIG['images'].'/') { return $url; }
+	$scheme = parse_url(htmlspecialchars($url), PHP_URL_SCHEME);
+	$url = preg_replace('#https?://#', '', htmlspecialchars($url));
+	return (!empty($scheme) ? $scheme : 'http').'://'.$url;
+}
+
+function checkGenre($genre) {
+	return trim(mb_convert_case(htmlspecialchars($genre), MB_CASE_TITLE, "UTF-8"));
+}
+
+function importImage($url, $id) {
+	global $_CONFIG;
+
+	$tmp = $_CONFIG['images'].'/temp.jpg';
+	$output = $_CONFIG['images'].'/'.$id;
+	$width = 160;
+	$height = 213;
+
+	$allowed_ext = array('jpg', 'jpeg', 'gif', 'png');
+	$allowed_mime = array('image/jpeg', 'image/png', 'image/gif');
+
+	$infos = @getimagesize($url);
+	if ($infos == FALSE) { throw new \Exception('The URL given is not an image or the file is not found.'); }
+
+	$mime = $infos['mime'];
+	$ext = pathinfo($url, PATHINFO_EXTENSION);
+
+	if (!in_array($mime, $allowed_mime) || !in_array($ext, $allowed_ext)) { throw new \Exception('The MIMIE type or the extension of the image is not allowed.'); }
+
+	$img = @file_get_contents($url);
+	$imported = file_put_contents($tmp, $img);
+	if ($imported == FALSE) { throw new \Exception('Unable to import image.'); }
+
+	if ($ext == 'png') { $src = imagecreatefrompng($tmp); }
+	else { $src = imagecreatefromjpeg($tmp); }
+	unlink($tmp);
+
+	$thumb = imagecreatetruecolor($width, $height);
+	imagecopyresampled($thumb, $src, 0, 0, 0, 0, $width, $height, imagesx($src), imagesy($src));
+	$result = imagejpeg($thumb, $output.'.jpg');
+	if ($result == FALSE) {  throw new \Exception('Unable to resize image.'); }
 }
 
 /**
@@ -377,6 +478,12 @@ function canLogin() {
 	return TRUE;
 }
 
+// list of url allowed to be redirected
+function targetIsAllowed($target) {
+	$allowed = array('admin', 'add', 'logs');
+	return in_array(htmlspecialchars($target), $allowed);
+}
+
 /**
  * Display functions
  */
@@ -399,44 +506,29 @@ function displaySynopsis($synopsis, $size = 400) {
 }
 // Convert note into stars
 function displayNote($note) {
-	if ($note == NULL)
-		return '';
-	$stars = $note % 5;
-	$half_star = ceil($note) - $stars;
+	$note = $note/2;
+	$full_stars = variant_int($note);
+	$half_star = (2*$note) % 2;
+	$empty_stars = 5 - $note - $half_star;
 	$result = '<div class="stars stars-'.ceil($note).' tip" data-title="Rated '.(2*$note).' out of 10" data-placement="bottom">';
-	for ($i=0; $i<$stars; $i++)
+	for ($i=0; $i<$full_stars; $i++)
 		$result .= '<i class="icon-star"></i>';
-	if ($half_star != 0)
+	if ($half_star == 1)
 		$result .= '<i class="icon-star-half-empty"></i>';
-	$stars = 5 - $stars - $half_star;
-	for ($i=0; $i<$stars; $i++)
+	for ($i=0; $i<$empty_stars; $i++)
 		$result .= '<i class="icon-star-empty"></i>';
 	return $result.'</div>'.PHP_EOL;
 }
 // remplace status by icon
 function displayStatus($status) {
 	$result = '<span class="tip" data-title="';
-	switch($status) {
-		case Movie::SEEN:
-			$result .= 'Movie seen';
-			break;
-		case Movie::TO_SEE:
-			$result .= 'Movie to see';
-			break;
-		default:
-			$result .= 'Unknown status';
-	}
+	if ($status == Movie::SEEN)
+		 { $result .= 'Movie seen'; }
+	else { $result .= 'Movie not seen'; }
 	$result .= '" data-placement="bottom"><i class="icon-';
-	switch($status) {
-		case Movie::SEEN:
-			$result .= 'ok-sign text-success';
-			break;
-		case Movie::TO_SEE:
-			$result .= 'screenshot text-warning';
-			break;
-		default:
-			$result .= 'question-sign';
-	}
+	if ($status == Movie::SEEN)
+		 { $result .= 'desktop'; }
+	else { $result .= 'eye-close'; }
 	return $result.'"></i></span>';
 }
 // remplace country name by a flag
@@ -448,19 +540,15 @@ function displayFlag($country) {
 function displayCountryOptions($active = FALSE) {
 	global $_CONFIG;
 	asort($_CONFIG['countries']);
-	$result = '<option value="o">Unknown</option>';
+	$result = '<option value="o">None</option>';
 	foreach($_CONFIG['countries'] as $code => $name) {
 		$result .= '<option value="'.$code.'"';
-		if ($name == $active) {$result .= ' selected="selected"';}
+		if ($code == $active) {$result .= ' selected="selected"';}
 		$result .= '>'.$name.'</option>';
 	}
 	return $result;
 }
-// list of url allowed to be redirected
-function targetIsAllowed($target) {
-	$allowed = array('admin', 'add');
-	return in_array(htmlspecialchars($target), $allowed);
-}
+
 
 /**
  * Script begin here
@@ -502,6 +590,39 @@ function administration() {
 	exit();
 }
 
+// display log file
+function logsPage() {
+	if (!isLogged()) {
+		header('Location: '.Path::signin().'&target=logs');
+		exit();
+	}
+	global $tpl;
+	global $_CONFIG;
+
+	if (!empty($_POST['purge-logs'])) {
+		if (acceptToken($_POST['token'])) {		
+			file_put_contents($_CONFIG['log'], NULL); // in case of deleting file will not work
+			unlink($_CONFIG['log']);
+			header('Location: '.Path::logs());
+			exit();
+		}
+		errorPage('The given token was empty or invalid.', 'Invalid token');
+	}
+
+	if (!is_file($_CONFIG['log'])) {$logs = 'Nothing to say';}
+	else {$logs = file_get_contents($_CONFIG['log']);}
+	if (empty($logs)) {$logs = 'Nothing to say';}
+
+	$tpl->assign('page_title', 'Logs');
+	$tpl->assign('menu_links', Path::menu('logs'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('admin'));
+	$tpl->assign('logs', $logs);
+	$tpl->assign('filename', basename($_CONFIG['log']));
+	$tpl->assign('token', getToken());
+	$tpl->draw('admin.logs');
+	exit();
+}
+
 // add a new movie
 function addMovie() {
 	if (!isLogged()) {
@@ -509,17 +630,172 @@ function addMovie() {
 		exit();
 	}
 	global $tpl;
+	global $_CONFIG;
 
 	// process to add movie in database
-	// soon
+	if (isset($_POST) && !empty($_POST)) {
+		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
+			$inputs = array(
+				'title' => (isset($_POST['title']) ? trim(htmlspecialchars($_POST['title'])) : NULL),
+				'synopsis' => (isset($_POST['synopsis']) ? checkSynopsis($_POST['synopsis']) : NULL),
+				'genre' => (isset($_POST['genre']) ? checkGenre($_POST['genre']) : NULL),
+				'status' => (isset($_POST['status']) ? Movie::SEEN : NULL),
+				'note' => (isset($_POST['note']) ? checkRatingNote($_POST['note'], (isset($_POST['status']) ? Movie::SEEN : NULL)) : NULL),
+				'owned' => (isset($_POST['owned']) ? TRUE : NULL),
+				'original_title' => (isset($_POST['original_title']) ? trim(htmlspecialchars($_POST['original_title'])) : NULL),
+				'duration' => (isset($_POST['duration']) ? checkDuration($_POST['duration']) : NULL),
+				'release_date' => (isset($_POST['release_date']) ? checkReleaseDate($_POST['release_date']) : NULL),
+				'country' => (isset($_POST['country']) ? checkContry($_POST['country']) : NULL),
+				'link_website' => (isset($_POST['link_website']) ? checkLink($_POST['link_website']) : NULL),
+				'link_image' => (isset($_POST['link_image']) ? checkLink($_POST['link_image']) : NULL),
+				'link_image_import' => (isset($_POST['link_image_import']) ? TRUE : NULL)
+				//'links-image-upload' => (isset($_POST['links-image-upload']) ? htmlspecialchars($_POST['links-image-upload']) : NULL)
+			);
+			$tpl->assign('inputs', $inputs);
+			try {
+				if (empty($inputs['title'])) { throw new \Exception('Title must not be empty.'); }
+				if (empty($inputs['synopsis'])) { throw new \Exception('Synopsis must not be empty.'); }
+				$movie = array( 'id' => time() );
+
+				// check if we need to get the image given with url
+				if ($inputs['link_image_import']) {
+					importImage($inputs['link_image'], $movie['id']);
+					$inputs['link_image'] = $_CONFIG['images'].'/'.$id.'.jpg';
+				}
+				unset($inputs['link_image_import']);
+
+				foreach ($inputs as $key => $value) { $movie[$key] = $value; }
+				$movies = new Movies(isLogged());
+				$movies[$movie['id']] = $movie;
+				$movies->save();
+
+				header('Location: ./');
+				exit();
+			} catch(\Exception $e) {
+				$tpl->assign('error', $e->getMessage());
+			}
+		}
+		else { errorPage('The given token was empty or invalid.', 'Invalid token'); }
+	}
 
 	$tpl->assign('page_title', 'New movie');
 	$tpl->assign('menu_links', Path::menu('add'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('add'));
 	$tpl->assign('today', date('Y-m-d'));
+	$tpl->assign('countries', displayCountryOptions(isset($inputs['country']) ? $inputs['country'] : NULL));
 	$tpl->assign('token', getToken());
+	$tpl->assign('target', Path::add());
 	$tpl->draw('form.movie');
 	exit();
+}
+
+// edit a movie
+function editMovie() {
+	if (!isLogged()) {
+		header('Location: ./');
+		exit();
+	}
+	
+	$movies = new Movies(isLogged());
+	$id = (int) $_GET['edit']+0;
+	if (! isset($movies[$id])) { errorPage('The movie you want to edit does not exist!', 'Not found'); }
+	$movie = $movies[$id];
+	global $tpl;
+	global $_CONFIG;
+
+	// process to edit movie in database
+	if (isset($_POST) && !empty($_POST)) {
+		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
+			$inputs = array(
+				'title' => (isset($_POST['title']) ? trim(htmlspecialchars($_POST['title'])) : NULL),
+				'synopsis' => (isset($_POST['synopsis']) ? checkSynopsis($_POST['synopsis']) : NULL),
+				'genre' => (isset($_POST['genre']) ? checkGenre($_POST['genre']) : NULL),
+				'status' => (isset($_POST['status']) ? Movie::SEEN : NULL),
+				'note' => (isset($_POST['note']) ? checkRatingNote($_POST['note'], (isset($_POST['status']) ? Movie::SEEN : NULL)) : NULL),
+				'owned' => (isset($_POST['owned']) ? TRUE : NULL),
+				'original_title' => (isset($_POST['original_title']) ? trim(htmlspecialchars($_POST['original_title'])) : NULL),
+				'duration' => (isset($_POST['duration']) ? checkDuration($_POST['duration']) : NULL),
+				'release_date' => (isset($_POST['release_date']) ? checkReleaseDate($_POST['release_date']) : NULL),
+				'country' => (isset($_POST['country']) ? checkContry($_POST['country']) : NULL),
+				'link_website' => (isset($_POST['link_website']) ? checkLink($_POST['link_website']) : NULL),
+				'link_image' => (isset($_POST['link_image']) ? checkLink($_POST['link_image']) : NULL),
+				'link_image_import' => (isset($_POST['link_image_import']) ? TRUE : NULL)
+				//'links-image-upload' => (isset($_POST['links-image-upload']) ? htmlspecialchars($_POST['links-image-upload']) : NULL)
+			);
+			try {
+				if (empty($inputs['title'])) { throw new \Exception('Title must not be empty.'); }
+				if (empty($inputs['synopsis'])) { throw new \Exception('Synopsis must not be empty.'); }
+				$movie = array( 'id' => $id );
+
+				// check if we need to get the image given with url
+				if ($inputs['link_image_import']) {
+					importImage($inputs['link_image'], $movie['id']);
+					$inputs['link_image'] = $_CONFIG['images'].'/'.$id.'.jpg';
+				}
+				unset($inputs['link_image_import']);
+
+				foreach ($inputs as $key => $value) { $movie[$key] = $value; }
+				$movies[$id] = $movie;
+				$movies->save();
+
+				header('Location: ./');
+				exit();
+			} catch(\Exception $e) {
+				$tpl->assign('error', $e->getMessage());
+			}
+		}
+		else { errorPage('The given token was empty or invalid.', 'Invalid token'); }
+	}
+	else {
+		$inputs = array(
+			'title' => $movie['title'],
+			'synopsis' => str_replace('<br />', '', $movie['synopsis']),
+			'genre' => $movie['genre'],
+			'status' => $movie['status'],
+			'note' => $movie['note'],
+			'owned' => $movie['owned'],
+			'original_title' => $movie['original_title'],
+			'duration' => $movie['duration'],
+			'release_date' => $movie['release_date'],
+			'country' => $movie['country'],
+			'link_website' => preg_replace('#http://#', '', $movie['link_website']),
+			'link_image' => preg_replace('#http://#', '', $movie['link_image'])
+		);
+	}
+
+	$tpl->assign('page_title', 'Edit movie');
+	$tpl->assign('menu_links', Path::menu('edit'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('edit'));
+	$tpl->assign('inputs', $inputs);
+	$tpl->assign('today', date('Y-m-d'));
+	$tpl->assign('countries', displayCountryOptions($inputs['country']));
+	$tpl->assign('token', getToken());
+	$tpl->assign('target', Path::edit($id));
+	$tpl->assign('delete', Path::delete($id));
+	$tpl->draw('form.movie');
+	exit();
+}
+
+// delete a movie
+function deleteMovie() {
+	if (!isLogged()) {
+		header('Location: ./');
+		exit();
+	}
+	
+	$movies = new Movies(isLogged());
+	$id = (int) $_GET['delete']+0;
+	if (! isset($movies[$id])) { errorPage('The movie you want to delete does not exist!', 'Not found'); }
+	
+
+	// process to delete movie in database
+	if (!empty($_GET['token']) && acceptToken($_GET['token'])) {
+		unset($movies[$id]);
+		$movies->save();
+		header('Location: ./');
+		exit();
+	}
+	else { errorPage('The given token was empty or invalid.', 'Invalid token'); }
 }
 
 // signout controller
@@ -538,6 +814,7 @@ function signin() {
 		exit();
 	}
 	global $tpl;
+	global $_CONFIG;
 
 	if (!canLogin()) {
 		global $tpl;
@@ -562,7 +839,7 @@ function signin() {
 				exit();
 			}
 			loginFailed();
-			errorPage('The given username or password was wrong. <br />If you do not remberer your login informations, just delete the file <code>data/settings.php</code>.', 'Invalid username or password');
+			errorPage('The given username or password was wrong. <br />If you do not remberer your login informations, just delete the file <code>'.basename($_CONFIG['settings']).'</code>.', 'Invalid username or password');
 		}
 		loginFailed();
 		errorPage('The given token was empty or invalid.', 'Invalid token');
@@ -584,20 +861,27 @@ if (empty($_GET) || isset($_GET['page'])) {
 	$movies = new Movies();
 	$tpl->assign('movie', $movies->lastMovies());
 	$tpl->assign('page_title', 'Home');
-
 	$tpl->assign('menu_links', Path::menu('home'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('home'));
+	$tpl->assign('token', getToken());
 	$tpl->draw('list');
 	exit();
 }
 // admin asked
 if (isset($_GET['admin'])) {administration();}
-// logout asked
-if (isset($_GET['signout'])) {signout();}
 // login asked
 if (isset($_GET['signin'])) {signin();}
+// logout asked
+if (isset($_GET['signout'])) {signout();}
 // new movie asked
 if (isset($_GET['add'])) {addMovie();}
+// edit movie asked
+if (isset($_GET['edit']) && !empty($_GET['edit'])) {editMovie();}
+// delete movie asked
+if (isset($_GET['delete']) && !empty($_GET['delete'])) {deleteMovie();}
+// display writted log asked
+if (isset($_GET['logs'])) {logsPage();}
+
 
 // nothing to do: 404 error
 header('HTTP/1.1 404 Not Found', true, 404);

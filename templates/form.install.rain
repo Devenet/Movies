@@ -19,7 +19,7 @@
 	<div class="form-group">
 		<label for="login" class="control-label col-lg-2">Login</label>
 		<div class="col-lg-6">
-			<input type="text" class="form-control" id="login" name="login" placeholder="Username" />
+			<input type="text" class="form-control" id="login" name="login" placeholder="Username" autofocus/>
 		</div>
 	</div>
 	<div class="form-group">

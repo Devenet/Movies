@@ -24,6 +24,7 @@
  * Copyright 2013 Nicolas Devenet
  */
 .form-group.checkbox label {font-weight:bold;}
+label.normal {font-weight:normal;}
 .flag-option {display:inline-block; margin-right:4px;}
 select#country option {display:block; padding:4px 8px;}
 .form-group-note .slider .slider-handle.round {}

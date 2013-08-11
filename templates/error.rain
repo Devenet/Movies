@@ -11,7 +11,7 @@
 <div class="col-lg-8 col-lg-offset-2">
 	<h2>Shit happened!</h2>
 
-	<div class="panel panel-danger espace-top-big">
+	<div class="panel panel-danger espace-top">
 		<div class="panel-heading"><h3 class="panel-title">{$error_title}</h3></div>
 		{$error_content}
 	</div>

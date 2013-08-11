@@ -11,20 +11,20 @@
 {loop="movie"}
 <article class="movie col-lg-6">
 	<h2>
-		{if="isLogged()"}<span class="movie-tools"><a href="#" class="text-success"><i class="icon-pencil"></i></a> <a href="#" class="text-danger"><i class="icon-trash"></i></a></span>{/if}
+		{if="isLogged()"}<span class="movie-tools"><a href="{$value.id|Path::edit}" class="text-success"><i class="icon-pencil"></i></a> <a href="{$value.id|Path::delete}&amp;token={$token}" class="text-danger" onclick="return confirmDeleteMovie('{$value.title}')"><i class="icon-trash"></i></a></span>{/if}
 		<a href="{$value.id|Path::movie}" title="{$value.title}">{$value.title}</a>
 		{if="$value.original_title != NULL"} <small>{$value.original_title}</small>{/if}
 	</h2>
 
 	<ul class="infos list-inline text-muted">
-		<li class="status">{$value.status|displayStatus}</li>
+		<li class="status espace-right-sm">{$value.status|displayStatus}</li>
 		{if="$value.duration != NULL"}<li>{$value.duration} min</li>{/if}
-		{if="$value.date != NULL"}<li><span class="tip" data-title="Release date" data-placement="bottom"><i class="icon-calendar"></i> {$value.date}</span></li>{/if}
-		{if="$value.country != NULL"}<li>{$value.country|displayFlag}</li>{/if}
+		{if="$value.release_date != NULL"}<li><span class="tip" data-title="Release date" data-placement="bottom"><i class="icon-calendar"></i> {$value.release_date}</span></li>{/if}
+		{if="$value.country != NULL"}<li class="espace-left-sm">{$value.country|displayFlag}</li>{/if}
 		<li class="pull-right">
 		<ul class="list-inline">
 			{if="$value.owned"}<li><span class="tip" data-title="Movie owned" data-placement="bottom"><i class="icon-film"></i></span></li>{/if}
-			{if="$value.links.more != NULL"}<li><a href="{$value.links.more}" rel="external" class="normal text-muted tip" title="More&nbsp;infos&nbsp;online" data-placement="bottom"><i class="icon-globe"></i></a></li>{/if}
+			{if="$value.link_website != NULL"}<li><a href="{$value.link_website}" rel="external" class="normal text-muted tip" title="More&nbsp;infos&nbsp;online" data-placement="bottom"><i class="icon-globe"></i></a></li>{/if}
 		</ul>
 		</li>
 	</ul>
@@ -32,15 +32,15 @@
 	<div class="row">
 	<div class="col-12 col-sm-2 col-lg-4">
 		<div class="text-center">
-			<a href="{$value.id|Path::movie}" class="thumbnail"><img src="{if="$value.links.image != NULL"}{$value.links.image}{else}assets/img/movie.jpg{/if}" alt="{$value.title}" class="img-responsive" width="160" height="213" /></a>
-			{$value.note|displayNote}
+			<a href="{$value.id|Path::movie}" class="thumbnail"><img src="{if="$value.link_image != NULL"}{$value.link_image}{else}assets/img/movie.jpg{/if}" alt="{$value.title}" class="img-responsive" width="160" height="213" /></a>
+			{if="$value.status == Movie::SEEN"}{$value.note|displayNote}{/if}
 		</div>
 	</div>
 	<div class="col-12 col-sm-10 col-lg-8">
 		<p class="description">{$value.synopsis|displaySynopsis}</p>
 		{if="$value.status == Movie::SEEN"}
 		<ul class="list-inline text-muted">
-			{$value.genres|displayGenres}
+			{$value.genre|displayGenres}
 		</ul>
 		{/if}
 	</div>

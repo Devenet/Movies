@@ -12,11 +12,17 @@ a.normal {text-decoration: none;}
 .tip {cursor: default;}
 a.tip {cursor: pointer;}
 
+label.text-muted {color: rgb(153, 153, 153);}
 .form-controls {border-top: 1px solid rgb(200,200,200); padding: 15px 0; margin: 30px 0 20px; background: rgb(245,245,245); overflow: hidden;}
 .espace-top {margin-top: 20px;}
+.espace-top-sm {margin-top: 10px;}
 .espace-top-lg {margin-top: 40px;}
 .espace-left {margin-left: 20px;}
 .espace-left-sm {margin-left: 10px;}
+.espace-right {margin-right: 20px;}
+.espace-right-sm {margin-right: 10px;}
+.no-espace-top {margin-top: 0;}
+.no-espace-bottom {margin-bottom: 0;}
 
 article.movie {margin-bottom: 20px;}
 article.movie h2 a {text-decoration: none;}
@@ -25,12 +31,12 @@ article.movie .row {margin-top: 20px;}
 article.movie .kinds {font-size: 12px;}
 article.movie .stars {margin: 10px auto; font-size: 16px;}
 article.movie .stars i {margin-right: 2px;}
-.stars.stars-0 {}
-.stars.stars-1 {}
-.stars.stars-2 {}
-.stars.stars-3 {}
-.stars.stars-4 {color: #357ebd;}
-.stars.stars-5 {color: #4cae4c;}
+.stars.stars-0 {color: #999999;}
+.stars.stars-1 {color: #CF5B59;}
+.stars.stars-2 {color: #f0ad4e;}
+.stars.stars-3 {color: #9272C2;}
+.stars.stars-4 {color: #428bca;}
+.stars.stars-5 {color: #468847;}
 .movie .movie-tools {display: block; font-size: 16px; position: absolute; left: -5px;}
 .movie .movie-tools a {display: block;}
 

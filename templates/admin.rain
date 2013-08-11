@@ -11,7 +11,10 @@
 	<div class="col-lg-4 text-center">
 		<a href="{""|Path::add}" class="btn btn-success"><i class="icon-plus"></i> Add a movie</a>
 	</div>
-	<div class="col-lg-4 col-lg-offset-4 text-center">
+	<div class="col-lg-4 text-center">
+		<a href="{""|Path::logs}" class="btn btn-default"><i class="icon-file-text-alt"></i> Display logs</a>
+	</div>
+	<div class="col-lg-4 text-center">
 		<a href="{""|Path::signout}" class="btn btn-default"><i class="icon-signout"></i> Sign out</a>
 	</div>
 </div>
