@@ -507,7 +507,7 @@ function displaySynopsis($synopsis, $size = 400) {
 // Convert note into stars
 function displayNote($note) {
 	$note = $note/2;
-	$full_stars = variant_int($note);
+	$full_stars = floor($note);
 	$half_star = (2*$note) % 2;
 	$empty_stars = 5 - $note - $half_star;
 	$result = '<div class="stars stars-'.ceil($note).' tip" data-title="Rated '.(2*$note).' out of 10" data-placement="bottom">';
