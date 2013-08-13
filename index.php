@@ -786,10 +786,14 @@ function deleteMovie() {
 	$movies = new Movies(isLogged());
 	$id = (int) $_GET['delete']+0;
 	if (! isset($movies[$id])) { errorPage('The movie you want to delete does not exist!', 'Not found'); }
-	
+	global $_CONFIG;
 
 	// process to delete movie in database
 	if (!empty($_GET['token']) && acceptToken($_GET['token'])) {
+		// check if a miniature exists and delete it
+		$img = $_CONFIG['images'].'/'.$id.'.jpg';
+		if (is_file($img)) { unlink($img); }
+		// delete movie in database
 		unset($movies[$id]);
 		$movies->save();
 		header('Location: ./');
