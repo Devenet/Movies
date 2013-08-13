@@ -24,21 +24,30 @@ label.text-muted {color: rgb(153, 153, 153);}
 .no-espace-top {margin-top: 0;}
 .no-espace-bottom {margin-bottom: 0;}
 
-article.movie {margin-bottom: 20px;}
-article.movie h2 a {text-decoration: none;}
-article.movie h2 small {display: block; font-size: 14px;}
-article.movie .row {margin-top: 20px;}
-article.movie .kinds {font-size: 12px;}
-article.movie .stars {margin: 10px auto; font-size: 16px;}
-article.movie .stars i {margin-right: 2px;}
+article.movies {margin-bottom: 20px;}
+article.movies h2 a {text-decoration: none;}
+article.movies h2 small {display: block; font-size: 14px;}
+article.movies .row {margin-top: 20px;}
+article.movies .kinds {font-size: 12px;}
+.stars {margin: 10px auto; font-size: 16px;}
+.stars i {margin-right: 2px;}
 .stars.stars-0 {color: #999999;}
 .stars.stars-1 {color: #CF5B59;}
 .stars.stars-2 {color: #f0ad4e;}
 .stars.stars-3 {color: #9272C2;}
 .stars.stars-4 {color: #428bca;}
 .stars.stars-5 {color: #468847;}
-.movie .movie-tools {display: block; font-size: 16px; position: absolute; left: -5px;}
-.movie .movie-tools a {display: block;}
+.movie-tools {display: block; font-size: 16px; position: absolute; left: -5px;}
+.movie-tools a {display: block;}
+
+article.movie .page-header {margin-top: 0; margin-bottom: 15px;}
+article.movie h2 {margin-bottom: 0; position: relative;}
+article.movie h2 a {text-decoration: none;}
+article.movie h2 .tooltip .tooltip-inner {font-size: 12px; font-weight: normal;}
+article.movie h3 {font-size: 18px; color: rgb(153,153,153); font-weight: normal; margin-top: 15px;}
+article.movie .stars {margin-top: 20px; letter-spacing: 2px;}
+article.movie .aside {text-align: right;}
+.movie .movie-tools {left: -20px;}
 
 @media(max-width: 767px) {
 	header {margin: 0;}

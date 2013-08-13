@@ -17,7 +17,8 @@ $_CONFIG['countries'] = array(
 	'fr' => 'France',
 	'de' => 'Germany',
 	'gb' => 'United Kingdom',
-	'be' => 'Belgique'
+	'be' => 'Belgique',
+	'ca' => 'Canada'
 );
 $_CONFIG['ban'] = $_CONFIG['data'].'/jail.php';
 $_CONFIG['ban_after'] = 4;
@@ -91,8 +92,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	public function count() { return count($this->data); }
 
 	// ArrayAccess interface implementation
-	public function offsetSet($offset, $value)
-	{
+	public function offsetSet($offset, $value) {
 		if (!$this->logged) die('You are not authorized to add a movie.');
 		if (empty($value['id'])) die('Internal Error: A movie should always have a date id.');
 		if (empty($offset)) die('You must specify a key.');
@@ -490,6 +490,7 @@ function targetIsAllowed($target) {
 // kinks in <li></li>
 function displayGenres($genres) {
 	$genre = explode(",", $genres);
+	ksort($genre);
 	$result = '';
 	foreach ($genre as $value)
 		$result .= '<li><i class="icon-tag"></i> '.trim(mb_convert_case($value, MB_CASE_TITLE, "UTF-8")).'</li>';
@@ -523,8 +524,8 @@ function displayNote($note) {
 function displayStatus($status) {
 	$result = '<span class="tip" data-title="';
 	if ($status == Movie::SEEN)
-		 { $result .= 'Movie seen'; }
-	else { $result .= 'Movie not seen'; }
+		 { $result .= 'Movie&nbsp;seen'; }
+	else { $result .= 'Movie&nbsp;not&nbsp;seen'; }
 	$result .= '" data-placement="bottom"><i class="icon-';
 	if ($status == Movie::SEEN)
 		 { $result .= 'desktop'; }
@@ -571,6 +572,28 @@ function install($tpl) {
 	$tpl->assign('page_title', 'Installation');	
 	$tpl->assign('menu_links', NULL);
 	$tpl->draw('form.install');
+	exit();
+}
+
+// movie page
+function moviePage() {
+	$movies = new Movies();
+	$id = (int) $_GET['movie']+0;
+	if (! isset($movies[$id])) { notFound(); }
+	$movie = $movies[$id];
+	
+	global $tpl;
+	$tpl->assign('page_title', $movie['title']);
+	$tpl->assign('menu_links', Path::menu('movie'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('movie'));
+	$tpl->assign('movie', $movie);
+	$tpl->assign('id', $movie['id']);
+	$tpl->assign('displayStatus', displayStatus($movie['status']));
+	$tpl->assign('displayNote', displayNote($movie['note']));
+	$tpl->assign('country', $movie['country']);
+	$tpl->assign('displayGenres', displayGenres($movie['genre']));
+	$tpl->assign('token', getToken());
+	$tpl->draw('movie');
 	exit();
 }
 
@@ -698,7 +721,7 @@ function editMovie() {
 	
 	$movies = new Movies(isLogged());
 	$id = (int) $_GET['edit']+0;
-	if (! isset($movies[$id])) { errorPage('The movie you want to edit does not exist!', 'Not found'); }
+	if (! isset($movies[$id])) { notFound(); }
 	$movie = $movies[$id];
 	global $tpl;
 	global $_CONFIG;
@@ -785,7 +808,7 @@ function deleteMovie() {
 	
 	$movies = new Movies(isLogged());
 	$id = (int) $_GET['delete']+0;
-	if (! isset($movies[$id])) { errorPage('The movie you want to delete does not exist!', 'Not found'); }
+	if (! isset($movies[$id])) { notFound(); }
 	global $_CONFIG;
 
 	// process to delete movie in database
@@ -871,6 +894,8 @@ if (empty($_GET) || isset($_GET['page'])) {
 	$tpl->draw('list');
 	exit();
 }
+// movie asked
+if (!empty($_GET['movie'])) {moviePage();}
 // admin asked
 if (isset($_GET['admin'])) {administration();}
 // login asked
@@ -888,10 +913,15 @@ if (isset($_GET['logs'])) {logsPage();}
 
 
 // nothing to do: 404 error
-header('HTTP/1.1 404 Not Found', true, 404);
-$tpl->assign('page_title', 'Error 404');
-$tpl->assign('menu_links', Path::menu('error'));
-$tpl->assign('menu_links_admin', Path::menuAdmin('error'));
-$tpl->draw('404');
+function notFound() {
+	global $tpl;
+	header('HTTP/1.1 404 Not Found', true, 404);
+	$tpl->assign('page_title', 'Error 404');
+	$tpl->assign('menu_links', Path::menu('error'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('error'));
+	$tpl->draw('404');
+	exit();
+}
+notFound();
 
 ?>

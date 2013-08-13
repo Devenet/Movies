@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+{include="page.head"}
+</head>
+<body>
+{include="page.menu"}
+
+<div class="container">
+	<article class="movie">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="page-header">
+					<h2>
+						{if="isLogged()"}<span class="movie-tools"><a href="{$id|Path::edit}" class="text-success"><i class="icon-pencil"></i></a> <a href="{$id|Path::delete}&amp;token={$token}" class="text-danger" onclick="return confirmDeleteMovie('{$movie['title']}')"><i class="icon-trash"></i></a></span>{/if}
+						{$movie['title']}
+						<span class="pull-right espace-right {if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus}</span>
+					</h2>
+				</div>
+				{if="!empty($movie['original_title'])"}<h3>{$movie['original_title']}</h3>{/if}
+			</div>
+		</div>
+
+		<div class="row espace-top">
+			<div class="col-lg-3 text-center">
+				<p><img src="{if="$movie['link_image'] != NULL"}{$movie['link_image']}{else}assets/img/movie.jpg{/if}" alt="{$movie['title']}" class="img-responsive img-thumbnail" width="160" height="213" /></p>
+				{if="$movie['status'] == Movie::SEEN"}{$displayNote}{/if}
+			</div>
+			<div class="col-lg-7">
+				<p>{$movie['synopsis']}</p>
+			</div>
+			<div class="col-lg-2 aside text-muted">
+				{if="!empty($movie['duration'])"}<p>{$movie['duration']} min</p>{/if}
+				{if="!empty($movie['release_date'])"}<p>{$movie['release_date']} <span class="tip" data-title="Release&nbsp;date" data-placement="left"><i class="icon-calendar"></i></span></p>{/if}
+				{if="!empty($country)"}<p>Production {$country|displayFlag}</p>{/if}
+				<ul class="list-unstyled">
+					{$displayGenres}
+				</ul>
+			</div>
+		</div>
+
+	</article>
+</div>
+
+{include="page.foot"}
+</body>
+</html>

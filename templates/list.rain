@@ -9,22 +9,22 @@
 <div class="container">
 <div class="row">
 {loop="movie"}
-<article class="movie col-lg-6">
+<article class="movies col-lg-6">
 	<h2>
 		{if="isLogged()"}<span class="movie-tools"><a href="{$value.id|Path::edit}" class="text-success"><i class="icon-pencil"></i></a> <a href="{$value.id|Path::delete}&amp;token={$token}" class="text-danger" onclick="return confirmDeleteMovie('{$value.title}')"><i class="icon-trash"></i></a></span>{/if}
 		<a href="{$value.id|Path::movie}" title="{$value.title}">{$value.title}</a>
-		{if="$value.original_title != NULL"} <small>{$value.original_title}</small>{/if}
+		{if="!empty($value.original_title)"} <small>{$value.original_title}</small>{/if}
 	</h2>
 
 	<ul class="infos list-inline text-muted">
 		<li class="status espace-right-sm">{$value.status|displayStatus}</li>
-		{if="$value.duration != NULL"}<li>{$value.duration} min</li>{/if}
-		{if="$value.release_date != NULL"}<li><span class="tip" data-title="Release date" data-placement="bottom"><i class="icon-calendar"></i> {$value.release_date}</span></li>{/if}
-		{if="$value.country != NULL"}<li class="espace-left-sm">{$value.country|displayFlag}</li>{/if}
+		{if="!empty($value.duration)"}<li>{$value.duration} min</li>{/if}
+		{if="!empty($value.release_date)"}<li><span class="tip" data-title="Release&nbsp;date" data-placement="bottom"><i class="icon-calendar"></i> {$value.release_date}</span></li>{/if}
+		{if="!empty($value.country)"}<li class="espace-left-sm">{$value.country|displayFlag}</li>{/if}
 		<li class="pull-right">
 		<ul class="list-inline">
 			{if="$value.owned"}<li><span class="tip" data-title="Movie owned" data-placement="bottom"><i class="icon-film"></i></span></li>{/if}
-			{if="$value.link_website != NULL"}<li><a href="{$value.link_website}" rel="external" class="normal text-muted tip" title="More&nbsp;infos&nbsp;online" data-placement="bottom"><i class="icon-globe"></i></a></li>{/if}
+			{if="!empty($value.link_website)"}<li><a href="{$value.link_website}" rel="external" class="normal text-muted tip" title="More&nbsp;infos&nbsp;online" data-placement="bottom"><i class="icon-globe"></i></a></li>{/if}
 		</ul>
 		</li>
 	</ul>
