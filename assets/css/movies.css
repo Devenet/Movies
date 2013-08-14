@@ -8,7 +8,6 @@ header {margin: 20px 0 10px;}
 header h1 {display: inline;}
 footer {margin: 40px auto 10px;}
 
-.navbar li.rss a:hover {color: #FF7A4D;}
 a.normal {text-decoration: none;}
 .tip {cursor: default;}
 a.tip {cursor: pointer;}
@@ -28,6 +27,9 @@ label.text-muted {color: rgb(153, 153, 153);}
 .no-espace-bottom {margin-bottom: 0;}
 
 .page-header h2 {margin-top: 0;}
+.navbar li a {border-bottom: 1px solid rgb(238,238,238);}
+.navbar li.active a, .navbar li a:hover {border-bottom: 1px solid #888;}
+.navbar li.rss a:hover {color: #FF7A4D; border-color: #FF7A4D;}
 
 article.movies {margin-bottom: 20px;}
 article.movies h2 a {text-decoration: none;}

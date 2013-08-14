@@ -161,17 +161,14 @@ abstract class Path {
 		switch ($url) {
 			case 'home':
 				break;
-			case 'favorite':
-				$result .= $prefix.'favorite';
+			case 'favorites':
+				$result .= $prefix.'favorites';
 				break;
 			case 'soon':
 				$result .= $prefix.'soon';
 				break;
 			case 'add':
 				$result .= $prefix.'add';
-				break;
-			case 'movie':
-				$result .= $prefix.'movie';
 				break;
 			default:
 				$result .= '#';
@@ -203,7 +200,7 @@ abstract class Path {
 		return $result.'">'.($icon != NULL ? '<i class="icon-'.$icon.'"></i>' : NULL).' '.$name."</a>".($tpl ? '</li>' : NULL);
 	}
 	static function menu($active) {
-		return self::url('home', 'Home', $active).self::url('favorite', 'Favorites', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
+		return self::url('home', 'All', $active).self::url('favorites', 'Favorites', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
 	}
 	static function menuAdmin($active) {
 		return self::url_admin('add', 'Movie', $active).self::url_admin('admin', 'Admin', $active).PHP_EOL;
@@ -364,7 +361,7 @@ function importImage($url, $id) {
 	if ($result == FALSE) {  throw new \Exception('Unable to resize image.'); }
 }
 
-// check if page asked is correct else 404 or homepage
+// check if page number asked is correct else 404 or homepage
 function checkPagination($page, $total) {
 	$page = (int) $page+0;
 	if ($page <= 0) { header('Location: ./'); exit(); }
@@ -699,7 +696,6 @@ function settingsPage() {
 	exit();
 }
 
-
 // add a new movie
 function addMovie() {
 	if (!isLogged()) {
@@ -746,7 +742,7 @@ function addMovie() {
 				$movies[$movie['id']] = $movie;
 				$movies->save();
 
-				header('Location: ./');
+				header('Location: '.Path::movie($movie['id']));
 				exit();
 			} catch(\Exception $e) {
 				$tpl->assign('error', $e->getMessage());
@@ -815,7 +811,7 @@ function editMovie() {
 				$movies[$id] = $movie;
 				$movies->save();
 
-				header('Location: ./');
+				header('Location: '.Path::movie($id));
 				exit();
 			} catch(\Exception $e) {
 				$tpl->assign('error', $e->getMessage());
