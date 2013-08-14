@@ -1,7 +1,7 @@
 <?php
 
 date_default_timezone_set('Europe/Paris');
-error_reporting(-1);
+//error_reporting(0);
 
 global $_CONFIG;
 $_CONFIG['data'] = 'data';
@@ -23,7 +23,7 @@ $_CONFIG['countries'] = array(
 $_CONFIG['ban'] = $_CONFIG['data'].'/jail.php';
 $_CONFIG['ban_after'] = 4;
 $_CONFIG['ban_duration'] = 1800;
-$_CONFIG['pagination'] = 20;
+$_CONFIG['pagination'] = 10;
 
 define('PHPPREFIX','<?php /* '); 
 define('PHPSUFFIX',' */ ?>');
@@ -214,6 +214,10 @@ abstract class Path {
 		global $_CONFIG;
 		return '.'.($_CONFIG['url_rewriting'] ? '/movie/' : '/?movie=').$id;
 	}
+	static function page($id) {
+		global $_CONFIG;
+		return ($_CONFIG['url_rewriting'] ? 'page/' : 'page=').$id;
+	}
 	static function admin() {
 		global $_CONFIG;
 		return '.'.($_CONFIG['url_rewriting'] ? '/admin' : '/?admin');
@@ -367,6 +371,16 @@ function importImage($url, $id) {
 	$result = imagejpeg($thumb, $output.'.jpg');
 	if ($result == FALSE) {  throw new \Exception('Unable to resize image.'); }
 }
+
+// check if page asked is correct else 404 or homepage
+function checkPagination($page, $total) {
+	$page = (int) $page+0;
+	if ($page <= 0) { header('Location: ./'); exit(); }
+	$pages = ceil($total/PAGINATION);
+	if ($page < $pages) { return TRUE; }
+	notFound();
+}
+
 
 /**
  * Session managment (thanks to Sébastien Sauvage with Shaarli!)
@@ -549,9 +563,27 @@ function displayCountryOptions($active = FALSE) {
 	return $result;
 }
 
+// generate the <li></li> for pagination
+function displayPagination($page, $total) {
+	$page = (int) $page+0;
+	$pages = ceil($total/PAGINATION);
+	$offset = 2;
+	$begin = ($page-$offset <= 0) ? 0 : $page-$offset;
+	$end = ($page+$offset >= $pages) ? $pages-1 : $page+$offset;
+	if ($pages > 1 && $end-$begin < 2*$offset) {
+		if ($end-$page <= $offset-1) { $begin -= $offset-$end+$page; }
+		else { $end += $offset-$page; }
+	}
+	$result = '<li'.($page==0 ? ' class="disabled"' : NULL).'><a href="./" title="First page" class="tip"><i class="icon-double-angle-left"></i></a></li>';
+	for ($i=$begin; $i<=$end; $i++) {
+		$result .= '<li'.($i==$page ? ' class="active"' : NULL).'><a href="./'.($i>0 ? '?'.Path::page($i) : NULL).'">'.($i+1).'</a></li>';
+	}
+	$result .= '<li'.($page==$end ? ' class="disabled"' : NULL).'><a href="./?'.Path::page($pages-1).'" title="Last page" class="tip"><i class="icon-double-angle-right"></i></a></li>';
+	return $result;
+}
 
 /**
- * Script begin here
+ * Script for pages begin here
  */
 
 // installation: get user's ID
@@ -885,7 +917,13 @@ function signin() {
 // home asked
 if (empty($_GET) || isset($_GET['page'])) {
 	$movies = new Movies();
-	$tpl->assign('movie', $movies->lastMovies());
+	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
+	// check if pagination is asked
+	if (!empty($_GET['page'])) {
+			checkPagination($page, $movies->count());
+			$tpl->assign('movie', $movies->lastMovies($page*PAGINATION));
+	} else { $tpl->assign('movie', $movies->lastMovies()); }
+	$tpl->assign('pagination', displayPagination($page, $movies->count()));
 	$tpl->assign('page_title', 'Home');
 	$tpl->assign('menu_links', Path::menu('home'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('home'));
