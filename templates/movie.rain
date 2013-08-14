@@ -22,20 +22,25 @@
 		</div>
 
 		<div class="row espace-top">
-			<div class="col-lg-3 text-center">
+			<div class="col-lg-3 col-sm-6 col-12 text-center espace-bottom">
 				<p><img src="{if="$movie['link_image'] != NULL"}{$movie['link_image']}{else}assets/img/movie.jpg{/if}" alt="{$movie['title']}" class="img-responsive img-thumbnail" width="160" height="213" /></p>
 				{if="$movie['status'] == Movie::SEEN"}{$displayNote}{/if}
 			</div>
-			<div class="col-lg-7">
-				<p>{$movie['synopsis']}</p>
-			</div>
-			<div class="col-lg-2 aside text-muted">
+			<div class="col-lg-2 col-sm-6 col-12 aside text-muted pull-right">
+				<div class="espace-bottom">
+					<p><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus} {if="$movie['status'] == Movie::SEEN"}Seen{else}Not seen{/if}</span></p>
+					{if="$movie['owned']"}<p><span class="tip" data-title="Movie owned" data-placement="bottom"><i class="icon-film"></i></span> Owned</p>{/if}
+				</div>
 				{if="!empty($movie['duration'])"}<p>{$movie['duration']} min</p>{/if}
-				{if="!empty($movie['release_date'])"}<p>{$movie['release_date']} <span class="tip" data-title="Release&nbsp;date" data-placement="left"><i class="icon-calendar"></i></span></p>{/if}
-				{if="!empty($country)"}<p>Production {$country|displayFlag}</p>{/if}
-				<ul class="list-unstyled">
+				{if="!empty($movie['release_date'])"}<p><span class="tip" data-title="Release&nbsp;date" data-placement="bottom"><i class="icon-calendar"></i></span> {$movie['release_date']}</p>{/if}
+				{if="!empty($country)"}<p>{$country|displayFlag} nationality</p>{/if}
+				<ul class="list-unstyled espace-top">
 					{$displayGenres}
 				</ul>
+				{if="!empty($movie['link_website'])"}<p class="espace-top"><a href="{$movie['link_website']}" rel="external" class="normal tip" title="More&nbsp;infos&nbsp;online" data-placement="bottom"><i class="icon-globe"></i> infos online</a></p>{/if}
+			</div>
+			<div class="col-lg-6 col-sm-12 col-12">
+				<p>{$movie['synopsis']}</p>
 			</div>
 		</div>
 

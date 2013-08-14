@@ -17,7 +17,7 @@
 	</h2>
 
 	<ul class="infos list-inline text-muted">
-		<li class="status espace-right-sm">{$value.status|displayStatus}</li>
+		<li class="status espace-right-sm"><span class="{if="$value.status == Movie::SEEN"}text-success{else}text-warning{/if}">{$value.status|displayStatus}</span></li>
 		{if="!empty($value.duration)"}<li>{$value.duration} min</li>{/if}
 		{if="!empty($value.release_date)"}<li><span class="tip" data-title="Release&nbsp;date" data-placement="bottom"><i class="icon-calendar"></i> {$value.release_date}</span></li>{/if}
 		{if="!empty($value.country)"}<li class="espace-left-sm">{$value.country|displayFlag}</li>{/if}
@@ -38,6 +38,8 @@
 	</div>
 	<div class="col-12 col-sm-10 col-lg-8">
 		<p class="description">{$value.synopsis|displaySynopsis}</p>
+		<p><a class="more-button btn btn-default btn-sm" href="{$value.id|Path::movie}">More</a>
+		</p>
 		{if="$value.status == Movie::SEEN"}
 		<ul class="list-inline text-muted">
 			{$value.genre|displayGenres}

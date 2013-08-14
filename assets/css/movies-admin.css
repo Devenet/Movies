@@ -28,3 +28,7 @@ label.normal {font-weight:normal;}
 .flag-option {display:inline-block; margin-right:4px;}
 select#country option {display:block; padding:4px 8px;}
 .form-group-note .slider .slider-handle.round {}
+
+.movie-tools {display: block; font-size: 16px; position: absolute; left: -5px;}
+.movie-tools a {display: block;}
+.movie .movie-tools {left: -20px;}

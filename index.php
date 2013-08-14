@@ -496,12 +496,11 @@ function displayGenres($genres) {
 		$result .= '<li><i class="icon-tag"></i> '.trim(mb_convert_case($value, MB_CASE_TITLE, "UTF-8")).'</li>';
 	return $result.PHP_EOL;
 }
-// shortcut the synopsis (= summary) of the movie with <span class="more"></span>
+// shortcut the synopsis (= summary) of the movie with [...]
 function displaySynopsis($synopsis, $size = 400) {
 	if (strlen($synopsis) > $size) {
 		$begin = substr($synopsis, 0, $size);
-		$end = substr($synopsis, $size);
-		return $begin.'<span class="more"><span class="more-dots" style="display:none;">[...]</span><span class="more-content">'.$end.'</span><div class="more-button btn btn-default btn-sm" style="display:none;">More</div></span>';
+		return $begin.'[...]';
 	}
 	return $synopsis;
 }
