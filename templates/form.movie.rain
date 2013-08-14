@@ -14,10 +14,10 @@
     </div>
   </div>
   <div class="col-lg-3">
-    <form class="form-search" method="post" action="{$target-search}" enctype="multipart/form-data">
-      <div class="input-append">
-        <input type="text" class="search-query span2" id="search" name="search" placeholder="Recherche" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if}/>
-        <button class="btn" type="submit">IMDB Search</button>
+    <form method="post" action="{$target-search}" enctype="multipart/form-data">
+      <div class="input-group">
+        <input type="search" class="span2" id="search" name="search" placeholder="Recherche" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if}/>
+        <button class="btn" type="submit"><i class="icon-search"></i> IMDB</button>
       </div>
     </form>
   </div>
