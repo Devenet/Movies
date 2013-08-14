@@ -788,7 +788,7 @@ function addMovie() {
 	$tpl->assign('countries', displayCountryOptions(isset($inputs['country']) ? $inputs['country'] : NULL));
 	$tpl->assign('token', getToken());
 	$tpl->assign('target', Path::add());
-	$tpl->assign('target-search', Path::add());
+	$tpl->assign('target_search', Path::add());
 	$tpl->draw('form.movie');
 	exit();
 }

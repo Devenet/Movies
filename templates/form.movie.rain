@@ -14,7 +14,7 @@
     </div>
   </div>
   <div class="col-lg-3">
-    <form method="post" action="{$target-search}" enctype="multipart/form-data">
+    <form method="post" action="{$target_search}" enctype="multipart/form-data">
       <div class="input-group">
         <input type="search" class="form-control" id="search" name="search" placeholder="Recherche" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if}/>
         <span class="input-group-btn">
