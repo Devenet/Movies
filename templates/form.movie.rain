@@ -21,6 +21,7 @@
           <button class="btn btn-info" type="submit"><i class="icon-search icon-white"></i> IMDB</button>
         </span>
       </div>
+      <input type="hidden" name="token" value="{$token}" />
     </form>
   </div>
 </div>
