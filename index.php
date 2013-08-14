@@ -708,45 +708,75 @@ function addMovie() {
 	// process to add movie in database
 	if (isset($_POST) && !empty($_POST)) {
 		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
-			$inputs = array(
-				'title' => (isset($_POST['title']) ? trim(htmlspecialchars($_POST['title'])) : NULL),
-				'synopsis' => (isset($_POST['synopsis']) ? checkSynopsis($_POST['synopsis']) : NULL),
-				'genre' => (isset($_POST['genre']) ? checkGenre($_POST['genre']) : NULL),
-				'status' => (isset($_POST['status']) ? Movie::SEEN : NULL),
-				'note' => (isset($_POST['note']) ? checkRatingNote($_POST['note'], (isset($_POST['status']) ? Movie::SEEN : NULL)) : NULL),
-				'owned' => (isset($_POST['owned']) ? TRUE : NULL),
-				'original_title' => (isset($_POST['original_title']) ? trim(htmlspecialchars($_POST['original_title'])) : NULL),
-				'duration' => (isset($_POST['duration']) ? checkDuration($_POST['duration']) : NULL),
-				'release_date' => (isset($_POST['release_date']) ? checkReleaseDate($_POST['release_date']) : NULL),
-				'country' => (isset($_POST['country']) ? checkContry($_POST['country']) : NULL),
-				'link_website' => (isset($_POST['link_website']) ? checkLink($_POST['link_website']) : NULL),
-				'link_image' => (isset($_POST['link_image']) ? checkLink($_POST['link_image']) : NULL),
-				'link_image_import' => (isset($_POST['link_image_import']) ? TRUE : NULL)
-				//'links-image-upload' => (isset($_POST['links-image-upload']) ? htmlspecialchars($_POST['links-image-upload']) : NULL)
-			);
-			$tpl->assign('inputs', $inputs);
-			try {
-				if (empty($inputs['title'])) { throw new \Exception('Title must not be empty.'); }
-				if (empty($inputs['synopsis'])) { throw new \Exception('Synopsis must not be empty.'); }
-				$movie = array( 'id' => time() );
+      if(!empty($_POST['search']){
+        include_once 'lib/scraper/imdb.php';
+        
+        $oIMDB = new IMDB($_POST['search']);
+        
+        if($oIMDB->isReady){
+          $inputs = array(
+            'title' => $oIMDB->getTitle(),
+            'synopsis' => $oIMDB->getDescription(),
+            'genre' => $oIMDB->getGenre(),
+            'status' => NULL,
+            'note' => NULL,
+            'owned' => NULL,
+            'original_title' => $oIMDB->getTitle(),
+            'duration' => $oIMDB->getRuntime(),
+            'release_date' => checkReleaseDate($oIMDB->getReleaseDate()),
+            'country' => checkContry($oIMDB->getCountry()),
+            'link_website' => checkLink($oIMDB->getLocationAsUrl()),
+            'link_image' => checkLink($_POST['link_image']),
+            'link_image_import' => TRUE
+            //'links-image-upload' => ???
+          );
+          $tpl->assign('inputs', $inputs);
+        }
+        else{
+          $tpl->assign('error', 'Movie not found in IMDB database.');
+        }
+      }
+      else{
+        $inputs = array(
+          'title' => (isset($_POST['title']) ? trim(htmlspecialchars($_POST['title'])) : NULL),
+          'synopsis' => (isset($_POST['synopsis']) ? checkSynopsis($_POST['synopsis']) : NULL),
+          'genre' => (isset($_POST['genre']) ? checkGenre($_POST['genre']) : NULL),
+          'status' => (isset($_POST['status']) ? Movie::SEEN : NULL),
+          'note' => (isset($_POST['note']) ? checkRatingNote($_POST['note'], (isset($_POST['status']) ? Movie::SEEN : NULL)) : NULL),
+          'owned' => (isset($_POST['owned']) ? TRUE : NULL),
+          'original_title' => (isset($_POST['original_title']) ? trim(htmlspecialchars($_POST['original_title'])) : NULL),
+          'duration' => (isset($_POST['duration']) ? checkDuration($_POST['duration']) : NULL),
+          'release_date' => (isset($_POST['release_date']) ? checkReleaseDate($_POST['release_date']) : NULL),
+          'country' => (isset($_POST['country']) ? checkContry($_POST['country']) : NULL),
+          'link_website' => (isset($_POST['link_website']) ? checkLink($_POST['link_website']) : NULL),
+          'link_image' => (isset($_POST['link_image']) ? checkLink($_POST['link_image']) : NULL),
+          'link_image_import' => (isset($_POST['link_image_import']) ? TRUE : NULL)
+          //'links-image-upload' => (isset($_POST['links-image-upload']) ? htmlspecialchars($_POST['links-image-upload']) : NULL)
+        );
+        $tpl->assign('inputs', $inputs);
+        try {
+          if (empty($inputs['title'])) { throw new \Exception('Title must not be empty.'); }
+          if (empty($inputs['synopsis'])) { throw new \Exception('Synopsis must not be empty.'); }
+          $movie = array( 'id' => time() );
 
-				// check if we need to get the image given with url
-				if ($inputs['link_image_import']) {
-					importImage($inputs['link_image'], $movie['id']);
-					$inputs['link_image'] = $_CONFIG['images'].'/'.$movie['id'].'.jpg';
-				}
-				unset($inputs['link_image_import']);
+          // check if we need to get the image given with url
+          if ($inputs['link_image_import']) {
+            importImage($inputs['link_image'], $movie['id']);
+            $inputs['link_image'] = $_CONFIG['images'].'/'.$movie['id'].'.jpg';
+          }
+          unset($inputs['link_image_import']);
 
-				foreach ($inputs as $key => $value) { $movie[$key] = $value; }
-				$movies = new Movies(isLogged());
-				$movies[$movie['id']] = $movie;
-				$movies->save();
+          foreach ($inputs as $key => $value) { $movie[$key] = $value; }
+          $movies = new Movies(isLogged());
+          $movies[$movie['id']] = $movie;
+          $movies->save();
 
-				header('Location: '.Path::movie($movie['id']));
-				exit();
-			} catch(\Exception $e) {
-				$tpl->assign('error', $e->getMessage());
-			}
+          header('Location: '.Path::movie($movie['id']));
+          exit();
+        } catch(\Exception $e) {
+          $tpl->assign('error', $e->getMessage());
+        }
+      }
 		}
 		else { errorPage('The given token was empty or invalid.', 'Invalid token'); }
 	}
@@ -758,6 +788,7 @@ function addMovie() {
 	$tpl->assign('countries', displayCountryOptions(isset($inputs['country']) ? $inputs['country'] : NULL));
 	$tpl->assign('token', getToken());
 	$tpl->assign('target', Path::add());
+	$tpl->assign('target-search', Path::add());
 	$tpl->draw('form.movie');
 	exit();
 }
