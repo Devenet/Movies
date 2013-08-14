@@ -8,16 +8,16 @@
 
 <div class="container">
 <div class="row">
-  <div class="col-lg-8">
+  <div class="col-lg-9">
     <div class="page-header no-espace-top">
       <h2>{$page_title}</h2>
     </div>
   </div>
-  <div class="col-lg-4">
+  <div class="col-lg-3">
     <form class="form-search" method="post" action="{$target-search}" enctype="multipart/form-data">
       <div class="input-append">
-        <input type="text" class="search-query span3" id="search" name="search" placeholder="Recherche" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if}/>
-        <button class="btn btn-info" type="submit">IMDB Search</button>
+        <input type="text" class="search-query span2" id="search" name="search" placeholder="Recherche" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if}/>
+        <button class="btn" type="submit">IMDB Search</button>
       </div>
     </form>
   </div>
