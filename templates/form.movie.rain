@@ -14,9 +14,9 @@
     </div>
   </div>
   <div class="col-lg-4">
-    <form method="post" action="{$target-search}" enctype="multipart/form-data">
+    <form class="form-search" method="post" action="{$target-search}" enctype="multipart/form-data">
       <div class="input-append">
-        <input type="text" class="form-control" id="search" name="search" placeholder="Recherche" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if}/>
+        <input type="text" class="search-query span3" id="search" name="search" placeholder="Recherche" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if}/>
         <button class="btn btn-info" type="submit">IMDB Search</button>
       </div>
     </form>
