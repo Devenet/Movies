@@ -5,6 +5,9 @@ date_default_timezone_set('Europe/Paris');
 
 global $_CONFIG;
 $_CONFIG['data'] = 'data';
+$_CONFIG['lib'] = 'lib';
+$_CONFIG['scraper'] = 'lib/scraper';
+$_CONFIG['scraper_imdb'] = 'lib/scraper/imdb.php';
 $_CONFIG['database'] = $_CONFIG['data'].'/movies.php';
 $_CONFIG['settings'] = $_CONFIG['data'].'/settings.php';
 $_CONFIG['log'] = $_CONFIG['data'].'/area-51.txt';
@@ -710,7 +713,7 @@ function addMovie() {
 		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
       if(!empty($_POST['search'])){
         try{
-          include_once 'lib/scraper/imdb.php';
+          include_once $_CONFIG['scraper_imdb'];
           
           $oIMDB = new IMDB($_POST['search']);
           
@@ -718,16 +721,16 @@ function addMovie() {
             $inputs = array(
               'title' => $oIMDB->getTitle(),
               'synopsis' => $oIMDB->getDescription(),
-              'genre' => $oIMDB->getGenre(),
+              'genre' => str_replace(' /', ',', $oIMDB->getGenre()),
               'status' => NULL,
               'note' => NULL,
               'owned' => NULL,
               'original_title' => $oIMDB->getTitle(),
-              'duration' => $oIMDB->getRuntime(),
-              'release_date' => checkReleaseDate($oIMDB->getReleaseDate()),
-              'country' => checkContry($oIMDB->getCountry()),
-              'link_website' => checkLink($oIMDB->getLocationAsUrl()),
-              'link_image' => checkLink($oIMDB->getPoster()),
+              'duration' => NULL,
+              'release_date' => NULL,
+              'country' => NULL,
+              'link_website' => checkLink($oIMDB->getUrl()),
+              'link_image' => $_CONFIG['scraper'].'/'.$oIMDB->getPoster(),
               'link_image_import' => TRUE
               //'links-image-upload' => ???
             );
