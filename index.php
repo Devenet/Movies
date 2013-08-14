@@ -10,7 +10,7 @@ $_CONFIG['settings'] = $_CONFIG['data'].'/settings.php';
 $_CONFIG['log'] = $_CONFIG['data'].'/area-51.txt';
 $_CONFIG['images'] = 'images';
 $_CONFIG['cache'] = 'cache';
-$_CONFIG['title'] = 'Movies';
+$_CONFIG['title'] = 'myMovies';
 $_CONFIG['url_rewriting'] = FALSE;
 $_CONFIG['countries'] = array(
 	'us' => 'United States of America',
@@ -27,7 +27,7 @@ $_CONFIG['pagination'] = 10;
 
 define('PHPPREFIX','<?php /* '); 
 define('PHPSUFFIX',' */ ?>');
-define('MOVIES_VERSION', '0.1 bêta');
+define('MYMOVIES_VERSION', '0.1');
 define('INACTIVITY_TIMEOUT', 3600);
 
 // Force cookie path (but do not change lifetime)
@@ -37,7 +37,7 @@ session_set_cookie_params($cookie['lifetime'], $cookiedir, $_SERVER['HTTP_HOST']
 ini_set('session.use_cookies', 1);
 ini_set('session.use_only_cookies', 1);
 ini_set('session.use_trans_sid', false);
-session_name('movies');
+session_name('myMovies');
 if (session_id() == '') session_start();
 
 // check right before create directories
@@ -594,7 +594,7 @@ function install($tpl) {
 		$_CONFIG['login'] = htmlspecialchars($_POST['login']);
 		$_CONFIG['salt'] = sha1(uniqid('',true).'_'.mt_rand());
 		$_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']);
-		$_CONFIG['title'] = empty($_POST['title']) ? 'Movies' : htmlspecialchars($_POST['title']);
+		$_CONFIG['title'] = empty($_POST['title']) ? 'myMovies' : htmlspecialchars($_POST['title']);
 		writeSettings();
 		header('Location: '.$_SERVER['REQUEST_URI']);
 		exit();
