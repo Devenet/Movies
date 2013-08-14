@@ -708,7 +708,7 @@ function addMovie() {
 	// process to add movie in database
 	if (isset($_POST) && !empty($_POST)) {
 		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
-      if(!empty($_POST['search']){
+      if(!empty($_POST['search'])){
         include_once 'lib/scraper/imdb.php';
         
         $oIMDB = new IMDB($_POST['search']);
@@ -726,7 +726,7 @@ function addMovie() {
             'release_date' => checkReleaseDate($oIMDB->getReleaseDate()),
             'country' => checkContry($oIMDB->getCountry()),
             'link_website' => checkLink($oIMDB->getLocationAsUrl()),
-            'link_image' => checkLink($_POST['link_image']),
+            'link_image' => checkLink($oIMDB->getPoster()),
             'link_image_import' => TRUE
             //'links-image-upload' => ???
           );
