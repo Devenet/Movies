@@ -6,16 +6,27 @@
 <body>
 {include="page.menu"}
 
-<div class="container espace-top">
+<div class="container">
 <div class="row">
+<div class="col-lg-12">
+	<div class="page-header no-espace-top">
+		<h2>
+			{#TITLE#}
+			<a href="{""|Path::signout}" class="btn btn-default btn-sm pull-right"><i class="icon-signout"></i> Sign out</a>
+		</h2>
+	</div>
+</div>
+</div>
+
+<div class="row espace-top">
 	<div class="col-lg-4 text-center">
 		<a href="{""|Path::add}" class="btn btn-success"><i class="icon-plus"></i> Add a movie</a>
 	</div>
 	<div class="col-lg-4 text-center">
-		<a href="{""|Path::logs}" class="btn btn-default"><i class="icon-file-text-alt"></i> Display logs</a>
+		<a href="{""|Path::settings}" class="btn btn-info"><i class="icon-cog"></i> Settings</a>
 	</div>
 	<div class="col-lg-4 text-center">
-		<a href="{""|Path::signout}" class="btn btn-default"><i class="icon-signout"></i> Sign out</a>
+		<a href="{""|Path::logs}" class="btn btn-default"><i class="icon-file-text-alt"></i> Display logs</a>
 	</div>
 </div>
 </div>

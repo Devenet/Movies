@@ -150,14 +150,13 @@ class Movies implements Iterator, Countable, ArrayAccess {
  */
 abstract class Path {
 	private static function url($url, $name, $tpl = FALSE) {
-		global $_CONFIG;
 		$result = '';
 		if ($tpl) {
 			$result .= '<li';
 			if ($url == $tpl) {$result .= ' class="active"';}
 			$result .= '>';
 		}
-		$prefix = $_CONFIG['url_rewriting'] ? '/' : '/?';
+		$prefix = '/?';
 		$result .= '<a href=".';
 		switch ($url) {
 			case 'home':
@@ -180,20 +179,19 @@ abstract class Path {
 		return $result.'">'.$name."</a>".($tpl ? '</li>' : NULL);
 	}
 	private static function url_admin($url, $name, $tpl = FALSE) {
-		global $_CONFIG;
 		$result = '';
 		if ($tpl) {
 			$result .= '<li';
 			if ($url == $tpl) {$result .= ' class="active"';}
 			$result .= '>';
 		}
-		$prefix = $_CONFIG['url_rewriting'] ? '/' : '/?';
+		$prefix = '/?';
 		$result .= '<a href=".';
 		$icon = NULL;
 		switch ($url) {
 			case 'add':
 				$result .= $prefix.'add';
-				$icon = '';
+				$icon = 'plus';
 				break;
 			case 'admin':
 				$result .= $prefix.'admin';
@@ -208,43 +206,37 @@ abstract class Path {
 		return self::url('home', 'Home', $active).self::url('favorite', 'Favorites', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
 	}
 	static function menuAdmin($active) {
-		return self::url_admin('add', 'Add movie', $active).self::url_admin('admin', 'Admin', $active).PHP_EOL;
+		return self::url_admin('add', 'Movie', $active).self::url_admin('admin', 'Admin', $active).PHP_EOL;
 	}
 	static function movie($id) {
-		global $_CONFIG;
-		return '.'.($_CONFIG['url_rewriting'] ? '/movie/' : '/?movie=').$id;
+		return './?movie='.$id;
 	}
 	static function page($id) {
-		global $_CONFIG;
-		return ($_CONFIG['url_rewriting'] ? 'page/' : 'page=').$id;
+		return 'page='.$id;
 	}
 	static function admin() {
-		global $_CONFIG;
-		return '.'.($_CONFIG['url_rewriting'] ? '/admin' : '/?admin');
+		return './?admin';
 	}
 	static function signin() {
-		global $_CONFIG;
-		return '.'.($_CONFIG['url_rewriting'] ? '/signin' : '/?signin');
+		return './?signin';
 	}
 	static function signout() {
-		global $_CONFIG;
-		return '.'.($_CONFIG['url_rewriting'] ? '/signout' : '/?signout');
+		return './?signout';
 	}
 	static function add() {
-		global $_CONFIG;
-		return '.'.($_CONFIG['url_rewriting'] ? '/add' : '/?add');
+		return './?add';
 	}
 	static function edit($id) {
-		global $_CONFIG;
-		return '.'.($_CONFIG['url_rewriting'] ? '/edit/' : '/?edit=').$id;
+		return './?edit='.$id;
 	}
 	static function delete($id) {
-		global $_CONFIG;
-		return '.'.($_CONFIG['url_rewriting'] ? '/delete/' : '/?delete=').$id;
+		return './?delete='.$id;
 	}
 	static function logs() {
-		global $_CONFIG;
-		return '.'.($_CONFIG['url_rewriting'] ? '/logs' : '/?logs');	
+		return './?logs';
+	}
+	static function settings() {
+		return './?settings';	
 	}
 }
 
@@ -494,7 +486,7 @@ function canLogin() {
 
 // list of url allowed to be redirected
 function targetIsAllowed($target) {
-	$allowed = array('admin', 'add', 'logs');
+	$allowed = array('admin', 'add', 'logs', 'settings');
 	return in_array(htmlspecialchars($target), $allowed);
 }
 
@@ -676,6 +668,37 @@ function logsPage() {
 	$tpl->draw('admin.logs');
 	exit();
 }
+
+// display log file
+function settingsPage() {
+	if (!isLogged()) {
+		header('Location: '.Path::signin().'&target=settings');
+		exit();
+	}
+	global $tpl;
+	global $_CONFIG;
+
+	if (!empty($_POST)) {
+		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
+			global $_CONFIG;
+			if (!empty($_POST['title'])) { $_CONFIG['title'] = htmlspecialchars($_POST['title']); }
+			if (!empty($_POST['password'])) { $_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']); }
+			writeSettings();
+			header('Location: '.Path::settings().'&update');
+			exit();
+		}
+		errorPage('The given token was empty or invalid.', 'Invalid token');
+	}
+
+	$tpl->assign('page_title', 'Settings');
+	$tpl->assign('menu_links', Path::menu('settings'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('admin'));
+	$tpl->assign('username', $_CONFIG['login']);
+	$tpl->assign('token', getToken());
+	$tpl->draw('admin.settings');
+	exit();
+}
+
 
 // add a new movie
 function addMovie() {
@@ -947,6 +970,8 @@ if (isset($_GET['edit']) && !empty($_GET['edit'])) {editMovie();}
 if (isset($_GET['delete']) && !empty($_GET['delete'])) {deleteMovie();}
 // display writted log asked
 if (isset($_GET['logs'])) {logsPage();}
+// display settings log asked
+if (isset($_GET['settings'])) {settingsPage();}
 
 
 // nothing to do: 404 error

@@ -9,8 +9,9 @@
 <div class="container">
 <div class="row">
 <div class="col-lg-12">
-	<h3>{$page_title}</h3>
-	<hr />
+	<div class="page-header no-espace-top">
+		<h2>{$page_title}</h2>
+	</div>
 </div>
 </div>
 {if="!empty($error)"}

@@ -5,6 +5,7 @@
  */
 
 header {margin: 20px 0 10px;}
+header h1 {display: inline;}
 footer {margin: 40px auto 10px;}
 
 .navbar li.rss a:hover {color: #FF7A4D;}
@@ -18,12 +19,15 @@ label.text-muted {color: rgb(153, 153, 153);}
 .espace-top-sm {margin-top: 10px;}
 .espace-top-lg {margin-top: 40px;}
 .espace-bottom {margin-bottom: 20px;}
+.espace-bottom-lg {margin-bottom: 40px;}
 .espace-left {margin-left: 20px;}
 .espace-left-sm {margin-left: 10px;}
 .espace-right {margin-right: 20px;}
 .espace-right-sm {margin-right: 10px;}
 .no-espace-top {margin-top: 0;}
 .no-espace-bottom {margin-bottom: 0;}
+
+.page-header h2 {margin-top: 0;}
 
 article.movies {margin-bottom: 20px;}
 article.movies h2 a {text-decoration: none;}
