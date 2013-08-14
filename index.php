@@ -730,8 +730,8 @@ function addMovie() {
               'release_date' => NULL,
               'country' => NULL,
               'link_website' => checkLink($oIMDB->getUrl()),
-              'link_image' => 'http://localhost/'.dirname(__FILE__).'/'.$_CONFIG['scraper'].'/'.$oIMDB->getPoster(),
-              'link_image_import' => TRUE
+              'link_image' => NULL,
+              'link_image_import' => NULL
               //'links-image-upload' => ???
             );
             $tpl->assign('inputs', $inputs);
