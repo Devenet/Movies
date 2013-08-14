@@ -709,31 +709,35 @@ function addMovie() {
 	if (isset($_POST) && !empty($_POST)) {
 		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
       if(!empty($_POST['search'])){
-        include_once 'lib/scraper/imdb.php';
-        
-        $oIMDB = new IMDB($_POST['search']);
-        
-        if($oIMDB->isReady){
-          $inputs = array(
-            'title' => $oIMDB->getTitle(),
-            'synopsis' => $oIMDB->getDescription(),
-            'genre' => $oIMDB->getGenre(),
-            'status' => NULL,
-            'note' => NULL,
-            'owned' => NULL,
-            'original_title' => $oIMDB->getTitle(),
-            'duration' => $oIMDB->getRuntime(),
-            'release_date' => checkReleaseDate($oIMDB->getReleaseDate()),
-            'country' => checkContry($oIMDB->getCountry()),
-            'link_website' => checkLink($oIMDB->getLocationAsUrl()),
-            'link_image' => checkLink($oIMDB->getPoster()),
-            'link_image_import' => TRUE
-            //'links-image-upload' => ???
-          );
-          $tpl->assign('inputs', $inputs);
-        }
-        else{
-          $tpl->assign('error', 'Movie not found in IMDB database.');
+        try{
+          include_once 'lib/scraper/imdb.php';
+          
+          $oIMDB = new IMDB($_POST['search']);
+          
+          if($oIMDB->isReady){
+            $inputs = array(
+              'title' => $oIMDB->getTitle(),
+              'synopsis' => $oIMDB->getDescription(),
+              'genre' => $oIMDB->getGenre(),
+              'status' => NULL,
+              'note' => NULL,
+              'owned' => NULL,
+              'original_title' => $oIMDB->getTitle(),
+              'duration' => $oIMDB->getRuntime(),
+              'release_date' => checkReleaseDate($oIMDB->getReleaseDate()),
+              'country' => checkContry($oIMDB->getCountry()),
+              'link_website' => checkLink($oIMDB->getLocationAsUrl()),
+              'link_image' => checkLink($oIMDB->getPoster()),
+              'link_image_import' => TRUE
+              //'links-image-upload' => ???
+            );
+            $tpl->assign('inputs', $inputs);
+          } 
+          else{
+            $tpl->assign('error', 'Movie not found in IMDB database.');
+          }
+        } catch(\Exception $e) {
+          $tpl->assign('error', $e->getMessage());
         }
       }
       else{
