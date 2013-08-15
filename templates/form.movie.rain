@@ -8,11 +8,22 @@
 
 <div class="container">
 <div class="row">
-<div class="col-lg-12">
-	<div class="page-header no-espace-top">
-		<h2>{$page_title}</h2>
-	</div>
-</div>
+  <div class="col-lg-9">
+    <div class="page-header no-espace-top">
+      <h2>{$page_title}</h2>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <form method="post" action="{$target_search}" enctype="multipart/form-data">
+      <div class="input-group">
+        <input type="search" class="form-control" id="search" name="search" placeholder="Recherche" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if}/>
+        <span class="input-group-btn">
+          <button class="btn btn-info" type="submit"><i class="icon-search icon-white"></i> IMDB</button>
+        </span>
+      </div>
+      <input type="hidden" name="token" value="{$token}" />
+    </form>
+  </div>
 </div>
 {if="!empty($error)"}
 <div class="row">
