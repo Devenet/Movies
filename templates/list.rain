@@ -40,11 +40,9 @@
 		<p class="description">{$value.synopsis|displaySynopsis}</p>
 		<p><a class="more-button btn btn-default btn-sm" href="{$value.id|Path::movie}">More</a>
 		</p>
-		{if="$value.status == Movie::SEEN"}
 		<ul class="list-inline text-muted">
 			{$value.genre|displayGenres}
 		</ul>
-		{/if}
 	</div>
 	</div>
 </article>
