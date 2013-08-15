@@ -27,6 +27,7 @@ $_CONFIG['pagination'] = 10;
 
 define('PHPPREFIX','<?php /* '); 
 define('PHPSUFFIX',' */ ?>');
+define('MYMOVIES', 'myMovies');
 define('MYMOVIES_VERSION', '0.1');
 define('INACTIVITY_TIMEOUT', 3600);
 
@@ -528,7 +529,7 @@ function displayStatus($status) {
 	if ($status == Movie::SEEN)
 		 { $result .= 'Movie&nbsp;seen'; }
 	else { $result .= 'Movie&nbsp;not&nbsp;seen'; }
-	$result .= '" data-placement="bottom"><i class="icon-';
+	$result .= '"><i class="icon-';
 	if ($status == Movie::SEEN)
 		 { $result .= 'desktop'; }
 	else { $result .= 'eye-close'; }
@@ -537,7 +538,7 @@ function displayStatus($status) {
 // remplace country name by a flag
 function displayFlag($country) {
 	global $_CONFIG;
-	return '<span class="tip" data-title="'.$_CONFIG['countries'][$country].'" data-placement="bottom"><span class="flag flag-'.$country.'" width="16" height="11"></span></span>';
+	return '<span class="tip" data-title="'.$_CONFIG['countries'][$country].'"><span class="flag flag-'.$country.'" width="16" height="11"></span></span>';
 }
 // display option of each contry (for form.movie.rain)
 function displayCountryOptions($active = FALSE) {
