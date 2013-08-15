@@ -726,12 +726,12 @@ function addMovie() {
               'note' => NULL,
               'owned' => NULL,
               'original_title' => $oIMDB->getTitle(),
-              'duration' => NULL,
+              'duration' => explode(' ', $oIMDB->getRuntime())[0],
               'release_date' => NULL,
               'country' => NULL,
               'link_website' => checkLink($oIMDB->getUrl()),
-              'link_image' => NULL,
-              'link_image_import' => NULL
+              'link_image' => $oIMDB->getPosterUrl('big'),
+              'link_image_import' => TRUE
               //'links-image-upload' => ???
             );
             $tpl->assign('inputs', $inputs);
