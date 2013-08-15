@@ -19,6 +19,7 @@ Light webapplication to get status' movies if they are seen or not
 - [ ] Add some cache pages for public pages
 - [ ] Export movies (html, json file? Possibility to remove personnal infos: if seen/owned or not)
 - [ ] Import movies from file (htlm, json?)
-
-- [ ] Merge imdb autocomplete fields from Rauks
 - [ ] Create a same library to get informations from Allociné
+
+__Pull requests:__
+- [ ] [#2](https://github.com/nicolabricot/myMovies/pull/2) Merge imdb autocomplete fields from Rauks
