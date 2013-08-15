@@ -384,6 +384,15 @@ function importImage($url, $id) {
 	if ($result == FALSE) {  throw new \Exception('Unable to resize image.'); }
 }
 
+// transform a date given by IMDB into yyyy-mm-dd to save it
+function transformReleaseDate($date = NULL) {
+	$date = explode(' ', $date);
+	if (empty($date) || sizeof($date) < 3) { return NULL; }
+	$months = array('January' => 1, 'Februrary' => 2, 'March' => 3, 'April' => 4, 'May' => 5, 'June' => 6, 'July' => 7, 'August' => 8, 'September' => 9, 'October' => 10, 'November' => 11, 'December' => 12);
+	if (!array_key_exists($date[1], $months)) { return NULL; }
+	return implode('-', array($date[2], str_pad($months[$date[1]], 2, '0', STR_PAD_LEFT), str_pad($date[0], 2, '0', STR_PAD_LEFT)));
+}
+
 // check if page number asked is correct else 404 or homepage
 function checkPagination($page, $total) {
 	$page = (int) $page+0;
@@ -513,7 +522,7 @@ function targetIsAllowed($target) {
 /**
  * Display functions
  */
-// kinks in <li></li>
+// genre in <li></li>
 function displayGenres($genres) {
 	$genre = explode(",", $genres);
 	ksort($genre);
@@ -736,18 +745,18 @@ function addMovie() {
 				try{
 				
 				$oIMDB = new IMDB($_POST['search']);
-					
+
 				if($oIMDB->isReady){
 					$inputs = array(
-						'title' => $oIMDB->getTitle(),
-						'synopsis' => $oIMDB->getDescription(),
+						'title' => $oIMDB->getTitle(TRUE),
+						'synopsis' => ($oIMDB->getPlot() != $oIMDB->strNotFound ? $oIMDB->getPlot() : $oIMDB->getDescription()),
 						'genre' => ($oIMDB->getGenre() != $oIMDB->strNotFound ? str_replace(' /', ',', $oIMDB->getGenre()) : NULL),
 						'status' => NULL,
 						'note' => NULL,
 						'owned' => NULL,
-						'original_title' => $oIMDB->getTitle(),
+						'original_title' => ($oIMDB->getTitle(TRUE) != $oIMDB->getTitle() ? $oIMDB->getTitle() : NULL),
 						'duration' => explode(' ', $oIMDB->getRuntime())[0],
-						'release_date' => NULL,
+						'release_date' => transformReleaseDate($oIMDB->getReleaseDate()),
 						'country' => NULL,
 						'link_website' => checkLink($oIMDB->getUrl()),
 						'link_image' => ($oIMDB->getPosterUrl('big') != $oIMDB->strNotFound ? $oIMDB->getPosterUrl('big') : NULL),
