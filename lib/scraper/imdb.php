@@ -849,6 +849,22 @@ class IMDB {
     }
 
     /**
+     * Return the imdb url to the image.
+     *
+     * @return string The path to the poster (either local or online).
+     */
+    public function getPosterUrl($sSize = 'small') {
+       if ($this->isReady) {
+            if ($strReturn = $this->matchRegex($this->_strSource, IMDB::IMDB_POSTER, 1)) {
+                if (strtolower($sSize) == 'big') {
+                    $strReturn = substr($strReturn, 0, strpos($strReturn, '_'));
+                }
+                return $strReturn;
+            }
+        }
+        return $this->strNotFound;
+    }
+    /**
      * Download the poster, cache it and return the local path to the image.
      *
      * @return string The path to the poster (either local or online).
