@@ -7,44 +7,44 @@
 {include="page.menu"}
 
 <div class="container">
-	<article class="movie">
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="page-header">
-					<h2>
-						{if="isLogged()"}<span class="movie-tools"><a href="{$id|Path::edit}" class="text-success"><i class="icon-pencil"></i></a> <a href="{$id|Path::delete}&amp;token={$token}" class="text-danger" onclick="return confirmDeleteMovie('{$movie['title']}')"><i class="icon-trash"></i></a></span>{/if}
-						{$movie['title']}
-						<span class="pull-right espace-right {if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus}</span>
-					</h2>
-				</div>
-				{if="!empty($movie['original_title'])"}<h3>{$movie['original_title']}</h3>{/if}
-			</div>
+<article class="movie">
+<div class="row">
+	<div class="col-lg-12">
+		<div class="page-header">
+			<h2>
+				{if="isLogged()"}<span class="movie-tools"><a href="{$id|Path::edit}" class="text-success"><i class="icon-pencil"></i></a> <a href="{$id|Path::delete}&amp;token={$token}" class="text-danger" onclick="return confirmDeleteMovie('{$movie['title']}')"><i class="icon-trash"></i></a></span>{/if}
+				{$movie['title']}
+				<span class="pull-right espace-right {if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus}</span>
+			</h2>
 		</div>
+		{if="!empty($movie['original_title'])"}<h3>{$movie['original_title']}</h3>{/if}
+	</div>
+</div>
 
-		<div class="row espace-top">
-			<div class="col-lg-3 col-sm-6 col-12 text-center espace-bottom">
-				<p><img src="{if="$movie['link_image'] != NULL"}{$movie['link_image']}{else}assets/img/movie.jpg{/if}" alt="{$movie['title']}" class="img-responsive img-thumbnail" width="160" height="213" /></p>
-				{if="$movie['status'] == Movie::SEEN"}{$displayNote}{/if}
-			</div>
-			<div class="col-lg-2 col-sm-6 col-12 aside text-muted pull-right">
-				<div class="espace-bottom">
-					<p><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus} {if="$movie['status'] == Movie::SEEN"}Seen{else}Not seen{/if}</span></p>
-					{if="$movie['owned']"}<p><span class="tip" data-title="Movie owned"><i class="icon-film"></i></span> Owned</p>{/if}
-				</div>
-				{if="!empty($movie['duration'])"}<p>{$movie['duration']} min</p>{/if}
-				{if="!empty($movie['release_date'])"}<p><span class="tip" data-title="Release&nbsp;date"><i class="icon-calendar"></i> {$movie['release_date']}</span></p>{/if}
-				{if="!empty($country)"}<p>{$country|displayFlag} nationality</p>{/if}
-				<ul class="list-unstyled espace-top">
-					{$displayGenres}
-				</ul>
-				{if="!empty($movie['link_website'])"}<p class="espace-top"><a href="{$movie['link_website']}" rel="external" class="normal tip" title="More&nbsp;infos&nbsp;online"><i class="icon-globe"></i> infos online</a></p>{/if}
-			</div>
-			<div class="col-lg-6 col-sm-12 col-12">
-				<p class="synopsis">{$movie['synopsis']}</p>
-			</div>
+<div class="row espace-top">
+	<div class="col-lg-3 col-sm-6 col-12 text-center espace-bottom">
+		<p><img src="{if="$movie['link_image'] != NULL"}{$movie['link_image']}{else}assets/img/movie.jpg{/if}" alt="{$movie['title']}" class="img-responsive img-thumbnail" width="160" height="213" /></p>
+		{if="$movie['status'] == Movie::SEEN"}{$displayNote}{/if}
+	</div>
+	<div class="col-lg-2 col-sm-6 col-12 aside text-muted pull-right">
+		<div class="espace-bottom">
+			<p><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus} {if="$movie['status'] == Movie::SEEN"}Seen{else}Not seen{/if}</span></p>
+			{if="$movie['owned']"}<p><span class="tip" data-title="Movie owned"><i class="icon-film"></i></span> Owned</p>{/if}
 		</div>
+		{if="!empty($movie['duration'])"}<p>{$movie['duration']} min</p>{/if}
+		{if="!empty($movie['release_date'])"}<p><span class="tip" data-title="Release&nbsp;date"><i class="icon-calendar"></i> {$movie['release_date']}</span></p>{/if}
+		{if="!empty($country)"}<p>{$country|displayFlag} nationality</p>{/if}
+		<ul class="list-unstyled espace-top">
+			{$displayGenres}
+		</ul>
+		{if="!empty($movie['link_website'])"}<p class="espace-top"><a href="{$movie['link_website']}" rel="external" class="normal tip" title="More&nbsp;infos&nbsp;online"><i class="icon-globe"></i> infos online</a></p>{/if}
+	</div>
+	<div class="col-lg-6 col-sm-12 col-12">
+		<p class="synopsis">{$movie['synopsis']}</p>
+	</div>
+</div>
 
-	</article>
+</article>
 </div>
 
 {include="page.foot"}
