@@ -1,22 +1,10 @@
-# myMovies
+# ![myMovies](https://raw.github.com/nicolabricot/myMovies/gh-pages/images/movies_32x32.png) myMovies 
 
-Light webapplication to get status' movies if they are seen or not
+__Light webapplication to manage movies and track their state__  
+
 
 ---
 
-### Road map
+Currently in development for release candidate v 1.0.  
+See the [road map](https://github.com/nicolabricot/myMovies/issues/6).
 
-- [x] Easy installation
-- [x] Signin and signout pages
-- [x] Display logs of connections and errors
-- [x] Add and edit a movie (and import image from an url)
-- [x] List of movies (sorted by date of creation) and pagination
-- [ ] Add search (in title movie, synopsis and genre)
-- [ ] Sort movies by best rating (implementation of `Favorites`)
-- [ ] Display movies not yet seen (implemenation of `Soon`)
-- [ ] Sort movies by genre
-- [ ] Generate a RSS feed (update when a movie is added or edited)
-- [ ] Add some cache pages for public pages
-- [ ] Export movies (html, json file? Possibility to remove personnal infos: if seen/owned or not)
-- [ ] Import movies from file (htlm, json?)
-- [x] Autocomplete fields from IMDB (thanks to Rauks [#2](https://github.com/nicolabricot/myMovies/pull/2))
