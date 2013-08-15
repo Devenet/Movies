@@ -38,7 +38,7 @@ class IMDB {
     // Define a timeout for the request of the IMDb page.
     const IMDB_TIMEOUT   = 15;
     // Define the "Accept-Language" header language (so IMDb replies with decent localization settings).
-    const IMDB_LANG      = 'en-US, en';
+    const IMDB_LANG      = 'fr-FR, fr, en-US, en';
     // Define the default search type (all/tvtitle/tvepisode/movie).
     const IMDB_SEARCHFOR = 'all';
 
