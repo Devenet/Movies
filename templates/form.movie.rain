@@ -8,21 +8,19 @@
 
 <div class="container">
 <div class="row">
-  <div class="col-lg-9">
-    <div class="page-header no-espace-top">
-      <h2>{$page_title}</h2>
-    </div>
-  </div>
-  <div class="col-lg-3">
-    <form method="post" action="{$target_search}" enctype="multipart/form-data">
-      <div class="input-group">
-        <input type="search" class="form-control" id="search" name="search" placeholder="Recherche" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if}/>
-        <span class="input-group-btn">
-          <button class="btn btn-info" type="submit"><i class="icon-search icon-white"></i> IMDB</button>
-        </span>
-      </div>
-      <input type="hidden" name="token" value="{$token}" />
-    </form>
+  <div class="col-lg-12">
+	<div class="page-header no-espace-top">
+		<h2>{$page_title}</h2>
+		{if="!empty($display_search)"}
+		<form method="post" action="{$target_search}" class="search-inline pull-right col-3">
+			<div class="input-group">
+				<input type="search" class="form-control" id="search" name="search" placeholder="Search" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if} />
+				<input type="hidden" name="token" value="{$token}" />
+				<span class="input-group-btn"><button class="btn btn-info" type="submit"><i class="icon-search icon-white"></i> IMDB</button></span>
+			</div>
+		</form>
+		{/if}
+	</div>
   </div>
 </div>
 {if="!empty($error)"}
@@ -40,7 +38,7 @@
 <div class="col-lg-6">
 	<div class="form-group">
 		<label for="title" class="text-primary">Title</label>
-		<input type="text" class="form-control" id="title" name="title" placeholder="Moi, moche et méchant" {if="!empty($inputs['title'])"}value="{$inputs['title']}"{/if}/>
+		<input type="text" class="form-control" id="title" name="title" placeholder="Moi, moche et méchant" {if="!empty($inputs['title'])"}value="{$inputs['title']}"{/if} autofocus="autofocus" />
 	</div>
 	<div class="form-group">
 		<label for="synopsis" class="text-primary">Synopsis</label>
@@ -139,6 +137,8 @@ $('.datepicker-release').datepicker();
 $('select#country option').prepend(function() {return '<span class="flag flag-option flag-'+$(this).val()+'"></span> ';} );
 if($('input#status').attr('checked') == undefined) { $('.form-group-note').slideToggle(0); }
 $('input#status').change(function(){ $('.form-group-note').slideToggle(250); });
+$('#search').focus(function(){ $(this).parent().parent().toggleClass('col-3 col-4'); });
+$('#search').blur(function(){ $(this).parent().parent().toggleClass('col-3 col-4'); });
 });
 </script>
 </body>
