@@ -9,7 +9,7 @@
 <div class="container">
 <div class="row">
 <div class="col-lg-12">
-	<h3>It looks like it’s the first time your run “Movies”. <br />Please configure it!</h3>
+	<h3>It looks like it’s the first time your run “{#MYMOVIES#}”. <br />Please configure it!</h3>
 	<hr />
 </div>
 </div>
@@ -32,7 +32,8 @@
 	<div class="form-group espace-top-lg">
 		<label for="title" class="control-label col-lg-2">Title page</label>
 		<div class="col-lg-6">
-			<input type="text" class="form-control" id="title" name="title" value="myMovies" />
+			<input type="text" class="form-control" id="title" name="title" value="{#MYMOVIES#}" />
+			<p class="help-block">You could change that later if needed <i class="icon-smile"></i></p>
 		</div>
 	</div>
 
