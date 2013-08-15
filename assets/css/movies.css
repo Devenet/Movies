@@ -6,7 +6,6 @@
 
 html {position:relative; min-height:100%;}
 body {border-top:6px solid #428bca;}
-footer .bottom {position:absolute; left:0; bottom:0; border-bottom:6px solid #428bca; width:100%;}
 
 a.normal {text-decoration: none;}
 .tip {cursor: default;}
@@ -35,7 +34,8 @@ header .navbar-brand:hover {color:#428bca;}
 .navbar li a {border-bottom: 1px solid rgb(238,238,238);}
 .navbar li.active a, .navbar li a:hover {border-bottom: 1px solid #428bca; color:#428bca;}
 .navbar li.rss a:hover {color: #FF7A4D; border-color: #FF7A4D;}
-footer {margin: 40px auto 20px;}
+footer {margin: 20px auto 20px;}
+footer hr {border-top:2px solid #428bca;}
 footer p {font-size: 12px;}
 
 article.movies {margin-bottom: 20px;}

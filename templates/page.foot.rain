@@ -1,10 +1,11 @@
 <footer>
-<hr />
 <div class="container">
+<hr />
 <div class="row">
 	<div class="col-lg-12">
 	<p class="pull-left">
 		<a href="https://github.com/nicolabricot/myMovies" rel="external">{#MYMOVIES#}</a> &middot; Version {#MYMOVIES_VERSION#}
+		<br />Inspired by <a href="https://github.com/sebsauvage/Shaarli" rel="external">Shaarli</a> and <a href="http://books.hellohappy.org/" rel="external">HelloHappy</a>
 	</p>
 	<ul class="pull-right nav nav-pills">
 		<li><a href="#" id="go_home_you_are_drunk" title="Back&nbsp;to&nbsp;top" class="tip"><i class="icon-arrow-up"></i></a></li>
@@ -12,7 +13,6 @@
 	</div>
 </div>
 </div>
-<div class="bottom"></div>
 </footer>
 
 <script src="assets/js/jquery.js"></script>
