@@ -857,7 +857,7 @@ class IMDB {
        if ($this->isReady) {
             if ($strReturn = $this->matchRegex($this->_strSource, IMDB::IMDB_POSTER, 1)) {
                 if (strtolower($sSize) == 'big') {
-                    $strReturn = substr($strReturn, 0, strpos($strReturn, '_'));
+                    $strReturn = substr($strReturn, 0, strpos($strReturn, '_')).'jpg';
                 }
                 return $strReturn;
             }
@@ -873,7 +873,7 @@ class IMDB {
        if ($this->isReady) {
             if ($strReturn = $this->matchRegex($this->_strSource, IMDB::IMDB_POSTER, 1)) {
                 if (strtolower($sSize) == 'big') {
-                    $strReturn = substr($strReturn, 0, strpos($strReturn, '_'));
+                    $strReturn = substr($strReturn, 0, strpos($strReturn, '_')).'jpg';
                 }
                 if ($strLocal = $this->saveImage($strReturn)) {
                     return $strLocal;
