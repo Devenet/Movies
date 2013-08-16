@@ -199,7 +199,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	// write an RSS file with the last movies added
 	public function updateRSS() {
 		global $_CONFIG;
-		$url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/';
+		$url = (empty($_SERVER['REQUEST_SCHEME']) ? 'http' : $_SERVER['REQUEST_SCHEME']).'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/';
 		$xml  = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
 		$xml .= '<rss version="2.0"  xmlns:atom="http://www.w3.org/2005/Atom">'.PHP_EOL;
 		$xml .= '<channel>'.PHP_EOL;
