@@ -801,7 +801,7 @@ function addMovie() {
 						'original_title' => ($oIMDB->getTitle(TRUE) != $oIMDB->getTitle() ? $oIMDB->getTitle() : NULL),
 						'duration' => explode(' ', $oIMDB->getRuntime())[0],
 						'release_date' => transformReleaseDate($oIMDB->getReleaseDate()),
-						'country' => NULL,
+						'country' => ($oIMDB->getCountryAsUrl() != $oIMDB->strNotFound ? substr($oIMDB->getCountryAsUrl(), 37, 2) : NULL),
 						'link_website' => checkLink($oIMDB->getUrl()),
 						'link_image' => ($oIMDB->getPosterUrl('big') != $oIMDB->strNotFound ? $oIMDB->getPosterUrl('big') : NULL),
 						'link_image_import' => ($oIMDB->getPosterUrl('big') != $oIMDB->strNotFound ? TRUE : NULL),
