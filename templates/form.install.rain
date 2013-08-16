@@ -2,6 +2,7 @@
 <html>
 <head>
 {include="page.head"}
+<style>option {display:block; padding:4px 8px;}</style>
 </head>
 <body>
 {include="page.menu"}
@@ -9,35 +10,66 @@
 <div class="container">
 <div class="row">
 <div class="col-lg-12">
-	<h3>It looks like it’s the first time your run “Movies”. <br />Please configure it!</h3>
+	<h3>It looks like it’s the first time your run “{#MYMOVIES#}”. <br />Please configure it!</h3>
 	<hr />
 </div>
 </div>
+
+{if="!empty($error_curl)"}
+<div class="row">
+<div class="col-lg-8 col-lg-offset-2">
+	<div class="alert alert-info">
+		<strong>Oh damn!</strong> The cURL extension was not found or is disabled on your server.
+		<br />You can always use the webapplication, but the IMDB search will not work until you activate it <i class="icon-smile"></i>.
+	</div>
+</div>
+</div>
+{/if}
+{if="!empty($error_img)"}
+<div class="row">
+<div class="col-lg-8 col-lg-offset-2">
+	<div class="alert alert-info">
+		<strong>Oh damn!</strong> It seems that the PHP library GD is not enabled or installed on your server (the function <code>imagecreatefromjpeg()</code> is undefined).
+		<br />You can always use the webapplication, but you could not import image from URL and generate a thumbnail until you activate it <i class="icon-smile"></i>.
+	</div>
+</div>
+</div>
+{/if}
 
 <form class="form-horizontal espace-top" method="post" action=".">
 <fieldset>
 	<div class="form-group">
 		<label for="login" class="control-label col-lg-2">Login</label>
-		<div class="col-lg-6">
+		<div class="col-lg-8">
 			<input type="text" class="form-control" id="login" name="login" placeholder="Username" autofocus/>
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="password" class="control-label col-lg-2">Password</label>
-		<div class="col-lg-6">
+		<div class="col-lg-8">
 			<input type="password" class="form-control" id="password" name="password" placeholder="Password" />
 		</div>
 	</div>
 
 	<div class="form-group espace-top-lg">
 		<label for="title" class="control-label col-lg-2">Title page</label>
-		<div class="col-lg-6">
-			<input type="text" class="form-control" id="title" name="title" value="myMovies" />
+		<div class="col-lg-8">
+			<input type="text" class="form-control" id="title" name="title" value="{#MYMOVIES#}" />
+			<p class="help-block">You can change that later if needed <i class="icon-smile"></i>.</p>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="login" class="control-label col-lg-2">Prefered language</label>
+		<div class="col-lg-8">
+			<select class="form-control" id="locale" name="locale">
+				{$locales}
+			</select>
+			<p class="help-block">Used for IMDB search when importing informations to add a movie.</p>
 		</div>
 	</div>
 
 	<div class="form-group form-controls">
-		<div class="col-lg-6 col-lg-offset-2">
+		<div class="col-lg-8 col-lg-offset-2">
 			<button type="submit" class="btn btn-primary">Save</button>
 		</div>
 	</div>

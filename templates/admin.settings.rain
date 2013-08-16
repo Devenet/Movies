@@ -2,6 +2,7 @@
 <html>
 <head>
 {include="page.head"}
+<style>option {display:block; padding:4px 8px;}</style>
 </head>
 <body>
 {include="page.menu"}
@@ -48,6 +49,16 @@
 			<input type="text" class="form-control" id="title" name="title" placeholder="myMovies" value="{#TITLE#}" />
 		</div>
 	</div>
+	<div class="form-group espace-top-lg">
+		<label for="login" class="control-label col-lg-2">Prefered language</label>
+		<div class="col-lg-8">
+			<select class="form-control" id="locale" name="locale">
+				{$locales}
+			</select>
+			<p class="help-block">Used for IMDB search when importing informations to add a movie.</p>
+		</div>
+	</div>
+
 	<input type="hidden" name="token" value="{$token}" />
 
 	<div class="form-group form-controls">

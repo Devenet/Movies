@@ -10,7 +10,7 @@
 <div class="row">
 {loop="movie"}
 <article class="movies col-lg-6">
-	<h2>
+	<h2 class="no-espace-top">
 		{if="isLogged()"}<span class="movie-tools"><a href="{$value.id|Path::edit}" class="text-success"><i class="icon-pencil"></i></a> <a href="{$value.id|Path::delete}&amp;token={$token}" class="text-danger" onclick="return confirmDeleteMovie('{$value.title}')"><i class="icon-trash"></i></a></span>{/if}
 		<a href="{$value.id|Path::movie}" title="{$value.title}">{$value.title}</a>
 		{if="!empty($value.original_title)"} <small>{$value.original_title}</small>{/if}
@@ -19,12 +19,12 @@
 	<ul class="infos list-inline text-muted">
 		<li class="status espace-right-sm"><span class="{if="$value.status == Movie::SEEN"}text-success{else}text-warning{/if}">{$value.status|displayStatus}</span></li>
 		{if="!empty($value.duration)"}<li>{$value.duration} min</li>{/if}
-		{if="!empty($value.release_date)"}<li><span class="tip" data-title="Release&nbsp;date" data-placement="bottom"><i class="icon-calendar"></i> {$value.release_date}</span></li>{/if}
+		{if="!empty($value.release_date)"}<li><span class="tip" data-title="Release&nbsp;date"><i class="icon-calendar"></i> {$value.release_date}</span></li>{/if}
 		{if="!empty($value.country)"}<li class="espace-left-sm">{$value.country|displayFlag}</li>{/if}
 		<li class="pull-right">
 		<ul class="list-inline">
-			{if="$value.owned"}<li><span class="tip" data-title="Movie owned" data-placement="bottom"><i class="icon-film"></i></span></li>{/if}
-			{if="!empty($value.link_website)"}<li><a href="{$value.link_website}" rel="external" class="normal text-muted tip" title="More&nbsp;infos&nbsp;online" data-placement="bottom"><i class="icon-globe"></i></a></li>{/if}
+			{if="$value.owned"}<li><span class="tip" data-title="Movie owned"><i class="icon-film"></i></span></li>{/if}
+			{if="!empty($value.link_website)"}<li><a href="{$value.link_website}" rel="external" class="normal text-muted tip" title="More&nbsp;infos&nbsp;online"><i class="icon-globe"></i></a></li>{/if}
 		</ul>
 		</li>
 	</ul>
@@ -40,11 +40,9 @@
 		<p class="description">{$value.synopsis|displaySynopsis}</p>
 		<p><a class="more-button btn btn-default btn-sm" href="{$value.id|Path::movie}">More</a>
 		</p>
-		{if="$value.status == Movie::SEEN"}
 		<ul class="list-inline text-muted">
 			{$value.genre|displayGenres}
 		</ul>
-		{/if}
 	</div>
 	</div>
 </article>

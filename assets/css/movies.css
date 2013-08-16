@@ -4,9 +4,8 @@
  * Copyright 2013 Nicolas Devenet
  */
 
-header {margin: 20px 0 10px;}
-header h1 {display: inline;}
-footer {margin: 40px auto 10px;}
+html {position:relative; min-height:100%;}
+body {border-top:6px solid #428bca;}
 
 a.normal {text-decoration: none;}
 .tip {cursor: default;}
@@ -26,10 +25,18 @@ label.text-muted {color: rgb(153, 153, 153);}
 .no-espace-top {margin-top: 0;}
 .no-espace-bottom {margin-bottom: 0;}
 
+header {margin: 20px 0 10px;}
+header h1 {display: inline;}
+header .navbar-brand {font-family:Georgia,"DejaVu Serif","Bistream Vera Serif","Liberation Serif",serif;}
+header .navbar-brand img {margin-right: 5px;}
+header .navbar-brand:hover {color:#428bca;}
 .page-header h2 {margin-top: 0;}
 .navbar li a {border-bottom: 1px solid rgb(238,238,238);}
-.navbar li.active a, .navbar li a:hover {border-bottom: 1px solid #888;}
+.navbar li.active a, .navbar li a:hover {border-bottom: 1px solid #428bca; color:#428bca;}
 .navbar li.rss a:hover {color: #FF7A4D; border-color: #FF7A4D;}
+footer {margin: 20px auto 20px;}
+footer hr {border-top:2px solid #428bca;}
+footer p {font-size: 12px;}
 
 article.movies {margin-bottom: 20px;}
 article.movies h2 a {text-decoration: none;}
@@ -46,11 +53,12 @@ article.movies .kinds {font-size: 12px;}
 .stars.stars-5 {color: #468847;}
 
 article.movie .page-header {margin-top: 0; margin-bottom: 15px;}
-article.movie h2 {margin-bottom: 0; position: relative;}
+article.movie h2 {margin-bottom: 0; position: relative; color: #444;}
 article.movie h2 a {text-decoration: none;}
 article.movie h2 a.online {font-size: 16px; vertical-align: super;}
 article.movie h2 .tooltip .tooltip-inner {font-size: 12px; font-weight: normal;}
 article.movie h3 {font-size: 18px; color: rgb(153,153,153); font-weight: normal; margin-top: 15px;}
+article.movie .synopsis {font-size:16px;font-family:Georgia,"DejaVu Serif","Bistream Vera Serif","Liberation Serif",serif;}
 article.movie .stars {margin-top: 20px; letter-spacing: 2px;}
 
 @media(max-width: 767px) {
@@ -60,4 +68,5 @@ article.movie .stars {margin-top: 20px; letter-spacing: 2px;}
 	.movie .aside p, .movie .aside li {display: inline; margin-right: 15px;}
 	.movie .aside ul {display: inline;}
 	.movie .aside {margin-bottom: 20px;}
+	.navbar li a {border:none !important;}
 }
