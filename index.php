@@ -260,6 +260,123 @@ abstract class Path {
 	}
 }
 
+
+/**
+ * Session managment (thanks to Sébastien Sauvage with Shaarli!)
+ */
+// Get state if user is logged in or not
+function isLogged() {
+	global $_CONFIG;
+	if (!isset($_CONFIG['login'])) { return FALSE; }
+	// If session does not exist on server side, or IP address has changed, or session has expired, logout.
+	if (empty($_SESSION['uid']) || $_SESSION['ip'] != currentIP() || time() >= $_SESSION['expires_on']) {
+		logout();
+		return FALSE;
+	}
+	$_SESSION['expires_on'] = time() + INACTIVITY_TIMEOUT;
+	return TRUE;
+}
+
+// Logout user
+function logout() { if(isset($_SESSION)) { unset($_SESSION['uid']); unset($_SESSION['ip']); unset($_SESSION['expires_on']); } }
+
+// Returns the IP address of the client (Used to prevent session cookie hijacking.)
+function currentIP() {
+	$ip = $_SERVER["REMOTE_ADDR"];
+	// Then we use more HTTP headers to prevent session hijacking from users behind the same proxy
+	if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) { $ip=$ip.'_'.$_SERVER['HTTP_X_FORWARDED_FOR']; }
+	if (isset($_SERVER['HTTP_CLIENT_IP'])) { $ip=$ip.'_'.$_SERVER['HTTP_CLIENT_IP']; }
+	return $ip;
+}
+
+// Check that user/password is correct.
+function check_auth($login, $password) {
+	global $_CONFIG;
+	$hash = sha1($login.$password.$_CONFIG['salt']);
+	if ($login == $_CONFIG['login'] && $hash == $_CONFIG['hash']) {
+		$_SESSION['uid'] = sha1(uniqid('', TRUE).'_'.mt_rand());
+		$_SESSION['ip'] = currentIP();
+		$_SESSION['expires_on'] = time() + INACTIVITY_TIMEOUT;
+		writeLog('Login successful for user '.htmlspecialchars($login));
+		return TRUE;
+	}
+	writeLog('Login failed for user '.htmlspecialchars($login));
+	return FALSE;
+}
+
+// Token are attached to the session
+if (!isset($_SESSION['tokens'])) $_SESSION['tokens']=array();
+
+// Returns a token
+function getToken() {
+	$token = sha1(uniqid('',true).'_'.mt_rand());
+	$_SESSION['tokens'][$token] = 1;
+	return $token;
+}
+
+// Tells if a token is ok and destroy it in case of success
+function acceptToken($token) {
+	if (isset($_SESSION['tokens'][$token])) {
+		unset($_SESSION['tokens'][$token]);
+		return TRUE;
+	}
+	writeLog('Invalid token given');
+	return FALSE;
+}
+
+// Several consecutive failed logins will ban the IP address for 1 hour.
+include $_CONFIG['ban'];
+// in case of failed login
+function loginFailed() {
+	global $_CONFIG;
+	$ip = $_SERVER['REMOTE_ADDR'];
+	$ban = $_CONFIG['ban_ip'];
+	if (!isset($ban['failures'][$ip])) {$ban['failures'][$ip] = 0;}
+	$ban['failures'][$ip]++;
+	if ($ban['failures'][$ip] > ($_CONFIG['ban_after']-1)) {
+		$ban['banned'][$ip] = time() + $_CONFIG['ban_duration'];
+		writeLog('IP address banned from login');
+	}
+	$_CONFIG['ban_ip'] = $ban;
+	file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
+}
+
+// Signals a successful login. Resets failed login counter.
+function loginSucceeded() {
+	global $_CONFIG;
+	$ip = $_SERVER["REMOTE_ADDR"];
+	$ban = $_CONFIG['ban_ip'];
+	unset($ban['failures'][$ip]);
+	unset($ban['banned'][$ip]);
+	$_CONFIG['ban_ip'] = $ban;
+	file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
+}
+
+// Checks if the user CAN login. If 'true', the user can try to login.
+function canLogin() {
+	global $_CONFIG;
+	$ip = $_SERVER["REMOTE_ADDR"];
+	$ban = $_CONFIG['ban_ip'];
+	if (isset($ban['banned'][$ip])) {
+		// User is banned. Check if the ban has expired:
+		if ($ban['banned'][$ip] <= time()) {
+			writeLog('Ban lifted');
+			unset($ban['failures'][$ip]);
+			unset($ban['banned'][$ip]);
+			file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
+			return TRUE;
+		}
+		return FALSE;
+	}
+	return TRUE;
+}
+
+// list of url allowed to be redirected
+function targetIsAllowed($target) {
+	$allowed = array('admin', 'add', 'logs', 'settings');
+	return in_array(htmlspecialchars($target), $allowed);
+}
+
 /**
  * Toolbox functions
  */
@@ -400,123 +517,6 @@ function checkPagination($page, $total) {
 	$pages = ceil($total/PAGINATION);
 	if ($page < $pages) { return TRUE; }
 	notFound();
-}
-
-
-/**
- * Session managment (thanks to Sébastien Sauvage with Shaarli!)
- */
-// Get state if user is logged in or not
-function isLogged() {
-	global $_CONFIG;
-	if (!isset($_CONFIG['login'])) { return FALSE; }
-	// If session does not exist on server side, or IP address has changed, or session has expired, logout.
-	if (empty($_SESSION['uid']) || $_SESSION['ip'] != currentIP() || time() >= $_SESSION['expires_on']) {
-		logout();
-		return FALSE;
-	}
-	$_SESSION['expires_on'] = time() + INACTIVITY_TIMEOUT;
-	return TRUE;
-}
-
-// Logout user
-function logout() { if(isset($_SESSION)) { unset($_SESSION['uid']); unset($_SESSION['ip']); unset($_SESSION['expires_on']); } }
-
-// Returns the IP address of the client (Used to prevent session cookie hijacking.)
-function currentIP() {
-	$ip = $_SERVER["REMOTE_ADDR"];
-	// Then we use more HTTP headers to prevent session hijacking from users behind the same proxy
-	if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) { $ip=$ip.'_'.$_SERVER['HTTP_X_FORWARDED_FOR']; }
-	if (isset($_SERVER['HTTP_CLIENT_IP'])) { $ip=$ip.'_'.$_SERVER['HTTP_CLIENT_IP']; }
-	return $ip;
-}
-
-// Check that user/password is correct.
-function check_auth($login, $password) {
-	global $_CONFIG;
-	$hash = sha1($login.$password.$_CONFIG['salt']);
-	if ($login == $_CONFIG['login'] && $hash == $_CONFIG['hash']) {
-		$_SESSION['uid'] = sha1(uniqid('', TRUE).'_'.mt_rand());
-		$_SESSION['ip'] = currentIP();
-		$_SESSION['expires_on'] = time() + INACTIVITY_TIMEOUT;
-		writeLog('Login successful for user '.htmlspecialchars($login));
-		return TRUE;
-	}
-	writeLog('Login failed for user '.htmlspecialchars($login));
-	return FALSE;
-}
-
-// Token are attached to the session
-if (!isset($_SESSION['tokens'])) $_SESSION['tokens']=array();
-
-// Returns a token
-function getToken() {
-	$token = sha1(uniqid('',true).'_'.mt_rand());
-	$_SESSION['tokens'][$token] = 1;
-	return $token;
-}
-
-// Tells if a token is ok and destroy it in case of success
-function acceptToken($token) {
-	if (isset($_SESSION['tokens'][$token])) {
-		unset($_SESSION['tokens'][$token]);
-		return TRUE;
-	}
-	writeLog('Invalid token given');
-	return FALSE;
-}
-
-// Several consecutive failed logins will ban the IP address for 1 hour.
-include $_CONFIG['ban'];
-// in case of failed login
-function loginFailed() {
-	global $_CONFIG;
-	$ip = $_SERVER['REMOTE_ADDR'];
-	$ban = $_CONFIG['ban_ip'];
-	if (!isset($ban['failures'][$ip])) {$ban['failures'][$ip] = 0;}
-	$ban['failures'][$ip]++;
-	if ($ban['failures'][$ip] > ($_CONFIG['ban_after']-1)) {
-		$ban['banned'][$ip] = time() + $_CONFIG['ban_duration'];
-		writeLog('IP address banned from login');
-	}
-	$_CONFIG['ban_ip'] = $ban;
-	file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
-}
-
-// Signals a successful login. Resets failed login counter.
-function loginSucceeded() {
-	global $_CONFIG;
-	$ip = $_SERVER["REMOTE_ADDR"];
-	$ban = $_CONFIG['ban_ip'];
-	unset($ban['failures'][$ip]);
-	unset($ban['banned'][$ip]);
-	$_CONFIG['ban_ip'] = $ban;
-	file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
-}
-
-// Checks if the user CAN login. If 'true', the user can try to login.
-function canLogin() {
-	global $_CONFIG;
-	$ip = $_SERVER["REMOTE_ADDR"];
-	$ban = $_CONFIG['ban_ip'];
-	if (isset($ban['banned'][$ip])) {
-		// User is banned. Check if the ban has expired:
-		if ($ban['banned'][$ip] <= time()) {
-			writeLog('Ban lifted');
-			unset($ban['failures'][$ip]);
-			unset($ban['banned'][$ip]);
-			file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
-			return TRUE;
-		}
-		return FALSE;
-	}
-	return TRUE;
-}
-
-// list of url allowed to be redirected
-function targetIsAllowed($target) {
-	$allowed = array('admin', 'add', 'logs', 'settings');
-	return in_array(htmlspecialchars($target), $allowed);
 }
 
 /**
