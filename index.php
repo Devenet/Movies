@@ -142,9 +142,9 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		global $_CONFIG;
 		if (!file_exists($_CONFIG['database']))  {
 			$this->data = array();
-			$movie = array('id' => 1375621919,'title' => 'Moi, moche et méchant','original_title' => 'Despicable me','release_date' => '2010-10-06','country' => 'us','genre' => 'animation, comédie, famille','duration' => 95,'synopsis' => 'Dans un charmant quartier résidentiel délimité par des clôtures de bois blanc et orné de rosiers fleurissants se dresse une bâtisse noire entourée d’une pelouse en friche. Cette façade sinistre cache un secret : Gru, un méchant vilain, entouré d’une myriade de sous-fifres et armé jusqu’aux dents, qui, à l’insu du voisinage, complote le plus gros casse de tous les temps : voler la lune (Oui, la lune !)...<br />Gru affectionne toutes sortes de sales joujoux. Il possède une multitude de véhicules de combat aérien et terrestre et un arsenal de rayons immobilisants et rétrécissants avec lesquels il anéantit tous ceux qui osent lui barrer la route... jusqu’au jour où il tombe nez à nez avec trois petites orphelines qui voient en lui quelqu’un de tout à fait différent : un papa.<br />Le plus grand vilain de tous les temps se retrouve confronté à sa plus dure épreuve : trois fillettes prénommées Margo, Edith et Agnes','link_image' => NULL,'link_website' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=140623.html','status' => Movie::SEEN,'note' => 9, 'owned' => TRUE);
+			$movie = array('id' => time(),'title' => 'Moi, moche et méchant','original_title' => 'Despicable Me','release_date' => '2010-10-06','country' => 'us','genre' => 'Animation, Comedy, Crime, Family, Fantasy','duration' => 95,'synopsis' => 'In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru, planning the biggest heist in the history of the world. He is going to steal the moon. (Yes, the moon!) Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world\'s greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.','link_image' => 'http://fr.web.img4.acsta.net/r_160_240/b_1_d6d6d6/medias/nmedia/18/73/23/03/19494202.jpg','link_website' => 'http://www.imdb.com/title/tt1323594/','status' => Movie::SEEN,'note' => 8, 'owned' => TRUE);
 			$this->data[$movie['id']] = $movie;
-			$movie = array('id' => 1375621920,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable me 2','release_date' => '2013-06-26','country' => 'us','genre' => 'animation','duration' => 98,'synopsis' => 'Ayant abandonné la super-criminalité et mis de côté ses activités funestes pour se consacrer à la paternité et élever Margo, Édith et Agnès, Gru, et avec lui, le Professeur Néfario et les Minions, doivent se trouver de nouvelles occupations. Alors qu’il commence à peine à s’adapter à sa nouvelle vie tranquille de père de famille, une organisation ultrasecrète, menant une lutte acharnée contre le Mal à l’échelle planétaire, vient frapper à sa porte. Soudain, c’est à Gru, et à sa nouvelle coéquipière Lucy, que revient la responsabilité de résoudre une série de méfaits spectaculaires. Après tout, qui mieux que l’ex plus méchant méchant de tous les temps, pourrait attraper celui qui rivalise pour lui voler la place qu’il occupait encore récemment.<br />Rejoignant nos héros, on découvre : Floyd, le propriétaire du salon Eagle Postiche Club pour hommes et suspect numéro 1 du crime le plus abject jamais perpétré depuis le départ de Gru à la retraite ; Silas de Lamolefès, le super-espion à la tête de l’Agence Vigilance de Lynx, patron de Lucy, dont le nom de famille est une source inépuisable d’amusement pour les Minions ; Antonio, le si mielleux objet de l’affection naissante de Margo, et Eduardo Perez, le père d’Antonio, propriétaire du restaurant Salsa & Salsa et l’homme qui se cache peut-être derrière le masque d’El Macho, le plus impitoyable et, comme son nom l’indique, méchant macho que la terre ait jamais porté.','link_image' => NULL,'link_website' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=190299.html','status' => Movie::NOT_SEEN,'note' => NULL, 'owned' => FALSE);
+			$movie = array('id' => time()+1,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable Me 2','release_date' => '2013-06-26','country' => 'us','genre' => 'Animation, Adventure, Comedy, Crime, Family, Sci-Fi','duration' => 98,'synopsis' => 'While Gru, the ex-supervillain is adjusting to family life and an attempted honest living in the jam business, a secret Arctic laboratory is stolen. The Anti-Villain League decides it needs an insider\'s help and recruits Gru in the investigation. Together with the eccentric AVL agent, Lucy Wilde, Gru concludes that his prime suspect is the presumed dead supervillain, El Macho, whose his teenage son is also making the moves on his eldest daughter, Margo. Seemingly blinded by his overprotectiveness of his children and his growing mutual attraction to Lucy, Gru seems on the wrong track even as his minions are being quietly kidnapped en masse for some malevolent purpose.','link_image' => 'http://fr.web.img2.acsta.net/r_160_240/b_1_d6d6d6/medias/nmedia/18/89/40/05/20532087.jpg','link_website' => 'http://www.imdb.com/title/tt1690953/','status' => Movie::NOT_SEEN,'note' => NULL, 'owned' => NULL);
 			$this->data[$movie['id']] = $movie;
 			file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
 			self::updateRSS();
@@ -200,9 +200,10 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	public function updateRSS() {
 		global $_CONFIG;
 		$url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/';
-		$xml  = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL;
-		$xml .= '<rss version="2.0">'.PHP_EOL;
+		$xml  = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
+		$xml .= '<rss version="2.0"  xmlns:atom="http://www.w3.org/2005/Atom">'.PHP_EOL;
 		$xml .= '<channel>'.PHP_EOL;
+		$xml .= '<atom:link href="'.$url.RSS.'" rel="self" type="application/rss+xml" />'.PHP_EOL;
 		$xml .= '<title>'.TITLE.'</title>'.PHP_EOL;
 		$xml .= '<link>'.$url.'</link>'.PHP_EOL;
 		$xml .= '<description>RSS feed of '.TITLE.'</description>'.PHP_EOL;
@@ -221,13 +222,13 @@ class Movies implements Iterator, Countable, ArrayAccess {
 			$xml .= '<item>'.PHP_EOL;
 			$xml .= '<title>'. $movie['title'] .'</title>'.PHP_EOL;
 			$xml .= '<link>'.$url.substr(Path::movie($id), 2).'</link>'.PHP_EOL;
-			$xml .= '<description><![CDATA[<strong>'.($movie['status']==Movie::SEEN ? 'Movie seen &middot; Rated '.$movie['note'].'/10' : 'Movie not seen').'</strong><br />'.$movie['synopsis'] .']]></description>'.PHP_EOL;
+			$xml .= '<description><![CDATA[<strong>'.($movie['status']==Movie::SEEN ? 'Movie seen &middot; Rated '.$movie['note'].'/10' : 'Movie not seen').'</strong><br />'.htmlspecialchars_decode(htmlentities($movie['synopsis'])).']]></description>'.PHP_EOL;
 			// trasform image url if needed
 			$img = !empty($movie['link_image']) ? $movie['link_image'] : $url.'assets/img/movie.jpg';
 			// if img is hosted in local, we have to add $url before...
 			if (substr( $img, 0, strlen($_CONFIG['images'].'/') ) === $_CONFIG['images'].'/') { $img = $url.$img; }
-			$xml .= '<enclosure url="'.$img.'" type="image/jpeg" />'.PHP_EOL;
-			$xml .= '<guid isPermaLink="true">'.$id.'</guid>'.PHP_EOL;
+			$xml .= '<enclosure url="'.$img.'" length="42" type="image/jpeg" />'.PHP_EOL;
+			$xml .= '<guid isPermaLink="false">'.$id.'</guid>'.PHP_EOL;
 			$xml .= '<pubDate>'.date("D, d M Y H:i:s O", $id).'</pubDate>'.PHP_EOL;
 			$xml .= '<category domain="'.$url.'">'.$movie['genre'].'</category>'.PHP_EOL;
 			$xml .= '<source url="'.$url.RSS.'">'.TITLE.'</source>'.PHP_EOL;
