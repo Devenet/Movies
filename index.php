@@ -110,6 +110,8 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	private $keys;
 	private $current; 
 	private $logged;
+	public $total_not_seen = 0;
+	public $total_seen = 0;
 
 	function __construct($logged = FALSE) {
 		$this->logged = $logged;
@@ -164,7 +166,8 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	public function save() {
 		global $_CONFIG;
 		if (!$this->logged) die('You are not authorized to change the database.');
-		file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);		
+		krsort($this->data);
+		file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
 	}
 
 	// last movies inserted
@@ -173,22 +176,27 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		return array_slice($this->data, $begin, PAGINATION, TRUE);
 	}
 
-	// return sorted array by status (not seen first)
+	// return sorted array by status (only not seen returned)
 	public function byStatus($begin = 0) {
-		$temp = array();
-		foreach ($this->data as $id => $movie) { $temp[$id] = $movie['status']; }
-		asort($temp);
 		$sorted = array();
-		foreach($temp as $id => $value) { $sorted[$id] = $this->data[$id]; }
+		foreach ($this->data as $id => $movie) {
+			if ($movie['status'] == Movie::NOT_SEEN) { $sorted[$id] = $movie; }
+		}
+		krsort($sorted);
+		$this->total_not_seen = sizeof($sorted);
 		return array_slice($sorted, $begin, PAGINATION, TRUE);
 	}
 
+	// return sorted array by note (and then id desc) (only seen i.e. with a note returned)
 	public function byNote($begin = 0) {
-		$temp = array();
-		foreach ($this->data as $id => $movie) { $temp[$id] = $movie['note']; }
-		arsort($temp);
 		$sorted = array();
-		foreach($temp as $id => $value) { $sorted[$id] = $this->data[$id]; }
+		foreach ($this->data as $id => $movie) {
+			if ($movie['status'] == Movie::SEEN) { $sorted[$id] = $movie; }
+		}
+		$this->total_seen = sizeof($sorted);
+		foreach ($sorted as $key => $value) { $values[] = $value['note']; }
+		$keys = array_keys($sorted);
+		array_multisort($values, SORT_DESC, $keys, SORT_DESC, $sorted);
 		return array_slice($sorted, $begin, PAGINATION, TRUE);
 	}
 }
@@ -619,7 +627,7 @@ function displayPagination($page, $total, $prefix = '?') {
 	$offset = 2;
 	$begin = ($page-$offset <= 0) ? 0 : $page-$offset;
 	$end = ($page+$offset >= $pages) ? $pages-1 : $page+$offset;
-	if ($pages > 1 && $offset < PAGINATION && $end-$begin < 2*$offset) {
+	if ($pages > 2*$offset && $end-$begin < 2*$offset) {
 		if ($end-$page <= $offset-1) { $begin -= $offset-$end+$page; }
 		else { $end += $offset-$page; }
 	}
@@ -1042,7 +1050,7 @@ function signin() {
 /**
  * Process to display (loading...)
  */
-// by status asked
+// movies not seen asked
 if (isset($_GET['soon'])) {
 	$movies = new Movies();
 	$sorted = $movies->byStatus();
@@ -1050,18 +1058,18 @@ if (isset($_GET['soon'])) {
 	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
 	// check if pagination is asked
 	if (!empty($_GET['page'])) {
-			checkPagination($page, $movies->count());
+			checkPagination($page, $movies->total_not_seen);
 			$tpl->assign('movie', $movies->byStatus($page*PAGINATION));
 	} else { $tpl->assign('movie', $movies->byStatus()); }
-	$tpl->assign('pagination', displayPagination($page, $movies->count(), '?soon&amp;'));
-	$tpl->assign('page_title', 'Coming soon');
+	$tpl->assign('pagination', displayPagination($page, $movies->total_not_seen, '?soon&amp;'));
+	$tpl->assign('page_title', !empty($page) ?  'Soon &middot; Page '.($page+1) : 'Soon');
 	$tpl->assign('menu_links', Path::menu('soon'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('soon'));
 	$tpl->assign('token', getToken());
 	$tpl->draw('list');
 	exit();
 }
-// by note asked
+// movies sorted by note asked
 if (isset($_GET['box-office'])) {
 	$movies = new Movies();
 	$sorted = $movies->byStatus();
@@ -1069,18 +1077,19 @@ if (isset($_GET['box-office'])) {
 	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
 	// check if pagination is asked
 	if (!empty($_GET['page'])) {
-			checkPagination($page, $movies->count());
+			checkPagination($page, $movies->total_seen);
 			$tpl->assign('movie', $movies->byNote($page*PAGINATION));
 	} else { $tpl->assign('movie', $movies->byNote()); }
-	$tpl->assign('pagination', displayPagination($page, $movies->count(), '?box-office&amp;'));
-	$tpl->assign('page_title', 'Box office');
+	$tpl->assign('pagination', displayPagination($page, $movies->total_seen, '?box-office&amp;'));
+	$tpl->assign('page_title', !empty($page) ?  'Box office &middot; Page '.($page+1) : 'Box office');
 	$tpl->assign('menu_links', Path::menu('box-office'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('box-office'));
 	$tpl->assign('token', getToken());
 	$tpl->draw('list');
 	exit();
 }
-// home asked [need to be after other page they need pagination!]
+// all movies asked [need to be after other page they need pagination!]
+// HOME PAGE
 if (empty($_GET) || isset($_GET['page'])) {
 	$movies = new Movies();
 	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
@@ -1090,7 +1099,7 @@ if (empty($_GET) || isset($_GET['page'])) {
 			$tpl->assign('movie', $movies->lastMovies($page*PAGINATION));
 	} else { $tpl->assign('movie', $movies->lastMovies()); }
 	$tpl->assign('pagination', displayPagination($page, $movies->count()));
-	$tpl->assign('page_title', 'Home');
+	$tpl->assign('page_title', !empty($page) ?  'Home &middot; Page '.($page+1) : 'Home');
 	$tpl->assign('menu_links', Path::menu('home'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('home'));
 	$tpl->assign('token', getToken());
