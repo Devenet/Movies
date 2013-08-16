@@ -172,6 +172,16 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		krsort($this->data);
 		return array_slice($this->data, $begin, PAGINATION, TRUE);
 	}
+
+	// return sorted array by status (not seen first)
+	public function byStatus($begin = 0) {
+		$temp = array();
+		foreach ($this->data as $id => $movie) { $temp[$id] = $movie['status']; }
+		asort($temp);
+		$sorted = array();
+		foreach($temp as $id => $value) { $sorted[$id] = $this->data[$id]; }
+		return array_slice($sorted, $begin, PAGINATION, TRUE);
+	}
 }
 
 /**
@@ -594,21 +604,21 @@ function displayCountryOptions($active = FALSE) {
 }
 
 // generate the <li></li> for pagination
-function displayPagination($page, $total) {
+function displayPagination($page, $total, $prefix = '?') {
 	$page = (int) $page+0;
 	$pages = ceil($total/PAGINATION);
 	$offset = 2;
 	$begin = ($page-$offset <= 0) ? 0 : $page-$offset;
 	$end = ($page+$offset >= $pages) ? $pages-1 : $page+$offset;
-	if ($pages > 1 && $end-$begin < 2*$offset) {
+	if ($pages > 1 && $offset < PAGINATION && $end-$begin < 2*$offset) {
 		if ($end-$page <= $offset-1) { $begin -= $offset-$end+$page; }
 		else { $end += $offset-$page; }
 	}
-	$result = '<li'.($page==0 ? ' class="disabled"' : NULL).'><a href="./" title="First page" class="tip"><i class="icon-double-angle-left"></i></a></li>';
+	$result = '<li'.($page==0 ? ' class="disabled"' : NULL).'><a href="./'.str_replace('&amp;', '', $prefix).'" title="First page" class="tip"><i class="icon-double-angle-left"></i></a></li>';
 	for ($i=$begin; $i<=$end; $i++) {
-		$result .= '<li'.($i==$page ? ' class="active"' : NULL).'><a href="./'.($i>0 ? '?'.Path::page($i) : NULL).'">'.($i+1).'</a></li>';
+		$result .= '<li'.($i==$page ? ' class="active"' : NULL).'><a href="./'.$prefix.($i>0 ? Path::page($i) : NULL).'">'.($i+1).'</a></li>';
 	}
-	$result .= '<li'.($page==$end ? ' class="disabled"' : NULL).'><a href="./?'.Path::page($pages-1).'" title="Last page" class="tip"><i class="icon-double-angle-right"></i></a></li>';
+	$result .= '<li'.($page==$end ? ' class="disabled"' : NULL).'><a href="./'.$prefix.Path::page($pages-1).'" title="Last page" class="tip"><i class="icon-double-angle-right"></i></a></li>';
 	return $result;
 }
 
@@ -1023,7 +1033,26 @@ function signin() {
 /**
  * Process to display (loading...)
  */
-// home asked
+// by status asked
+if (isset($_GET['soon'])) {
+	$movies = new Movies();
+	$sorted = $movies->byStatus();
+
+	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
+	// check if pagination is asked
+	if (!empty($_GET['page'])) {
+			checkPagination($page, $movies->count());
+			$tpl->assign('movie', $movies->byStatus($page*PAGINATION));
+	} else { $tpl->assign('movie', $movies->byStatus()); }
+	$tpl->assign('pagination', displayPagination($page, $movies->count(), '?soon&amp;'));
+	$tpl->assign('page_title', 'Home');
+	$tpl->assign('menu_links', Path::menu('soon'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('soon'));
+	$tpl->assign('token', getToken());
+	$tpl->draw('list');
+	exit();
+}
+// home asked [need to be after other page they need pagination!]
 if (empty($_GET) || isset($_GET['page'])) {
 	$movies = new Movies();
 	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
