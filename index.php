@@ -221,7 +221,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 			$xml .= '<item>'.PHP_EOL;
 			$xml .= '<title>'. $movie['title'] .'</title>'.PHP_EOL;
 			$xml .= '<link>'.$url.substr(Path::movie($id), 2).'</link>'.PHP_EOL;
-			$xml .= '<description><![CDATA[<strong>'.($movie['status']==Movie::SEEN ? 'Movie seen &middot Rated '.$movie['note'].'/10' : 'Movie not seen').'</strong><br />'.$movie['synopsis'] .']]></description>'.PHP_EOL;
+			$xml .= '<description><![CDATA[<strong>'.($movie['status']==Movie::SEEN ? 'Movie seen &middot; Rated '.$movie['note'].'/10' : 'Movie not seen').'</strong><br />'.$movie['synopsis'] .']]></description>'.PHP_EOL;
 			// trasform image url if needed
 			$img = !empty($movie['link_image']) ? $movie['link_image'] : $url.'assets/img/movie.jpg';
 			// if img is hosted in local, we have to add $url before...
