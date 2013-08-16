@@ -201,7 +201,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	}
   
   // export movies datas into json
-  public static function export($exportImages = true, array $moviesIdToExport = NULL){
+  public static function export($exportImages = true, $privateDatas = true, array $moviesIdToExport = NULL){
     $movies = new Movies();
     if($moviesIdToExport == NULL){
       $moviesIdToExport = array();
@@ -215,6 +215,11 @@ class Movies implements Iterator, Countable, ArrayAccess {
     foreach($moviesIdToExport as $id){
       if(isset($movies[$id])){
         $moviesToExport[$i] = $movies[$id];
+        if(!$privateDatas){
+          $moviesToExport[$i]['status'] = NULL;
+          $moviesToExport[$i]['note'] = NULL;
+          $moviesToExport[$i]['owned'] = NULL;
+        }
         if($exportImages && !empty($movies[$id]['link_image'])){
           $type = pathinfo($movies[$id]['link_image'], PATHINFO_EXTENSION);
           $data = file_get_contents($movies[$id]['link_image']);
