@@ -2,6 +2,7 @@
 <html>
 <head>
 {include="page.head"}
+<style>option {display:block; padding:4px 8px;}</style>
 </head>
 <body>
 {include="page.menu"}
@@ -54,7 +55,16 @@
 		<label for="title" class="control-label col-lg-2">Title page</label>
 		<div class="col-lg-8">
 			<input type="text" class="form-control" id="title" name="title" value="{#MYMOVIES#}" />
-			<p class="help-block">You could change that later if needed <i class="icon-smile"></i></p>
+			<p class="help-block">You can change that later if needed <i class="icon-smile"></i>.</p>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="login" class="control-label col-lg-2">Prefered language</label>
+		<div class="col-lg-8">
+			<select class="form-control" id="locale" name="locale">
+				{$locales}
+			</select>
+			<p class="help-block">Used for IMDB search when importing informations to add a movie.</p>
 		</div>
 	</div>
 
