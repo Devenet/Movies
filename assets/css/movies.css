@@ -64,7 +64,6 @@ article.movie .stars {margin-top: 20px; letter-spacing: 2px;}
 @media(max-width: 767px) {
 	header {margin: 0;}
 	header .navbar {border-radius: 0 !important;}
-	.movie .movie-tools {position: relative; float: left;}
 	.movie .aside p, .movie .aside li {display: inline; margin-right: 15px;}
 	.movie .aside ul {display: inline;}
 	.movie .aside {margin-bottom: 20px;}
