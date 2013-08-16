@@ -199,6 +199,27 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		array_multisort($values, SORT_DESC, $keys, SORT_DESC, $sorted);
 		return array_slice($sorted, $begin, PAGINATION, TRUE);
 	}
+  
+  // export movies datas into json
+  public static function export($exportImages = true, array $moviesIdToExport = NULL){
+    $movies = new Movies();
+    if($moviesIdToExport == NULL){
+      $moviesIdToExport = $movies->keys;
+    }
+    $moviesToExport = array();
+    $imagesDatas = array();
+    $i = 0;
+    foreach($id as $moviesIdToSave){
+      if(isset($movies[$id])){
+        $moviesToExport[$i] = $movies[$id];
+        if($exportImages && !empty($movies[$id]['link_image'])){
+          $imagesDatas[$i] = file_get_contents($movies[$id]['link_image']);
+        }
+        $i++;
+      }
+    }
+    return json_encode(array('datas' => $moviesToExport, 'images' => $imagesDatas));
+  }
 }
 
 /**
