@@ -216,7 +216,9 @@ class Movies implements Iterator, Countable, ArrayAccess {
       if(isset($movies[$id])){
         $moviesToExport[$i] = $movies[$id];
         if($exportImages && !empty($movies[$id]['link_image'])){
-          $imagesDatas[$i] = file_get_contents($movies[$id]['link_image']);
+          $type = pathinfo($movies[$id]['link_image'], PATHINFO_EXTENSION);
+          $data = file_get_contents($movies[$id]['link_image']);
+          $imagesDatas[$i] = 'data:image/'.$type.';base64,'.base64_encode($data);
         }
         $i++;
       }
