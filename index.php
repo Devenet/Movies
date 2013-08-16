@@ -204,12 +204,15 @@ class Movies implements Iterator, Countable, ArrayAccess {
   public static function export($exportImages = true, array $moviesIdToExport = NULL){
     $movies = new Movies();
     if($moviesIdToExport == NULL){
-      $moviesIdToExport = $movies->keys;
+      $moviesIdToExport = array();
+      foreach($movies as $movie){
+        array_push($moviesIdToExport, $movie['id']);
+      }
     }
     $moviesToExport = array();
     $imagesDatas = array();
     $i = 0;
-    foreach($id as $moviesIdToSave){
+    foreach($moviesIdToExport as $id){
       if(isset($movies[$id])){
         $moviesToExport[$i] = $movies[$id];
         if($exportImages && !empty($movies[$id]['link_image'])){
