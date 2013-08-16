@@ -29,6 +29,7 @@ define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'myMovies');
 define('MYMOVIES_VERSION', '0.1');
 define('INACTIVITY_TIMEOUT', 3600);
+define('RSS', 'movies.rss');
 
 // Force cookie path (but do not change lifetime)
 $cookie = session_get_cookie_params();
@@ -146,6 +147,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 			$movie = array('id' => 1375621920,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable me 2','release_date' => '2013-06-26','country' => 'us','genre' => 'animation','duration' => 98,'synopsis' => 'Ayant abandonné la super-criminalité et mis de côté ses activités funestes pour se consacrer à la paternité et élever Margo, Édith et Agnès, Gru, et avec lui, le Professeur Néfario et les Minions, doivent se trouver de nouvelles occupations. Alors qu’il commence à peine à s’adapter à sa nouvelle vie tranquille de père de famille, une organisation ultrasecrète, menant une lutte acharnée contre le Mal à l’échelle planétaire, vient frapper à sa porte. Soudain, c’est à Gru, et à sa nouvelle coéquipière Lucy, que revient la responsabilité de résoudre une série de méfaits spectaculaires. Après tout, qui mieux que l’ex plus méchant méchant de tous les temps, pourrait attraper celui qui rivalise pour lui voler la place qu’il occupait encore récemment.<br />Rejoignant nos héros, on découvre : Floyd, le propriétaire du salon Eagle Postiche Club pour hommes et suspect numéro 1 du crime le plus abject jamais perpétré depuis le départ de Gru à la retraite ; Silas de Lamolefès, le super-espion à la tête de l’Agence Vigilance de Lynx, patron de Lucy, dont le nom de famille est une source inépuisable d’amusement pour les Minions ; Antonio, le si mielleux objet de l’affection naissante de Margo, et Eduardo Perez, le père d’Antonio, propriétaire du restaurant Salsa & Salsa et l’homme qui se cache peut-être derrière le masque d’El Macho, le plus impitoyable et, comme son nom l’indique, méchant macho que la terre ait jamais porté.','link_image' => NULL,'link_website' => 'http://www.allocine.fr/film/fichefilm_gen_cfilm=190299.html','status' => Movie::NOT_SEEN,'note' => NULL, 'owned' => FALSE);
 			$this->data[$movie['id']] = $movie;
 			file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
+			self::updateRSS();
 		}
 	}
 
@@ -161,6 +163,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		if (!$this->logged) die('You are not authorized to change the database.');
 		krsort($this->data);
 		file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
+		self::updateRSS();
 	}
 
 	// last movies inserted
@@ -191,6 +194,48 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		$keys = array_keys($sorted);
 		array_multisort($values, SORT_DESC, $keys, SORT_DESC, $sorted);
 		return array_slice($sorted, $begin, PAGINATION, TRUE);
+	}
+
+	// write an RSS file with the last movies added
+	public function updateRSS() {
+		global $_CONFIG;
+		$url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/';
+		$xml  = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL;
+		$xml .= '<rss version="2.0">'.PHP_EOL;
+		$xml .= '<channel>'.PHP_EOL;
+		$xml .= '<title>'.TITLE.'</title>'.PHP_EOL;
+		$xml .= '<link>'.$url.'</link>'.PHP_EOL;
+		$xml .= '<description>RSS feed of '.TITLE.'</description>'.PHP_EOL;
+		$xml .= '<pubDate>'.date("D, d M Y H:i:s O").'</pubDate>'.PHP_EOL;
+		$xml .= '<copyright>'.$url.'</copyright>'.PHP_EOL;
+		$xml .= '<language>'.$_CONFIG['language'].'</language>'.PHP_EOL;
+		$xml .= '<generator>'.MYMOVIES.'</generator>'.PHP_EOL;
+		$xml .= '<image>'.PHP_EOL;
+		$xml .= '<title>'.TITLE.'</title>'.PHP_EOL;
+		$xml .= '<url>'.$url.'assets/img/movies_48x48.png</url>'.PHP_EOL;
+		$xml .= '<link>'.$url.'</link>'.PHP_EOL;
+		$xml .= '<width>48</width>'.PHP_EOL;
+		$xml .= '<height>48</height>'.PHP_EOL;
+		$xml .= '</image>'.PHP_EOL;
+		foreach (self::lastMovies() as $id => $movie) {
+			$xml .= '<item>'.PHP_EOL;
+			$xml .= '<title>'. $movie['title'] .'</title>'.PHP_EOL;
+			$xml .= '<link>'.$url.substr(Path::movie($id), 2).'</link>'.PHP_EOL;
+			$xml .= '<description><![CDATA[<strong>'.($movie['status']==Movie::SEEN ? 'Movie seen &middot Rated '.$movie['note'].'/10' : 'Movie not seen').'</strong><br />'.$movie['synopsis'] .']]></description>'.PHP_EOL;
+			// trasform image url if needed
+			$img = !empty($movie['link_image']) ? $movie['link_image'] : $url.'assets/img/movie.jpg';
+			// if img is hosted in local, we have to add $url before...
+			if (substr( $img, 0, strlen($_CONFIG['images'].'/') ) === $_CONFIG['images'].'/') { $img = $url.$img; }
+			$xml .= '<enclosure url="'.$img.'" type="image/jpeg" />'.PHP_EOL;
+			$xml .= '<guid isPermaLink="true">'.$id.'</guid>'.PHP_EOL;
+			$xml .= '<pubDate>'.date("D, d M Y H:i:s O", $id).'</pubDate>'.PHP_EOL;
+			$xml .= '<category domain="'.$url.'">'.$movie['genre'].'</category>'.PHP_EOL;
+			$xml .= '<source url="'.$url.RSS.'">'.TITLE.'</source>'.PHP_EOL;
+			$xml .= '</item>'.PHP_EOL;
+		}
+		$xml .= '</channel>'.PHP_EOL;
+		$xml .= '</rss>'.PHP_EOL;
+		file_put_contents(RSS, $xml);
 	}
 }
 
@@ -249,7 +294,7 @@ abstract class Path {
 		return $result.'">'.($icon != NULL ? '<i class="icon-'.$icon.'"></i>' : NULL).' '.$name."</a>".($tpl ? '</li>' : NULL);
 	}
 	static function menu($active) {
-		return self::url('home', 'All', $active).self::url('box-office', 'Box office', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
+		return self::url('home', 'All', $active).self::url('box-office', 'Box office', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./'.RSS.'" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
 	}
 	static function menuAdmin($active) {
 		return self::url_admin('add', 'Movie', $active).self::url_admin('admin', 'Admin', $active).PHP_EOL;
@@ -1085,6 +1130,7 @@ if (isset($_GET['box-office'])) {
 // HOME PAGE
 if (empty($_GET) || isset($_GET['page'])) {
 	$movies = new Movies();
+	
 	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
 	// check if pagination is asked
 	if (!empty($_GET['page'])) {

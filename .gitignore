@@ -3,3 +3,4 @@ data
 images
 *.fw.png
 .DS_Store
+*.rss
