@@ -635,7 +635,7 @@ function displayPagination($page, $total, $prefix = '?') {
 	for ($i=$begin; $i<=$end; $i++) {
 		$result .= '<li'.($i==$page ? ' class="active"' : NULL).'><a href="./'.$prefix.($i>0 ? Path::page($i) : NULL).'">'.($i+1).'</a></li>';
 	}
-	$result .= '<li'.($page==$end ? ' class="disabled"' : NULL).'><a href="./'.$prefix.Path::page($pages-1).'" title="Last page" class="tip"><i class="icon-double-angle-right"></i></a></li>';
+	$result .= '<li'.($page==$end || $total<=PAGINATION  ? ' class="disabled"' : NULL).'><a href="./'.$prefix.($total<=PAGINATION ? NULL : Path::page($pages-1)).'" title="Last page" class="tip"><i class="icon-double-angle-right"></i></a></li>';
 	return $result;
 }
 
@@ -1053,7 +1053,7 @@ function signin() {
 // movies not seen asked
 if (isset($_GET['soon'])) {
 	$movies = new Movies();
-	$sorted = $movies->byStatus();
+	$movies->byStatus(); // used to update $movies->total_no_seen
 
 	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
 	// check if pagination is asked
@@ -1072,7 +1072,7 @@ if (isset($_GET['soon'])) {
 // movies sorted by note asked
 if (isset($_GET['box-office'])) {
 	$movies = new Movies();
-	$sorted = $movies->byStatus();
+	$movies->byNote(); // used to update $movies->total_seen
 
 	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
 	// check if pagination is asked
