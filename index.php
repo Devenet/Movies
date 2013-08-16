@@ -182,6 +182,15 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		foreach($temp as $id => $value) { $sorted[$id] = $this->data[$id]; }
 		return array_slice($sorted, $begin, PAGINATION, TRUE);
 	}
+
+	public function byNote($begin = 0) {
+		$temp = array();
+		foreach ($this->data as $id => $movie) { $temp[$id] = $movie['note']; }
+		arsort($temp);
+		$sorted = array();
+		foreach($temp as $id => $value) { $sorted[$id] = $this->data[$id]; }
+		return array_slice($sorted, $begin, PAGINATION, TRUE);
+	}
 }
 
 /**
@@ -200,8 +209,8 @@ abstract class Path {
 		switch ($url) {
 			case 'home':
 				break;
-			case 'favorites':
-				$result .= $prefix.'favorites';
+			case 'box-office':
+				$result .= $prefix.'box-office';
 				break;
 			case 'soon':
 				$result .= $prefix.'soon';
@@ -239,7 +248,7 @@ abstract class Path {
 		return $result.'">'.($icon != NULL ? '<i class="icon-'.$icon.'"></i>' : NULL).' '.$name."</a>".($tpl ? '</li>' : NULL);
 	}
 	static function menu($active) {
-		return self::url('home', 'All', $active).self::url('favorites', 'Favorites', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
+		return self::url('home', 'All', $active).self::url('box-office', 'Box office', $active).self::url('soon', 'Soon', $active).'<li class="rss"><a href="./movies.rss" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
 	}
 	static function menuAdmin($active) {
 		return self::url_admin('add', 'Movie', $active).self::url_admin('admin', 'Admin', $active).PHP_EOL;
@@ -1045,9 +1054,28 @@ if (isset($_GET['soon'])) {
 			$tpl->assign('movie', $movies->byStatus($page*PAGINATION));
 	} else { $tpl->assign('movie', $movies->byStatus()); }
 	$tpl->assign('pagination', displayPagination($page, $movies->count(), '?soon&amp;'));
-	$tpl->assign('page_title', 'Home');
+	$tpl->assign('page_title', 'Coming soon');
 	$tpl->assign('menu_links', Path::menu('soon'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('soon'));
+	$tpl->assign('token', getToken());
+	$tpl->draw('list');
+	exit();
+}
+// by note asked
+if (isset($_GET['box-office'])) {
+	$movies = new Movies();
+	$sorted = $movies->byStatus();
+
+	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
+	// check if pagination is asked
+	if (!empty($_GET['page'])) {
+			checkPagination($page, $movies->count());
+			$tpl->assign('movie', $movies->byNote($page*PAGINATION));
+	} else { $tpl->assign('movie', $movies->byNote()); }
+	$tpl->assign('pagination', displayPagination($page, $movies->count(), '?box-office&amp;'));
+	$tpl->assign('page_title', 'Box office');
+	$tpl->assign('menu_links', Path::menu('box-office'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('box-office'));
 	$tpl->assign('token', getToken());
 	$tpl->draw('list');
 	exit();
