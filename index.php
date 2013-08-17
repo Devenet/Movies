@@ -843,7 +843,13 @@ function addMovie() {
 				try {
 					if (empty($inputs['title'])) { throw new \Exception('Title must not be empty.'); }
 					if (empty($inputs['synopsis'])) { throw new \Exception('Synopsis must not be empty.'); }
-					$movie = array( 'id' => time() );
+
+					$movies = new Movies(isLogged());
+					$id = time();
+					while(isset($movies[$id])){
+						$id--;
+					}
+					$movie = array( 'id' => $id );
 
 					// check if we need to get the image given with url
 					if ($inputs['link_image_import']) {
@@ -853,7 +859,6 @@ function addMovie() {
 					unset($inputs['link_image_import']);
 
 					foreach ($inputs as $key => $value) { $movie[$key] = $value; }
-					$movies = new Movies(isLogged());
 					$movies[$movie['id']] = $movie;
 					$movies->save();
 
