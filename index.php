@@ -240,7 +240,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
   public static function import($jsonDatas, $logged = false){
     global $_CONFIG;
   
-    $datas = json_decode($jsonDatas);
+    $datas = json_decode($jsonDatas, true);
     if(!isset($datas['datas']) || !isset($datas['images'])){
       return NULL;
     }
