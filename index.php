@@ -238,6 +238,88 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		$xml .= '</rss>'.PHP_EOL;
 		file_put_contents(RSS, $xml);
 	}
+  
+	// export movies datas into json
+	public static function export($exportImages = true, $privateDatas = true, array $moviesIdToExport = NULL){
+		$movies = new Movies();
+		if($moviesIdToExport == NULL){
+		 	$moviesIdToExport = array();
+		 	foreach($movies as $movie){
+				array_push($moviesIdToExport, $movie['id']);
+			}
+		}
+		$moviesToExport = array();
+		$imagesDatas = array();
+		$i = 0;
+		foreach($moviesIdToExport as $id){
+		  if(isset($movies[$id])){
+			$moviesToExport[$i] = $movies[$id];
+			if(!$privateDatas){
+			  $moviesToExport[$i]['status'] = NULL;
+			  $moviesToExport[$i]['note'] = NULL;
+			  $moviesToExport[$i]['owned'] = NULL;
+			}
+			if($exportImages){
+			  if(empty($movies[$id]['link_image'])){
+				$imagesDatas[$i] = NULL;
+			  }
+			  else{
+				$type = pathinfo($movies[$id]['link_image'], PATHINFO_EXTENSION);
+				$data = file_get_contents($movies[$id]['link_image']);
+				$imagesDatas[$i] = 'data:image/'.$type.';base64,'.base64_encode($data);
+			  }
+			}
+			$i++;
+		  }
+		}
+		return json_encode(array('datas' => $moviesToExport, 'images' => $imagesDatas));
+	}
+  
+	// import movies datas from json
+	public static function import($jsonDatas, $logged = false){
+		global $_CONFIG;
+
+		$datas = json_decode($jsonDatas, true);
+		if(!isset($datas['datas']) || !isset($datas['images'])){
+		  return NULL;
+		}
+		$moviesDatas = $datas['datas'];
+		$images = $datas['images'];
+		$id = time();
+		$i = 0;
+		$movies = new Movies($logged);
+		foreach($moviesDatas as $movie){
+		  while(isset($movies[$id])){
+			$id--;
+		  }
+		  $inputs = array(
+			'id' => $id,
+			'title' => (isset($movie['title']) ? trim(htmlspecialchars($movie['title'])) : NULL),
+			'synopsis' => (isset($movie['synopsis']) ? checkSynopsis($movie['synopsis']) : NULL),
+			'genre' => (isset($movie['genre']) ? checkGenre($movie['genre']) : NULL),
+			'status' => ((isset($movie['status']) && $movie['status'] != NULL) ? Movie::SEEN : NULL),
+			'note' => (isset($movie['note']) ? checkRatingNote($movie['note'], ((isset($movie['status']) && $movie['status'] != NULL) ? Movie::SEEN : NULL)) : NULL),
+			'owned' => ((isset($movie['owned']) && $movie['owned']) ? TRUE : NULL),
+			'original_title' => (isset($movie['original_title']) ? trim(htmlspecialchars($movie['original_title'])) : NULL),
+			'duration' => (isset($movie['duration']) ? checkDuration($movie['duration']) : NULL),
+			'release_date' => (isset($movie['release_date']) ? checkReleaseDate($movie['release_date']) : NULL),
+			'country' => (isset($movie['country']) ? checkContry($movie['country']) : NULL),
+			'link_website' => (isset($movie['link_website']) ? checkLink($movie['link_website']) : NULL),
+			'link_image' => NULL
+		  );
+		  if(empty($inputs['title']) || empty($inputs['synopsis'])) { continue; }
+		  if(function_exists('imagecreatefromjpeg') && !empty($images[$i])) {
+			$image = explode(',', $images[$i]);
+			if(!isset($image[1])){ continue; }
+			$imported = file_put_contents($_CONFIG['images'].'/'.$id.'.jpg', base64_decode($image[1]));
+			if ($imported == false){ continue; }
+			$inputs['link_image'] = $_CONFIG['images'].'/'.$id.'.jpg';
+		  }
+		  $movies[$id] = $inputs;
+		  $i++;
+		}
+		$movies->save();
+	}
 }
 
 /**
