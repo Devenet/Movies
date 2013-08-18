@@ -29,6 +29,21 @@
 		<a href="{""|Path::logs}" class="btn btn-default"><i class="icon-file-text-alt"></i> Display logs</a>
 	</div>
 </div>
+
+<div class="row espace-top-lg">
+	<div class="col-lg-12">
+		<hr />
+	</div>
+</div>
+
+<div class="row espace-top espace-bottom">
+	<div class="col-lg-4 col-lg-offset-2 text-center">
+		<a href="{""|Path::export}" class="btn btn-default"><i class="icon-cloud-download"></i> Export movies</a>
+	</div>
+	<div class="col-lg-4 text-center">
+		<a href="{""|Path::import}" class="btn btn-default"><i class="icon-download-alt"></i> Import movies</a>
+	</div>
+</div>
 </div>
 
 {include="page.foot"}

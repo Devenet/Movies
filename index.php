@@ -166,6 +166,12 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		self::updateRSS();
 	}
 
+	// return all movies inserted
+	public function all() {
+		krsort($this->data);
+		return $this->data;
+	}
+
 	// last movies inserted
 	public function lastMovies($begin = 0) {
 		krsort($this->data);
@@ -240,7 +246,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	}
   
 	// export movies datas into json
-	public static function export($exportImages = true, $privateDatas = true, array $moviesIdToExport = NULL){
+	public static function export($privateDatas = TRUE, $exportImages = FALSE, array $moviesIdToExport = NULL){
 		$movies = new Movies();
 		if($moviesIdToExport == NULL){
 		 	$moviesIdToExport = array();
@@ -272,18 +278,18 @@ class Movies implements Iterator, Countable, ArrayAccess {
 			$i++;
 		  }
 		}
-		return json_encode(array('datas' => $moviesToExport, 'images' => $imagesDatas));
+		return json_encode(array('movies' => $moviesToExport, 'images' => $imagesDatas));
 	}
   
 	// import movies datas from json
-	public static function import($jsonDatas, $logged = false){
+	public static function import($jsonDatas, $logged = FALSE){
 		global $_CONFIG;
 
 		$datas = json_decode($jsonDatas, true);
-		if(!isset($datas['datas']) || !isset($datas['images'])){
+		if(!isset($datas['movies']) || !isset($datas['images'])){
 		  return NULL;
 		}
-		$moviesDatas = $datas['datas'];
+		$moviesDatas = $datas['movies'];
 		$images = $datas['images'];
 		$id = time();
 		$i = 0;
@@ -412,6 +418,12 @@ abstract class Path {
 	static function settings() {
 		return './?settings';	
 	}
+	static function export() {
+		return './?export';
+	}
+	static function import() {
+		return './?import';
+	}
 }
 
 
@@ -527,7 +539,7 @@ function canLogin() {
 
 // list of url allowed to be redirected
 function targetIsAllowed($target) {
-	$allowed = array('admin', 'add', 'logs', 'settings');
+	$allowed = array('admin', 'add', 'logs', 'settings', 'export');
 	return in_array(htmlspecialchars($target), $allowed);
 }
 
@@ -642,7 +654,7 @@ function importImage($url, $id) {
 	$mime = $infos['mime'];
 	$ext = pathinfo($url, PATHINFO_EXTENSION);
 
-	if (!in_array($mime, $allowed_mime) || !in_array($ext, $allowed_ext)) { throw new \Exception('The MIMIE type or the extension of the image is not allowed.'); }
+	if (!in_array($mime, $allowed_mime) || !in_array($ext, $allowed_ext)) { throw new \Exception('The MIME type or the extension of the image is not allowed.'); }
 
 	$img = @file_get_contents($url);
 	$imported = file_put_contents($tmp, $img);
@@ -879,7 +891,6 @@ function settingsPage() {
 
 	if (!empty($_POST)) {
 		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
-			global $_CONFIG;
 			if (!empty($_POST['title'])) { $_CONFIG['title'] = htmlspecialchars($_POST['title']); }
 			if (!empty($_POST['password'])) { $_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']); }
 			if (!empty($_POST['locale'])) { $_CONFIG['language'] = array_key_exists($_POST['locale'], $_CONFIG['languages']) ? $_POST['locale'] : 'en'; }
@@ -897,6 +908,39 @@ function settingsPage() {
 	$tpl->assign('locales', displayLanguages($_CONFIG['language']));
 	$tpl->assign('token', getToken());
 	$tpl->draw('admin.settings');
+	exit();
+}
+
+// display export form
+function exportPage() {
+	if (!isLogged()) {
+		header('Location: '.Path::signin().'&target=export');
+		exit();
+	}
+	global $tpl;
+	global $_CONFIG;
+	$movies = new Movies();
+
+	if (!empty($_POST)) {
+		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
+			$private = !isset($_POST['private']);
+			$images = isset($_POST['images']);
+			$export = array();
+			if (!empty($_POST['movie'])) { foreach ($_POST['movie'] as $key => $value) { $export[] = $key; } }
+			header('Content-Type: application/force-download');
+			header('Content-Disposition: attachment; filename="'.trim(mb_convert_case(TITLE, MB_CASE_LOWER, "UTF-8")).'_'.date('Y_m_d').'.json"');
+			header('Content-type: application/json');
+			exit($movies->export($private, $images, $export));
+		}
+		errorPage('The given token was empty or invalid.', 'Invalid token');
+	}
+
+	$tpl->assign('page_title', 'Export movies');
+	$tpl->assign('menu_links', Path::menu('export'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('export'));
+	$tpl->assign('movies', $movies->all());
+	$tpl->assign('token', getToken());
+	$tpl->draw('admin.export');
 	exit();
 }
 
@@ -1251,6 +1295,8 @@ if (isset($_GET['delete']) && !empty($_GET['delete'])) {deleteMovie();}
 if (isset($_GET['logs'])) {logsPage();}
 // display settings log asked
 if (isset($_GET['settings'])) {settingsPage();}
+// display export page asked
+if (isset($_GET['export'])) {exportPage();}
 
 
 // nothing to do: 404 error
