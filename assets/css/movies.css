@@ -37,6 +37,8 @@ header .navbar-brand:hover {color:#428bca;}
 footer {margin: 20px auto 20px;}
 footer hr {border-top:2px solid #428bca;}
 footer p {font-size: 12px;}
+footer a.normal {color: #888;}
+footer a.normal:hover {color: #555; text-decoration: underline;}
 
 article.movies {margin-bottom: 20px;}
 article.movies h2 a {text-decoration: none;}

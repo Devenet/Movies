@@ -27,7 +27,7 @@ $_CONFIG['language'] = 'en';
 define('PHPPREFIX','<?php /* '); 
 define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'myMovies');
-define('MYMOVIES_VERSION', '0.1');
+define('MYMOVIES_VERSION', '0.2');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 
@@ -340,8 +340,8 @@ abstract class Path {
 			$result .= '>';
 		}
 		$result .= '<a ';
-		if ($url=='box-office') { $result .= 'href="./?box-office" title="Sorted&nbsp;by&nbsp;rating" class="tip"'; }
-		elseif ($url=='soon') { $result .= 'href="./?watchlist" title="Movies&nbsp;not&nbsp;seen&nbsp;yet" class="tip"'; }
+		if ($url=='box-office') { $result .= 'href="./?box-office"'; }
+		elseif ($url=='soon') { $result .= 'href="./?watchlist"'; }
 		elseif ($url=='home') { $result .= 'href="./"'; }
 		return $result.'>'.$name."</a>".($tpl ? '</li>' : NULL);
 	}
@@ -358,7 +358,7 @@ abstract class Path {
 		return $result.($tpl ? '</li>' : NULL);
 	}
 	static function menu($active) {
-		return self::url('home', 'All', $active).self::url('box-office', 'Box office', $active).self::url('soon', 'Watchlist', $active).'<li class="rss"><a href="./'.RSS.'" class="tip" title="Subscribe&nbsp;to&nbsp;'.TITLE.'&nbsp;feed" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
+		return self::url('home', 'All', $active).self::url('box-office', 'Box office', $active).self::url('soon', 'Watchlist', $active).'<li class="rss"><a href="./'.RSS.'" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
 	}
 	static function menuAdmin($active) {
 		return self::url_admin('add', 'Movie', $active).self::url_admin('admin', 'Admin', $active).PHP_EOL;
@@ -807,6 +807,7 @@ function moviePage() {
 	$tpl->assign('country', $movie['country']);
 	$tpl->assign('displayGenres', displayGenres($movie['genre']));
 	$tpl->assign('token', getToken());
+	$tpl->assign('movies_count', $movies->count());
 	$tpl->draw('movie');
 	exit();
 }

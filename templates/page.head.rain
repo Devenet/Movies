@@ -3,6 +3,7 @@
 
 <meta name="author" content="Nicolas Devenet" />
 <meta name="robots" content="noindex, noarchive, nofollow" />
+<meta name="copyright" content="{#TITLE#}" />
 
 <link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />

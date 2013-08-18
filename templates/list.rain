@@ -11,7 +11,7 @@
 {loop="movie"}
 <article class="movies col-lg-6">
 	<h2 class="no-espace-top">
-		{if="isLogged()"}<span class="movie-tools"><a href="{$value.id|Path::edit}" class="text-success"><i class="icon-pencil"></i></a> <a href="{$value.id|Path::delete}&amp;token={$token}" class="text-danger" onclick="return confirmDeleteMovie('{$value.title}')"><i class="icon-trash"></i></a></span>{/if}
+		{if="isLogged()"}<span class="movie-tools"><a href="{$value.id|Path::edit}" class="text-success tip" title="Edit&nbsp;movie" data-placement="right"><i class="icon-pencil"></i></a> <a href="{$value.id|Path::delete}&amp;token={$token}" class="text-danger tip" title="Delete&nbsp;movie" data-placement="right" onclick="return confirmDeleteMovie('{$value.title}')"><i class="icon-trash"></i></a></span>{/if}
 		<a href="{$value.id|Path::movie}" title="{$value.title}">{$value.title}</a>
 		{if="!empty($value.original_title)"} <small>{$value.original_title}</small>{/if}
 	</h2>
