@@ -946,6 +946,7 @@ function addMovie() {
 				$oIMDB = new IMDB($_POST['search']);
 
 				if($oIMDB->isReady){
+					$duration = explode(' ', $oIMDB->getRuntime()); // explode(' ', $oIMDB->getRuntime())[0] only works after PHP 5.4
 					$inputs = array(
 						'title' => $oIMDB->getTitle(TRUE),
 						'synopsis' => ($oIMDB->getPlot() != $oIMDB->strNotFound ? $oIMDB->getPlot() : $oIMDB->getDescription()),
@@ -954,7 +955,7 @@ function addMovie() {
 						'note' => NULL,
 						'owned' => NULL,
 						'original_title' => ($oIMDB->getTitle(TRUE) != $oIMDB->getTitle() ? $oIMDB->getTitle() : NULL),
-						'duration' => explode(' ', $oIMDB->getRuntime())[0],
+						'duration' => $duration[0],
 						'release_date' => transformReleaseDate($oIMDB->getReleaseDate()),
 						'country' => ($oIMDB->getCountryAsUrl() != $oIMDB->strNotFound ? substr($oIMDB->getCountryAsUrl(), 37, 2) : NULL),
 						'link_website' => checkLink($oIMDB->getUrl()),
