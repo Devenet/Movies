@@ -44,7 +44,7 @@
 	</div>
 
 	<div class="form-group espace-top">
-		<label for="title" class="control-label col-lg-2">Title page</label>
+		<label for="title" class="control-label col-lg-2">Title of the page</label>
 		<div class="col-lg-8">
 			<input type="text" class="form-control" id="title" name="title" placeholder="myMovies" value="{#TITLE#}" />
 		</div>
@@ -55,7 +55,7 @@
 			<select class="form-control" id="locale" name="locale">
 				{$locales}
 			</select>
-			<p class="help-block">Used for IMDB search when importing informations to add a movie.</p>
+			<p class="help-block">Used for IMDB search when importing information to add a movie.</p>
 		</div>
 	</div>
 

@@ -42,7 +42,7 @@
 	</div>
 	<div class="form-group">
 		<label for="synopsis" class="text-primary">Synopsis</label>
-		<textarea class="form-control" id="synopsis" name="synopsis" rows="8" placeholder="The beautiful story in few words" >{if="!empty($inputs['synopsis'])"}{$inputs['synopsis']}{/if}</textarea>
+		<textarea class="form-control" id="synopsis" name="synopsis" rows="8" placeholder="The awesome story in a nutshell" >{if="!empty($inputs['synopsis'])"}{$inputs['synopsis']}{/if}</textarea>
 	</div>
 	<div class="form-group">
 		<label for="genre">Genre</label>
@@ -52,7 +52,7 @@
 	<div class="well espace-top">
 	<div class="form-group checkbox no-espace-top">
 		<label for="status" class="text-primary">
-		<input type="checkbox" name="status" id="status" {if="!empty($inputs['status'])"}checked="checked"{/if}/> I’ve seen it
+		<input type="checkbox" name="status" id="status" {if="!empty($inputs['status'])"}checked="checked"{/if}/> I have already seen it
 		</label>
 	</div>
 	<div class="form-group form-group-note">
@@ -61,7 +61,7 @@
 	</div>
 	<div class="form-group checkbox no-espace-bottom">
 		<label for="owned">
-		<input type="checkbox" name="owned" id="owned" {if="!empty($inputs['owned'])"}checked="checked"{/if}/> I’ve owned it
+		<input type="checkbox" name="owned" id="owned" {if="!empty($inputs['owned'])"}checked="checked"{/if}/> I have it
 		</label>
 	</div>
 	</div>
@@ -90,19 +90,19 @@
 		</select>
 	</div>
 	<div class="form-group">
-		<label for="link_website">More infos online</label>
+		<label for="link_website">External information</label>
 		<div class="input-group">
 			<span class="input-group-addon text-muted">http://</span>
 			<input type="text" class="form-control" id="link_website" name="link_website" placeholder="movies.com/film/despicable-me.html" {if="!empty($inputs['link_website'])"}value="{$inputs['link_website']}"{/if}/>
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="link_image">URL to image</label>
+		<label for="link_image">URL to movie poster</label>
 		<div class="input-group">
 			<span class="input-group-addon text-muted">http://</span>
 			<input type="text" class="form-control" id="link_image" name="link_image" placeholder="movies.com/images/despicable-me.jpg" {if="!empty($inputs['link_image'])"}value="{$inputs['link_image']}"{/if}/>
 		</div>
-		<div class="espace-top-sm"><label for="link_image_import" class="normal"><input type="checkbox" name="link_image_import" id="link_image_import" {if="!empty($inputs['link_image_import'])"}checked="checked"{/if}/> Import image</label></div>
+		<div class="espace-top-sm"><label for="link_image_import" class="normal"><input type="checkbox" name="link_image_import" id="link_image_import" {if="!empty($inputs['link_image_import'])"}checked="checked"{/if}/> Import movie poster</label></div>
 	</div>
 	<!--
 	<div class="form-group">

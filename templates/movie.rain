@@ -28,16 +28,16 @@
 	</div>
 	<div class="col-lg-2 col-sm-6 col-12 aside text-muted pull-right">
 		<div class="espace-bottom">
-			<p><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus} {if="$movie['status'] == Movie::SEEN"}Seen{else}Not seen{/if}</span></p>
-			{if="$movie['owned']"}<p><span class="tip" data-title="Movie owned"><i class="icon-film"></i></span> Owned</p>{/if}
+			<p><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus} {if="$movie['status'] == Movie::SEEN"}Already seen{else}Not seen yet{/if}</span></p>
+			{if="$movie['owned']"}<p><i class="icon-film"></i> I have it</p>{/if}
 		</div>
 		{if="!empty($movie['duration'])"}<p>{$movie['duration']} min</p>{/if}
-		{if="!empty($movie['release_date'])"}<p><span class="tip" data-title="Release&nbsp;date"><i class="icon-calendar"></i> {$movie['release_date']}</span></p>{/if}
-		{if="!empty($country)"}<p>{$country|displayFlag} nationality</p>{/if}
+		{if="!empty($movie['release_date'])"}<p><span class="tip" data-title="Release&nbsp;date"><i class="icon-calendar"></i></span> {$movie['release_date']}</p>{/if}
+		{if="!empty($country)"}<p>{$country|displayFlagWithName}</p>{/if}
 		<ul class="list-unstyled espace-top">
 			{$displayGenres}
 		</ul>
-		{if="!empty($movie['link_website'])"}<p class="espace-top"><a href="{$movie['link_website']}" rel="external" class="normal tip" title="More&nbsp;infos&nbsp;online"><i class="icon-globe"></i> infos online</a></p>{/if}
+		{if="!empty($movie['link_website'])"}<p class="espace-top"><a href="{$movie['link_website']}" rel="external" class="normal tip" title="External information"><i class="icon-globe"></i> more online</a></p>{/if}
 	</div>
 	<div class="col-lg-6 col-sm-12 col-12">
 		<p class="synopsis">{$movie['synopsis']}</p>

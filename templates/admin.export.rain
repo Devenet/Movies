@@ -17,7 +17,7 @@
 		<h2>{$page_title}</h2>
 	</div>
 	<p>This wizard will export your database into a <strong>JSON file</strong>.
-	<br />You can use it as a backup, or to import those movies elsewhere.</p>
+	<br />You can use it as a backup or to import those movies elsewhere.</p>
 </div>
 </div>
 
@@ -29,19 +29,19 @@
 				<label for="private">
 					<input type="checkbox" name="private" id="private" checked="checked" /> Keep my data private
 				</label>
-				<p class="help-block">It will not export if you have seen, owned a movie and the note you have given.</p>
+				<p class="help-block">It will not export the following information: if you have seen or owned the movie and how you rated it.</p>
 			</div>
 		</div>
 	</div>
 	<div class="form-group no-espace-top">
-		<label class="control-label col-lg-2 label-checkbox" for="images">Images</label>
+		<label class="control-label col-lg-2 label-checkbox" for="images">Movie posters</label>
 		<div class="col-lg-10">
 			<div class="checkbox">
 				<label for="images">
-					<input type="checkbox" name="images" id="images" /> Export images
+					<input type="checkbox" name="images" id="images" /> Export posters
 				</label>
-				<p class="help-block">Images will be exported in the JSON file as base64.
-					<br /><span class="text-warning">Note: Size file will be bigger! </span></p>
+				<p class="help-block">Images will be exported in the JSON file as base64 data.
+					<br /><span class="text-warning">Note: The file will be a lot bigger! </span></p>
 			</div>
 		</div>
 	</div>
