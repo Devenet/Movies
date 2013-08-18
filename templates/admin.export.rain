@@ -2,7 +2,10 @@
 <html>
 <head>
 {include="page.head"}
-<style>option {display:block; padding:4px 8px;}</style>
+<style>
+@media(min-width:992px) { .movies div div:nth-child(2){margin-top:10px;} .export-toggle {margin-top: 10px;} }
+@media(max-width:991px) { .movies div div:nth-child(2){margin-top:10px;} .export-toggle {margin-left: 20px;} }
+</style>
 </head>
 <body>
 {include="page.menu"}
@@ -46,10 +49,11 @@
 	<div class="form-group movies">
 		<label class="control-label col-lg-2 label-checkbox export">Movies to export</label>
 		<div class="col-lg-10">
-			{loop="movies"}<div class="checkbox">
+			{loop="movies"}
+			<div class="checkbox col-lg-6 col-sm-6">
 				<label for="movie[{$value.id}]"><input type="checkbox" name="movie[{$value.id}]" id="movie[{$value.id}]" checked="checked"/>{$value.title}</label>
 			</div>
-			{/loop} 
+			{/loop}
 		</div>
 	</div>
 
@@ -67,7 +71,7 @@
 {include="page.foot"}
 <script>
 $(function(){
-$('label.export').append('<div class="btn btn-default btn-xs espace-top-sm export-toggle">Toggle all</div>');
+$('label.export').append('<div class="btn btn-default btn-xs export-toggle">Toggle all</div>');
 var checked = true;
 function toggleMovies(){ checked = !checked; checkboxes = $('.movies input');  for(var i=0, n=checkboxes.length;i<n;i++) {checkboxes[i].checked = checked;} }
 $('.export-toggle').click(function(){ toggleMovies(); });

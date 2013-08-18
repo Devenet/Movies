@@ -2,6 +2,7 @@
 <html>
 <head>
 {include="page.head"}
+<style>.row.espace-top {line-height: 40px;}</style>
 </head>
 <body>
 {include="page.menu"}
