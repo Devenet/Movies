@@ -18,6 +18,7 @@ $_CONFIG['ban'] = $_CONFIG['data'].'/jail.php';
 $_CONFIG['ban_after'] = 4;
 $_CONFIG['ban_duration'] = 1800;
 $_CONFIG['pagination'] = 10;
+$_CONFIG['pagination_rss'] = 2*$_CONFIG['pagination'];
 $_CONFIG['languages'] = array(
 	'en' => array('en-US, en', 'English (en)'),
 	'fr' => array('fr-FR, fr, en-US, en', 'French (fr), English (en)')
@@ -224,7 +225,8 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		$xml .= '<width>48</width>'.PHP_EOL;
 		$xml .= '<height>48</height>'.PHP_EOL;
 		$xml .= '</image>'.PHP_EOL;
-		foreach (self::lastMovies() as $id => $movie) {
+		$data = array_slice(self::all(), 0, $_CONFIG['pagination_rss'], TRUE);
+		foreach ($data as $id => $movie) {
 			$xml .= '<item>'.PHP_EOL;
 			$xml .= '<title>'. $movie['title'] .'</title>'.PHP_EOL;
 			$xml .= '<link>'.$url.substr(Path::movie($id), 2).'</link>'.PHP_EOL;
