@@ -342,7 +342,7 @@ abstract class Path {
 		$result .= '<a ';
 		if ($url=='best') { $result .= 'href="./?box-office" title="Sorted&nbsp;by&nbsp;rating" class="tip"'; }
 		elseif ($url=='soon') { $result .= 'href="./?watchlist" title="Movies&nbsp;not&nbsp;seen&nbsp;yet" class="tip"'; }
-		elseif ($url=='admin') { $result .= 'href="./"'; }
+		elseif ($url=='home') { $result .= 'href="./"'; }
 		return $result.'>'.$name."</a>".($tpl ? '</li>' : NULL);
 	}
 	private static function url_admin($url, $name, $tpl = FALSE) {
