@@ -340,7 +340,7 @@ abstract class Path {
 			$result .= '>';
 		}
 		$result .= '<a ';
-		if ($url=='best') { $result .= 'href="./?box-office" title="Sorted&nbsp;by&nbsp;rating" class="tip"'; }
+		if ($url=='box-office') { $result .= 'href="./?box-office" title="Sorted&nbsp;by&nbsp;rating" class="tip"'; }
 		elseif ($url=='soon') { $result .= 'href="./?watchlist" title="Movies&nbsp;not&nbsp;seen&nbsp;yet" class="tip"'; }
 		elseif ($url=='home') { $result .= 'href="./"'; }
 		return $result.'>'.$name."</a>".($tpl ? '</li>' : NULL);
@@ -358,7 +358,7 @@ abstract class Path {
 		return $result.($tpl ? '</li>' : NULL);
 	}
 	static function menu($active) {
-		return self::url('home', 'All', $active).self::url('best', 'Box office', $active).self::url('soon', 'Watchlist', $active).'<li class="rss"><a href="./'.RSS.'" class="tip" title="Subscribe&nbsp;to&nbsp;'.TITLE.'&nbsp;feed" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
+		return self::url('home', 'All', $active).self::url('box-office', 'Box office', $active).self::url('soon', 'Watchlist', $active).'<li class="rss"><a href="./'.RSS.'" class="tip" title="Subscribe&nbsp;to&nbsp;'.TITLE.'&nbsp;feed" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
 	}
 	static function menuAdmin($active) {
 		return self::url_admin('add', 'Movie', $active).self::url_admin('admin', 'Admin', $active).PHP_EOL;
@@ -917,7 +917,7 @@ function exportPage() {
 
 	$tpl->assign('page_title', 'Export movies');
 	$tpl->assign('menu_links', Path::menu('export'));
-	$tpl->assign('menu_links_admin', Path::menuAdmin('export'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('admin'));
 	$tpl->assign('movies', $movies->all());
 	$tpl->assign('token', getToken());
 	$tpl->draw('admin.export');
