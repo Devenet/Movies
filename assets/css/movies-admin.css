@@ -30,6 +30,7 @@ select#country option {display:block; padding:4px 8px;}
 .form-group-note .slider .slider-handle.round {}
 form.search-inline {display: inline; position: absolute; right: 0; top: 0;}
 form label.label-checkbox {margin-top: 4px;}
+form input[type="file"] {margin-top:5px;}
 
 .movie-tools {display: block; font-size: 16px; position: absolute; left: -5px;}
 .movie-tools a {display: block;}

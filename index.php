@@ -230,7 +230,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 			$xml .= '<item>'.PHP_EOL;
 			$xml .= '<title>'. $movie['title'] .'</title>'.PHP_EOL;
 			$xml .= '<link>'.$url.substr(Path::movie($id), 2).'</link>'.PHP_EOL;
-			$xml .= '<description><![CDATA[<strong>'.($movie['status']==Movie::SEEN ? 'Movie seen &middot; Rated '.$movie['note'].'/10' : 'Movie not seen').'</strong><br />'.htmlspecialchars_decode(htmlentities($movie['synopsis'])).']]></description>'.PHP_EOL;
+			$xml .= '<description><![CDATA[<strong>'.($movie['status']==Movie::SEEN ? 'Movie seen &middot; Rated '.$movie['note'].'/10' : 'Movie not seen').'</strong><br />'.htmlspecialchars_decode(htmlentities($movie['synopsis'], ENT_COMPAT, 'UTF-8')).']]></description>'.PHP_EOL;
 			// trasform image url if needed
 			$img = !empty($movie['link_image']) ? $movie['link_image'] : $url.'assets/img/movie.jpg';
 			// if img is hosted in local, we have to add $url before...
@@ -248,7 +248,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	}
   
 	// export movies datas into json
-	public static function export($privateDatas = TRUE, $exportImages = FALSE, array $moviesIdToExport = NULL){
+	public function export($privateDatas = TRUE, $exportImages = FALSE, array $moviesIdToExport = NULL){
 		$movies = new Movies();
 		if($moviesIdToExport == NULL){
 		 	$moviesIdToExport = array();
@@ -287,9 +287,11 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	public static function import($jsonDatas, $logged = FALSE){
 		global $_CONFIG;
 
-		$datas = json_decode($jsonDatas, true);
+		if (!$logged) die('You are not authorized to import movies.');
+
+		$datas = json_decode($jsonDatas, TRUE);
 		if(!isset($datas['movies']) || !isset($datas['posters'])){
-		  return NULL;
+		  return FALSE;
 		}
 		$moviesDatas = $datas['movies'];
 		$images = $datas['posters'];
@@ -327,6 +329,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		  $i++;
 		}
 		$movies->save();
+		return TRUE;
 	}
 }
 
@@ -516,7 +519,7 @@ function canLogin() {
 
 // list of url allowed to be redirected
 function targetIsAllowed($target) {
-	$allowed = array('admin', 'add', 'logs', 'settings', 'export');
+	$allowed = array('admin', 'add', 'logs', 'settings', 'export', 'import');
 	return in_array(htmlspecialchars($target), $allowed);
 }
 
@@ -927,6 +930,46 @@ function exportPage() {
 	exit();
 }
 
+// display import form
+function importPage() {
+	if (!isLogged()) {
+		header('Location: '.Path::signin().'&target=import');
+		exit();
+	}
+	global $tpl;
+
+	if (isset($_GET['imported'])) { $tpl->assign('imported', TRUE); }
+	else if (!empty($_FILES)) {
+		//if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
+			try {
+				$extension = end(explode('.', $_FILES['file']['name']));
+				$mime = $_FILES['file']['type'];
+				// check extension et mime type
+				if ($extension != 'json' || $mime != 'application/json') { throw new \Exception('<br />Extension or MIME type of the file is not allowed! Please import a JSON file.'); }
+
+				$file = file_get_contents($_FILES['file']['tmp_name']);
+				if (!$file) { throw new \Exception('An error occured while reading the file.'); }
+
+				$result = Movies::import($file, isLogged());
+				if (!$result) { throw new \Exception('An error occured while importing the file.'); }
+
+				header('Location: '.Path::import().'&imported');
+				exit();
+			} catch(\Exception $e) {
+					$tpl->assign('error', $e->getMessage());
+				}
+		//}
+		//errorPage('The received token was empty or invalid.', 'Invalid security token');
+	}
+
+	$tpl->assign('page_title', 'Import movies');
+	$tpl->assign('menu_links', Path::menu('import'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('admin'));
+	$tpl->assign('token', getToken());
+	$tpl->draw('admin.import');
+	exit();
+}
+
 // add a new movie
 function addMovie() {
 	if (!isLogged()) {
@@ -1281,6 +1324,8 @@ if (isset($_GET['logs'])) {logsPage();}
 if (isset($_GET['settings'])) {settingsPage();}
 // display export page asked
 if (isset($_GET['export'])) {exportPage();}
+// display import page asked
+if (isset($_GET['import'])) {importPage();}
 
 
 // nothing to do: 404 error
