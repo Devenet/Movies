@@ -13,7 +13,7 @@
 
 	<div class="panel panel-danger espace-top">
 		<div class="panel-heading"><h3 class="panel-title">{$error_title}</h3></div>
-		{$error_content}
+		<div class="panel-body">{$error_content}</div>
 	</div>
 </div>
 </div>

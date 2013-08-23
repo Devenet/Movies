@@ -940,12 +940,14 @@ function importPage() {
 
 	if (isset($_GET['imported'])) { $tpl->assign('imported', TRUE); }
 	else if (!empty($_FILES)) {
-		//if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
+		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
 			try {
-				$extension = end(explode('.', $_FILES['file']['name']));
+				$ext_array = explode('.', $_FILES['file']['name']);
+				$extension = end($ext_array);
 				$mime = $_FILES['file']['type'];
 				// check extension et mime type
-				if ($extension != 'json' || $mime != 'application/json') { throw new \Exception('<br />Extension or MIME type of the file is not allowed! Please import a JSON file.'); }
+				if ($extension != 'json') { throw new \Exception('<br />Extension of the file is not allowed! Please import a JSON file.'); }
+				if (! ($mime == 'application/octet-stream' || $mime == 'application/json')) { throw new \Exception('<br />MIME type of the file is not allowed! Please import a JSON file.'); }
 
 				$file = file_get_contents($_FILES['file']['tmp_name']);
 				if (!$file) { throw new \Exception('An error occured while reading the file.'); }
@@ -958,8 +960,9 @@ function importPage() {
 			} catch(\Exception $e) {
 					$tpl->assign('error', $e->getMessage());
 				}
-		//}
-		//errorPage('The received token was empty or invalid.', 'Invalid security token');
+		} else {
+			errorPage('The received token was empty or invalid.', 'Invalid security token');
+		}
 	}
 
 	$tpl->assign('page_title', 'Import movies');
@@ -1258,7 +1261,7 @@ if (isset($_GET['watchlist'])) {
 			checkPagination($page, $movies->total_not_seen);
 			$tpl->assign('movie', $movies->byStatus($page*PAGINATION));
 	} else { $tpl->assign('movie', $movies->byStatus()); }
-	$tpl->assign('pagination', displayPagination($page, $movies->total_not_seen, '?soon&amp;'));
+	$tpl->assign('pagination', displayPagination($page, $movies->total_not_seen, '?watchlist&amp;'));
 	$tpl->assign('page_title', !empty($page) ?  'Soon &middot; Page '.($page+1) : 'Soon');
 	$tpl->assign('menu_links', Path::menu('soon'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('soon'));

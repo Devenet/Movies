@@ -9,7 +9,7 @@
 <div class="container">
 <div class="row">
 {loop="movie"}
-<article class="movies col-lg-6">
+<article class="movies col-md-6">
 	<h2 class="no-espace-top">
 		{if="isLogged()"}<span class="movie-tools"><a href="{$value.id|Path::edit}" class="text-success tip" title="Edit&nbsp;movie" data-placement="right"><i class="icon-pencil"></i></a> <a href="{$value.id|Path::delete}&amp;token={$token}" class="text-danger tip" title="Delete&nbsp;movie" data-placement="right" onclick="return confirmDeleteMovie('{$value.title}')"><i class="icon-trash"></i></a></span>{/if}
 		<a href="{$value.id|Path::movie}" title="{$value.title}">{$value.title}</a>
@@ -30,13 +30,13 @@
 	</ul>
 
 	<div class="row">
-	<div class="col-12 col-sm-2 col-lg-4">
+	<div class="col-12 col-sm-2 col-md-4">
 		<div class="text-center">
 			<a href="{$value.id|Path::movie}" class="thumbnail"><img src="{if="$value.link_image != NULL"}{$value.link_image}{else}assets/img/movie.jpg{/if}" alt="{$value.title}" class="img-responsive" width="160" height="213" /></a>
 			{if="$value.status == Movie::SEEN"}{$value.note|displayNote}{/if}
 		</div>
 	</div>
-	<div class="col-12 col-sm-10 col-lg-8">
+	<div class="col-12 col-sm-10 col-md-8">
 		<p class="description">{$value.synopsis|displaySynopsis}</p>
 		<p><a class="more-button btn btn-default btn-sm" href="{$value.id|Path::movie}">More</a>
 		</p>

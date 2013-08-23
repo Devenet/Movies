@@ -22,11 +22,11 @@
 </div>
 
 <div class="row espace-top">
-	<div class="col-lg-3 col-sm-6 col-12 text-center espace-bottom">
+	<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 text-center espace-bottom">
 		<p><img src="{if="$movie['link_image'] != NULL"}{$movie['link_image']}{else}assets/img/movie.jpg{/if}" alt="{$movie['title']}" class="img-responsive img-thumbnail" width="160" height="213" /></p>
 		{if="$movie['status'] == Movie::SEEN"}{$displayNote}{/if}
 	</div>
-	<div class="col-lg-2 col-sm-6 col-12 aside text-muted pull-right">
+	<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 aside text-muted pull-right">
 		<div class="espace-bottom">
 			<p><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus} {if="$movie['status'] == Movie::SEEN"}Already seen{else}Not seen yet{/if}</span></p>
 			{if="$movie['owned']"}<p><i class="icon-film"></i> I have it</p>{/if}
@@ -39,7 +39,8 @@
 		</ul>
 		{if="!empty($movie['link_website'])"}<p class="espace-top"><a href="{$movie['link_website']}" rel="external" class="normal tip" title="External information"><i class="icon-globe"></i> more online</a></p>{/if}
 	</div>
-	<div class="col-lg-6 col-sm-12 col-12">
+	<div class="clearfix visible-sm"></div>
+	<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 		<p class="synopsis">{$movie['synopsis']}</p>
 	</div>
 </div>

@@ -22,7 +22,7 @@
 
 {if="!empty($imported)"}
 <div class="row">
-	<div class="col-lg-8 col-lg-offset-2">
+	<div class="col-md-8 col-md-offset-2">
 		<div class="alert alert-success text-center">
 			<strong>Yippee!</strong> Movies have been imported <i class="icon-smile"></i>.
 		</div>
@@ -31,7 +31,7 @@
 {/if}
 {if="!empty($error)"}
 <div class="row">
-	<div class="col-lg-8 col-lg-offset-2">
+	<div class="col-md-8 col-md-offset-2">
 		<div class="alert alert-danger text-center">
 			<strong>Oh damn!</strong> {$error}
 		</div>
@@ -41,15 +41,15 @@
 
 <form class="espace-top form-horizontal" method="post" action="{""|Path::import}"  enctype="multipart/form-data">
 	<div class="form-group">
-		<label for="login" class="control-label col-lg-2">File to import</label>
-		<div class="col-lg-8">
+		<label for="login" class="control-label col-md-2">File to import</label>
+		<div class="col-md-8">
 			<input type="file" id="file" name="file" />
 		</div>
 	</div>
 
 	<input type="hidden" name="token" value="{$token}" />
 	<div class="form-group form-controls">
-		<div class="col-lg-8 col-lg-offset-2">
+		<div class="col-md-8 col-md-offset-2">
 			<button type="submit" class="btn btn-primary" rel="external">Import</button>
 			<button type="reset" class="btn btn-default">Reset</button>
 		</div>
