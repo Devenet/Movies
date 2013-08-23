@@ -467,10 +467,10 @@ function check_auth($login, $password) {
 		$_SESSION['uid'] = sha1(uniqid('', TRUE).'_'.mt_rand());
 		$_SESSION['ip'] = currentIP();
 		$_SESSION['expires_on'] = time() + INACTIVITY_TIMEOUT;
-		writeLog('Successful Login for user '.htmlspecialchars($login));
+		writeLog('Successful login for user '.htmlspecialchars($login));
 		return TRUE;
 	}
-	writeLog('! Failed login for user '.htmlspecialchars($login));
+	writeLog('Failed login for user '.htmlspecialchars($login), TRUE);
 	return FALSE;
 }
 
@@ -490,7 +490,7 @@ function acceptToken($token) {
 		unset($_SESSION['tokens'][$token]);
 		return TRUE;
 	}
-	writeLog('! Invalid security token given');
+	writeLog('Invalid security token given', TRUE);
 	return FALSE;
 }
 
@@ -505,7 +505,7 @@ function loginFailed() {
 	$ban['failures'][$ip]++;
 	if ($ban['failures'][$ip] > ($_CONFIG['ban_after']-1)) {
 		$ban['banned'][$ip] = time() + $_CONFIG['ban_duration'];
-		writeLog('! IP address banned from sign in');
+		writeLog('IP address banned from sign in', TRUE);
 	}
 	$_CONFIG['ban_ip'] = $ban;
 	file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
@@ -565,9 +565,9 @@ function writeSettings() {
 }
 
 // log actions into file
-function writeLog($message) {
+function writeLog($message, $alert = FALSE) {
 	global $_CONFIG;
-	$log = strval(date('Y-m-d H:i:s')).' ['.$_SERVER["REMOTE_ADDR"].'] '.strval($message)."\n";
+	$log = strval(date('Y-m-d H:i:s')).' ['.$_SERVER["REMOTE_ADDR"].'] '.($alert ? '! ' : '  ').strval($message)."\n";
 	file_put_contents($_CONFIG['log'], $log, FILE_APPEND);
 }
 
