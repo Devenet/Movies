@@ -7,6 +7,15 @@
 {include="page.menu"}
 
 <div class="container">
+{if="!empty($search)"}
+<div class="row espace-bottom">
+<div class="col-md-8 col-md-offset-2">
+	<div class="panel panel-primary">
+		<div class="panel-body text-center">{$search_count} results for <strong>{$search}</strong></div>
+	</div>
+</div>
+</div>
+{/if}
 <div class="row">
 {loop="movie"}
 <article class="movies col-md-6">

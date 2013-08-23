@@ -15,7 +15,13 @@
 		<ul class="nav navbar-nav" role="navigation">
 			{$menu_links}
 		</ul>
-		<ul class="nav navbar-nav pull-right">
+		<div class="pull-right">
+		<form class="navbar-form navbar-left" role="search">
+			<div class="form-group" action="{""|Path::search}">
+			<input type="text" class="form-control" placeholder="Search" name="search" id="search" {if="!empty($search)"}value="{$search}"{/if} />
+			</div>
+		</form>
+		<ul class="nav navbar-nav">
 			{if="isLogged()"}
 			{$menu_links_admin}
 			<li><a href="{""|Path::signout}" title="Sign&nbsp;out" class="tip"><i class="icon-signout"></i></a></li>
@@ -23,6 +29,7 @@
 			<li><a href="{""|Path::admin}" title="Sign&nbsp;in" class="tip"><i class="icon-lock"></i></a></li>
 			{/if}
 		</ul>
+		</div>
 	</div>
 </nav>
 </div>

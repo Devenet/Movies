@@ -14,7 +14,7 @@
 		{if="!empty($display_search)"}
 		<form method="post" action="{$target_search}" class="form-inline search-inline">
 			<div class="input-group">
-				<input type="search" class="form-control" id="search" name="search" placeholder="Search" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if} />
+				<input type="text" class="form-control" id="fast_search" name="fast_search" placeholder="Easy import" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if} />
 				<input type="hidden" name="token" value="{$token}" />
 				<span class="input-group-btn"><button class="btn btn-info" type="submit"><i class="icon-search icon-white"></i> IMDB</button></span>
 			</div>
@@ -138,8 +138,6 @@ $('.datepicker-release').datepicker();
 $('select#country option').prepend(function() {return '<span class="flag flag-option flag-'+$(this).val()+'"></span> ';} );
 if($('input#status').attr('checked') == undefined) { $('.form-group-note').slideToggle(0); }
 $('input#status').change(function(){ $('.form-group-note').slideToggle(250); });
-$('#search').focus(function(){ $(this).parent().parent().toggleClass('search-increase'); });
-$('#search').blur(function(){ $(this).parent().parent().toggleClass('search-increase'); });
 });
 </script>
 </body>

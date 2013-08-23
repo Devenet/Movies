@@ -29,7 +29,6 @@ label.normal {font-weight:normal;}
 select#country option {display:block; padding:4px 8px;}
 .form-group-note .slider .slider-handle.round {}
 form.search-inline {display: inline; position: absolute; right: 20px; top: 0; width: 30%;}
-form.search-inline.search-increase {width: 40%;}
 form label.label-checkbox {margin-top: 4px;}
 form input[type="file"] {margin-top:5px;}
 

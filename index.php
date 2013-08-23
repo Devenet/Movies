@@ -28,7 +28,7 @@ $_CONFIG['language'] = 'en';
 define('PHPPREFIX','<?php /* '); 
 define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'myMovies');
-define('MYMOVIES_VERSION', '0.2');
+define('MYMOVIES_VERSION', '0.3');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 
@@ -107,6 +107,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	private $logged;
 	public $total_not_seen = 0;
 	public $total_seen = 0;
+	public $total_search = 0;
 
 	function __construct($logged = FALSE) {
 		$this->logged = $logged;
@@ -203,6 +204,22 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		return array_slice($sorted, $begin, PAGINATION, TRUE);
 	}
 
+	// search function (case no sensitive). Currently: search exact whole expression
+	public function search($term, $begin = 0) {
+		$result=array();
+		$s = mb_convert_case(htmlspecialchars($term), MB_CASE_LOWER, "UTF-8");
+		foreach($this->data as $m)
+		{
+			$found =   (strpos(mb_convert_case($m['title'], MB_CASE_LOWER, "UTF-8"),$s)!==false)
+					|| (strpos(mb_convert_case($m['synopsis'], MB_CASE_LOWER, "UTF-8"),$s)!==false)
+					|| (strpos(mb_convert_case($m['genre'], MB_CASE_LOWER, "UTF-8"),$s)!==false);
+			if ($found) $result[$m['id']] = $m;
+		}
+		krsort($result);
+		$this->total_search = sizeof($result);
+		return array_slice($result, $begin, PAGINATION, TRUE);
+	}
+
 	// write an RSS file with the last movies added
 	public function updateRSS() {
 		global $_CONFIG;
@@ -251,8 +268,8 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	public function export($privateDatas = TRUE, $exportImages = FALSE, array $moviesIdToExport = NULL){
 		$movies = new Movies();
 		if($moviesIdToExport == NULL){
-		 	$moviesIdToExport = array();
-		 	foreach($movies as $movie){
+			$moviesIdToExport = array();
+			foreach($movies as $movie){
 				array_push($moviesIdToExport, $movie['id']);
 			}
 		}
@@ -304,20 +321,20 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		  }
 		  $inputs = array(
 			'id' => $id,
-			'title' => (isset($movie['title']) ? trim(htmlspecialchars($movie['title'])) : NULL),
-			'synopsis' => (isset($movie['synopsis']) ? checkSynopsis($movie['synopsis']) : NULL),
+			'title' => (isset($movie['title']) ? trim(self::html_escaped($movie['title'])) : NULL),
+			'synopsis' => (isset($movie['synopsis']) ? checkSynopsis(preg_replace('#<br( /)?>#', '', $movie['synopsis'])) : NULL),
 			'genre' => (isset($movie['genre']) ? checkGenre($movie['genre']) : NULL),
 			'status' => ((isset($movie['status']) && $movie['status'] != NULL) ? Movie::SEEN : NULL),
 			'note' => (isset($movie['note']) ? checkRatingNote($movie['note'], ((isset($movie['status']) && $movie['status'] != NULL) ? Movie::SEEN : NULL)) : NULL),
 			'owned' => ((isset($movie['owned']) && $movie['owned']) ? TRUE : NULL),
-			'original_title' => (isset($movie['original_title']) ? trim(htmlspecialchars($movie['original_title'])) : NULL),
+			'original_title' => (isset($movie['original_title']) ? trim(self::html_escaped($movie['original_title'])) : NULL),
 			'duration' => (isset($movie['duration']) ? checkDuration($movie['duration']) : NULL),
 			'release_date' => (isset($movie['release_date']) ? checkReleaseDate($movie['release_date']) : NULL),
 			'country' => (isset($movie['country']) ? checkContry($movie['country']) : NULL),
 			'link_website' => (isset($movie['link_website']) ? checkLink($movie['link_website']) : NULL),
 			'link_image' => NULL
 		  );
-		  if(empty($inputs['title']) || empty($inputs['synopsis'])) { continue; }
+		  if(empty($inputs['title']) && empty($inputs['synopsis'])) { continue; }
 		  if(function_exists('imagecreatefromjpeg') && !empty($images[$i])) {
 			$image = explode(',', $images[$i]);
 			if(!isset($image[1])){ continue; }
@@ -330,6 +347,10 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		}
 		$movies->save();
 		return TRUE;
+	}
+	// Escapes < and > (inspired by Sebastien Sauvage with Shaarli)
+	private static function html_escaped($html) {
+    	return str_replace('>','&gt;',str_replace('<','&lt;',$html));
 	}
 }
 
@@ -373,6 +394,9 @@ abstract class Path {
 	}
 	static function page($id) {
 		return 'page='.$id;
+	}
+	static function search() {
+		return './?search';
 	}
 	static function admin() {
 		return './?admin';
@@ -986,10 +1010,10 @@ function addMovie() {
 	if (isset($_POST) && !empty($_POST)) {
 		if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
 			// try to import informations from IMDB
-			if(!empty($_POST['search'])) {
+			if(!empty($_POST['fast_search'])) {
 				try{
 				
-				$oIMDB = new IMDB($_POST['search']);
+				$oIMDB = new IMDB($_POST['fast_search']);
 
 				if($oIMDB->isReady){
 					$duration = explode(' ', $oIMDB->getRuntime()); // explode(' ', $oIMDB->getRuntime())[0] only works after PHP 5.4
@@ -1007,7 +1031,7 @@ function addMovie() {
 						'link_website' => checkLink($oIMDB->getUrl()),
 						'link_image' => ($oIMDB->getPosterUrl('big') != $oIMDB->strNotFound ? $oIMDB->getPosterUrl('big') : NULL),
 						'link_image_import' => ($oIMDB->getPosterUrl('big') != $oIMDB->strNotFound ? TRUE : NULL),
-						'search' => htmlspecialchars($_POST['search'])
+						'search' => htmlspecialchars($_POST['fast_search'])
 					);
 					$tpl->assign('inputs', $inputs);
 					} 
@@ -1284,6 +1308,28 @@ if (isset($_GET['box-office'])) {
 	$tpl->assign('page_title', !empty($page) ?  'Box office &middot; Page '.($page+1) : 'Box office');
 	$tpl->assign('menu_links', Path::menu('box-office'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('box-office'));
+	$tpl->assign('token', getToken());
+	$tpl->draw('list');
+	exit();
+}
+// movies sorted by search asked
+if (isset($_GET['search'])) {
+	if (empty($_GET['search'])) { notFound(); }
+	$movies = new Movies();
+	$movies->search(htmlspecialchars($_GET['search'])); // used to update $movies->total_search
+
+	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
+	// check if pagination is asked
+	if (!empty($_GET['page'])) {
+			checkPagination($page, $movies->total_search);
+			$tpl->assign('movie', $movies->search(htmlspecialchars($_GET['search']), $page*PAGINATION));
+	} else { $tpl->assign('movie', $movies->search(htmlspecialchars($_GET['search']))); }
+	$tpl->assign('pagination', displayPagination($page, $movies->total_search, '?search='.htmlspecialchars($_GET['search']).'&amp;'));
+	$tpl->assign('page_title', !empty($page) ?  'Box office &middot; Page '.($page+1) : 'Box office');
+	$tpl->assign('menu_links', Path::menu('search'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('search'));
+	$tpl->assign('search', htmlspecialchars($_GET['search']));
+	$tpl->assign('search_count', $movies->total_search);
 	$tpl->assign('token', getToken());
 	$tpl->draw('list');
 	exit();
