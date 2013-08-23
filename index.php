@@ -467,10 +467,10 @@ function check_auth($login, $password) {
 		$_SESSION['uid'] = sha1(uniqid('', TRUE).'_'.mt_rand());
 		$_SESSION['ip'] = currentIP();
 		$_SESSION['expires_on'] = time() + INACTIVITY_TIMEOUT;
-		writeLog('Login successful for user '.htmlspecialchars($login));
+		writeLog('Successful Login for user '.htmlspecialchars($login));
 		return TRUE;
 	}
-	writeLog('Login failed for user '.htmlspecialchars($login));
+	writeLog('! Failed login for user '.htmlspecialchars($login));
 	return FALSE;
 }
 
@@ -490,7 +490,7 @@ function acceptToken($token) {
 		unset($_SESSION['tokens'][$token]);
 		return TRUE;
 	}
-	writeLog('Invalid security token given');
+	writeLog('! Invalid security token given');
 	return FALSE;
 }
 
@@ -505,7 +505,7 @@ function loginFailed() {
 	$ban['failures'][$ip]++;
 	if ($ban['failures'][$ip] > ($_CONFIG['ban_after']-1)) {
 		$ban['banned'][$ip] = time() + $_CONFIG['ban_duration'];
-		writeLog('IP address banned from login');
+		writeLog('! IP address banned from sign in');
 	}
 	$_CONFIG['ban_ip'] = $ban;
 	file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
@@ -530,7 +530,7 @@ function canLogin() {
 	if (isset($ban['banned'][$ip])) {
 		// User is banned. Check if the ban has expired:
 		if ($ban['banned'][$ip] <= time()) {
-			writeLog('Ban lifted');
+			writeLog('Ban lifted from jail');
 			unset($ban['failures'][$ip]);
 			unset($ban['banned'][$ip]);
 			file_put_contents($_CONFIG['ban'], '<?php'.PHP_EOL.'$_CONFIG[\'ban_ip\']='.var_export($ban, TRUE).';'.PHP_EOL.'?>');
