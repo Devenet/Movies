@@ -211,6 +211,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		foreach($this->data as $m)
 		{
 			$found =   (strpos(mb_convert_case($m['title'], MB_CASE_LOWER, "UTF-8"),$s)!==false)
+					|| (strpos(mb_convert_case($m['original_title'], MB_CASE_LOWER, "UTF-8"),$s)!==false)
 					|| (strpos(mb_convert_case($m['synopsis'], MB_CASE_LOWER, "UTF-8"),$s)!==false)
 					|| (strpos(mb_convert_case($m['genre'], MB_CASE_LOWER, "UTF-8"),$s)!==false);
 			if ($found) $result[$m['id']] = $m;
