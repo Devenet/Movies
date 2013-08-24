@@ -8,13 +8,13 @@
 
 <div class="container rss-feeds espace-top-lg">
 <div class="row text-center">
-	<div class="col-md-4">
-		<p class="lead"><a href="./{#RSS#}" rel="external">{#TITLE#} <i class="icon-rss-sign"></i></a></p>
+	<div class="col-md-4 col-sm-4">
+		<p class="lead"><a href="./{#RSS#}" rel="external">Last movies <i class="icon-rss-sign"></i></a></p>
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-4 col-sm-4">
 		<p class="lead"><a href="./{#RSS_BOXOFFICE#}" rel="external">Box office <i class="icon-rss-sign"></i></a></p>
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-4 col-sm-4">
 		<p class="lead"><a href="./{#RSS_WATCHLIST#}" rel="external">Watchlist <i class="icon-rss-sign"></i></a></p>
 	</div>
 </div>
