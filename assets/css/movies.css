@@ -40,6 +40,9 @@ footer p {font-size: 12px;}
 footer a.normal {color: #888;}
 footer a.normal:hover {color: #555; text-decoration: underline;}
 
+.rss-feeds a {text-decoration: none;}
+.rss-feeds a i {color: #FF7A4D;}
+
 article.movies {margin-bottom: 20px;}
 article.movies h2 a {text-decoration: none;}
 article.movies h2 small {display: block; font-size: 14px;}

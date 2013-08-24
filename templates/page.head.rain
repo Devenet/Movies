@@ -9,6 +9,8 @@
 <link rel="icon" type="image/png" href="assets/favicon.png" />
 
 <link rel="alternate" type="application/rss+xml" href="{#RSS#}" title="{#TITLE#}" />
+<link rel="alternate" type="application/rss+xml" href="{#RSS_BOXOFFICE#}" title="{#TITLE#} &middot; Box office" />
+<link rel="alternate" type="application/rss+xml" href="{#RSS_WATCHLIST#}" title="{#TITLE#} &middot; Watchlist" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link href="assets/css/bootstrap.css" rel="stylesheet" type="text/css" />

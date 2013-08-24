@@ -31,6 +31,8 @@ define('MYMOVIES', 'myMovies');
 define('MYMOVIES_VERSION', '0.3');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
+define('RSS_BOXOFFICE', 'box-office.rss');
+define('RSS_WATCHLIST', 'watchlist.rss');
 
 // Force cookie path (but do not change lifetime)
 $cookie = session_get_cookie_params();
@@ -149,7 +151,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 			$movie = array('id' => time()+1,'title' => 'Moi, moche et méchant 2','original_title' => 'Despicable Me 2','release_date' => '2013-06-26','country' => 'us','genre' => 'Animation, Adventure, Comedy, Crime, Family, Sci-Fi','duration' => 98,'synopsis' => 'While Gru, the ex-supervillain is adjusting to family life and an attempted honest living in the jam business, a secret Arctic laboratory is stolen. The Anti-Villain League decides it needs an insider\'s help and recruits Gru in the investigation. Together with the eccentric AVL agent, Lucy Wilde, Gru concludes that his prime suspect is the presumed dead supervillain, El Macho, whose his teenage son is also making the moves on his eldest daughter, Margo. Seemingly blinded by his overprotectiveness of his children and his growing mutual attraction to Lucy, Gru seems on the wrong track even as his minions are being quietly kidnapped en masse for some malevolent purpose.','link_image' => 'http://fr.web.img2.acsta.net/r_160_240/b_1_d6d6d6/medias/nmedia/18/89/40/05/20532087.jpg','link_website' => 'http://www.imdb.com/title/tt1690953/','status' => Movie::NOT_SEEN,'note' => NULL, 'owned' => NULL);
 			$this->data[$movie['id']] = $movie;
 			file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
-			self::updateRSS();
+			self::RSS();
 		}
 	}
 
@@ -165,7 +167,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		if (!$this->logged) die('You are not authorized to change the database.');
 		krsort($this->data);
 		file_put_contents($_CONFIG['database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
-		self::updateRSS();
+		self::RSS();
 	}
 
 	// return all movies inserted
@@ -175,33 +177,34 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	}
 
 	// last movies inserted
-	public function lastMovies($begin = 0) {
+	public function lastMovies($begin = 0, $end = PAGINATION) {
 		krsort($this->data);
-		return array_slice($this->data, $begin, PAGINATION, TRUE);
+		return array_slice($this->data, $begin, $end, TRUE);
 	}
 
 	// return sorted array by status (only not seen returned)
-	public function byStatus($begin = 0) {
+	public function byStatus($begin = 0, $end = PAGINATION) {
 		$sorted = array();
 		foreach ($this->data as $id => $movie) {
 			if ($movie['status'] == Movie::NOT_SEEN) { $sorted[$id] = $movie; }
 		}
 		krsort($sorted);
 		$this->total_not_seen = sizeof($sorted);
-		return array_slice($sorted, $begin, PAGINATION, TRUE);
+		return array_slice($sorted, $begin, $end, TRUE);
 	}
 
 	// return sorted array by note (and then id desc) (only seen i.e. with a note returned)
-	public function byNote($begin = 0) {
+	public function byNote($begin = 0, $end = PAGINATION) {
 		$sorted = array();
 		foreach ($this->data as $id => $movie) {
 			if ($movie['status'] == Movie::SEEN) { $sorted[$id] = $movie; }
 		}
 		$this->total_seen = sizeof($sorted);
-		foreach ($sorted as $key => $value) { $values[] = $value['note']; }
+		$values = array();
+		foreach ($sorted as $key => $value) { $values[$key] = $value['note']; }
 		$keys = array_keys($sorted);
 		array_multisort($values, SORT_DESC, $keys, SORT_DESC, $sorted);
-		return array_slice($sorted, $begin, PAGINATION, TRUE);
+		return array_slice($sorted, $begin, $end, TRUE);
 	}
 
 	// search function (case no sensitive). Currently: search exact whole expression
@@ -221,50 +224,64 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		return array_slice($result, $begin, PAGINATION, TRUE);
 	}
 
-	// write an RSS file with the last movies added
-	public function updateRSS() {
+	/*
+	 * Write an RSS file with the movies $data given
+	 * $data: movies to write
+	 * $title: title of the RSS feed (ex.: Watchlist)
+	 * $file: file name (ex.: movies-watchlist.rss)
+	 */
+	private function updateRSS($data, $title, $file) {
 		global $_CONFIG;
 		$url = (empty($_SERVER['REQUEST_SCHEME']) ? 'http' : $_SERVER['REQUEST_SCHEME']).'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/';
 		$xml  = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
 		$xml .= '<rss version="2.0"  xmlns:atom="http://www.w3.org/2005/Atom">'.PHP_EOL;
 		$xml .= '<channel>'.PHP_EOL;
-		$xml .= '<atom:link href="'.$url.RSS.'" rel="self" type="application/rss+xml" />'.PHP_EOL;
-		$xml .= '<title>'.TITLE.'</title>'.PHP_EOL;
+		$xml .= '<atom:link href="'.$url.$file.'" rel="self" type="application/rss+xml" />'.PHP_EOL;
+		$xml .= '<title>'.$title.'</title>'.PHP_EOL;
 		$xml .= '<link>'.$url.'</link>'.PHP_EOL;
-		$xml .= '<description>RSS feed of '.TITLE.'</description>'.PHP_EOL;
+		$xml .= '<description>RSS feed of '.$title.'</description>'.PHP_EOL;
 		$xml .= '<pubDate>'.date("D, d M Y H:i:s O").'</pubDate>'.PHP_EOL;
 		$xml .= '<copyright>'.$url.'</copyright>'.PHP_EOL;
 		$xml .= '<language>'.$_CONFIG['language'].'</language>'.PHP_EOL;
 		$xml .= '<generator>'.MYMOVIES.'</generator>'.PHP_EOL;
 		$xml .= '<image>'.PHP_EOL;
-		$xml .= '<title>'.TITLE.'</title>'.PHP_EOL;
+		$xml .= '<title>'.$title.'</title>'.PHP_EOL;
 		$xml .= '<url>'.$url.'assets/img/movies_48x48.png</url>'.PHP_EOL;
 		$xml .= '<link>'.$url.'</link>'.PHP_EOL;
 		$xml .= '<width>48</width>'.PHP_EOL;
 		$xml .= '<height>48</height>'.PHP_EOL;
 		$xml .= '</image>'.PHP_EOL;
-		$data = array_slice(self::all(), 0, $_CONFIG['pagination_rss'], TRUE);
 		foreach ($data as $id => $movie) {
 			$xml .= '<item>'.PHP_EOL;
 			$xml .= '<title>'. $movie['title'] .'</title>'.PHP_EOL;
-			$xml .= '<link>'.$url.substr(Path::movie($id), 2).'</link>'.PHP_EOL;
+			$xml .= '<link>'.$url.substr(Path::movie($movie['id']), 2).'</link>'.PHP_EOL;
 			$xml .= '<description><![CDATA[<strong>'.($movie['status']==Movie::SEEN ? 'Movie seen &middot; Rated '.$movie['note'].'/10' : 'Movie not seen').'</strong><br />'.htmlspecialchars_decode(htmlentities($movie['synopsis'], ENT_COMPAT, 'UTF-8')).']]></description>'.PHP_EOL;
 			// trasform image url if needed
 			$img = !empty($movie['link_image']) ? $movie['link_image'] : $url.'assets/img/movie.jpg';
 			// if img is hosted in local, we have to add $url before...
 			if (substr( $img, 0, strlen($_CONFIG['images'].'/') ) === $_CONFIG['images'].'/') { $img = $url.$img; }
 			$xml .= '<enclosure url="'.$img.'" length="42" type="image/jpeg" />'.PHP_EOL;
-			$xml .= '<guid isPermaLink="false">'.$id.'</guid>'.PHP_EOL;
-			$xml .= '<pubDate>'.date("D, d M Y H:i:s O", $id).'</pubDate>'.PHP_EOL;
+			$xml .= '<guid isPermaLink="false">'.$movie['id'].'</guid>'.PHP_EOL;
+			$xml .= '<pubDate>'.date("D, d M Y H:i:s O", $movie['id']).'</pubDate>'.PHP_EOL;
 			$xml .= '<category domain="'.$url.'">'.$movie['genre'].'</category>'.PHP_EOL;
-			$xml .= '<source url="'.$url.RSS.'">'.TITLE.'</source>'.PHP_EOL;
+			$xml .= '<source url="'.$url.$file.'">'.TITLE.'</source>'.PHP_EOL;
 			$xml .= '</item>'.PHP_EOL;
 		}
 		$xml .= '</channel>'.PHP_EOL;
 		$xml .= '</rss>'.PHP_EOL;
-		file_put_contents(RSS, $xml);
+		file_put_contents($file, $xml);
 	}
   
+	public function RSS() {
+		global $_CONFIG;
+		// normal feed: last movies
+		self::updateRSS(self::lastMovies(0, $_CONFIG['pagination_rss']), TITLE, RSS);
+		// box office feed
+		self::updateRSS(self::byNote(0, $_CONFIG['pagination_rss']), TITLE.' &#183; Box office', RSS_BOXOFFICE);
+		// watch list feed
+		self::updateRSS(self::byStatus(0, $_CONFIG['pagination_rss']), TITLE.' &#183; Watchlist', RSS_WATCHLIST);
+	}
+
 	// export movies datas into json
 	public function export($privateDatas = TRUE, $exportImages = FALSE, array $moviesIdToExport = NULL){
 		$movies = new Movies();
@@ -385,7 +402,7 @@ abstract class Path {
 		return $result.($tpl ? '</li>' : NULL);
 	}
 	static function menu($active) {
-		return self::url('home', 'All', $active).self::url('box-office', 'Box office', $active).self::url('soon', 'Watchlist', $active).'<li class="rss"><a href="./'.RSS.'" rel="external"><i class="icon-rss"></i></a></li>'.PHP_EOL;
+		return self::url('home', 'All', $active).self::url('box-office', 'Box office', $active).self::url('soon', 'Watchlist', $active).'<li class="rss"><a href="./?rss-feeds" class="tip" title="RSS&nbsp;feeds"><i class="icon-rss"></i></a></li>'.PHP_EOL;
 	}
 	static function menuAdmin($active) {
 		return self::url_admin('add', 'Movie', $active).self::url_admin('admin', 'Admin', $active).PHP_EOL;
@@ -839,6 +856,16 @@ function moviePage() {
 	$tpl->assign('token', getToken());
 	$tpl->assign('movies_count', $movies->count());
 	$tpl->draw('movie');
+	exit();
+}
+
+// rss feeds page
+function rssPage() {
+	global $tpl;
+	$tpl->assign('page_title', 'RSS feeds');
+	$tpl->assign('menu_links', Path::menu('rss'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('rss'));
+	$tpl->draw('rss');
 	exit();
 }
 
@@ -1356,6 +1383,8 @@ if (empty($_GET) || isset($_GET['page'])) {
 }
 // movie asked
 if (!empty($_GET['movie'])) {moviePage();}
+// rss feeds asked
+if (isset($_GET['rss-feeds'])) {rssPage();}
 // admin asked
 if (isset($_GET['admin'])) {administration();}
 // login asked
