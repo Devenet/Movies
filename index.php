@@ -578,6 +578,7 @@ function writeSettings() {
 	$file .= '$_CONFIG[\'salt\']='.var_export($_CONFIG['salt'], TRUE).'; ';
 	$file .= '$_CONFIG[\'title\']='.var_export($_CONFIG['title'], TRUE).'; ';
 	$file .= '$_CONFIG[\'language\']='.var_export($_CONFIG['language'], TRUE).'; ';
+	$file .= '$_CONFIG[\'pagination\']='.var_export($_CONFIG['pagination'], TRUE).'; ';
 	$file .= PHP_EOL.'?>';
 	if (!file_put_contents($_CONFIG['settings'], $file)) die('Impossible to write the configuration file. Please verify the webapplication has rights to write.');
 }
@@ -932,6 +933,7 @@ function settingsPage() {
 			if (!empty($_POST['title'])) { $_CONFIG['title'] = htmlspecialchars($_POST['title']); }
 			if (!empty($_POST['password'])) { $_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']); }
 			if (!empty($_POST['locale'])) { $_CONFIG['language'] = array_key_exists($_POST['locale'], $_CONFIG['languages']) ? $_POST['locale'] : 'en'; }
+			if (!empty($_POST['pagination'])) { $_CONFIG['pagination'] = max(2, $_POST['pagination']+0); }
 			writeSettings();
 			header('Location: '.Path::settings().'&update');
 			exit();
