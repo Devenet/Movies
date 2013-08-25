@@ -1316,7 +1316,7 @@ if (isset($_GET['watchlist'])) {
 			$tpl->assign('movie', $movies->byStatus($page*PAGINATION));
 	} else { $tpl->assign('movie', $movies->byStatus()); }
 	$tpl->assign('pagination', displayPagination($page, $movies->total_not_seen, '?watchlist&amp;'));
-	$tpl->assign('page_title', !empty($page) ?  'Soon &middot; Page '.($page+1) : 'Soon');
+	$tpl->assign('page_title', !empty($page) ?  'Watchlist &middot; Page '.($page+1) : 'Watchlist');
 	$tpl->assign('menu_links', Path::menu('soon'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('soon'));
 	$tpl->assign('token', getToken());
