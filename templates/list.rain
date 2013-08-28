@@ -70,5 +70,9 @@
 </div>
 
 {include="page.foot"}
+{if="!empty($search)"}
+<script src="assets/js/jquery.highlight.js"></script>
+<script>$(function() { $('.movies').highlight("{$search}"); });</script>
+{/if}
 </body>
 </html>

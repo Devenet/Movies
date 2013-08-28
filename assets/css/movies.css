@@ -67,6 +67,7 @@ article.movie .synopsis {font-size:16px;font-family:Georgia,"DejaVu Serif","Bist
 article.movie .stars {margin-top: 20px; letter-spacing: 2px;}
 
 .pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus {background-color: rgb(245, 245, 245); border-color: #dddddd; color:rgb(153, 153, 153);}
+.highlight {background-color: #FFFF6F; border-radius:4px;}
 
 @media(max-width: 767px) {
 	header nav div {overflow: visible !important;}
