@@ -1,5 +1,5 @@
 <meta charset="utf-8" />
-<title>{$page_title} &middot; {#TITLE#}</title>
+<title>{#TITLE#}{if="!empty($page_title)"} &middot; {$page_title}{/if}</title>
 
 <meta name="author" content="Nicolas Devenet" />
 <meta name="robots" content="noindex, noarchive, nofollow" />

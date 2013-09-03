@@ -34,7 +34,7 @@
 		{if="!empty($movie['duration'])"}<p>{$movie['duration']} min</p>{/if}
 		{if="!empty($movie['release_date'])"}<p><span class="tip" data-title="Release&nbsp;date"><i class="icon-calendar"></i></span> {$movie['release_date']}</p>{/if}
 		{if="!empty($country)"}<p>{$country|displayFlagWithName}</p>{/if}
-		<ul class="list-unstyled espace-top">
+		<ul class="list-unstyled espace-top text-muted">
 			{$displayGenres}
 		</ul>
 		{if="!empty($movie['link_website'])"}<p class="espace-top"><a href="{$movie['link_website']}" rel="external" class="normal tip" title="External information"><i class="icon-globe"></i> more online</a></p>{/if}

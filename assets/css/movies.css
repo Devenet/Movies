@@ -56,6 +56,7 @@ article.movies .kinds {font-size: 12px;}
 .stars.stars-3 {color: #9272C2;}
 .stars.stars-4 {color: #428bca;}
 .stars.stars-5 {color: #468847;}
+article ul.text-muted a {color: rgb(153,153,153);}
 
 article.movie .page-header {margin-top: 0; margin-bottom: 15px;}
 article.movie h2 {margin-bottom: 0; position: relative; color: #444;}

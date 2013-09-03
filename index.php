@@ -1,7 +1,7 @@
 <?php
 
 date_default_timezone_set('Europe/Paris');
-//error_reporting(0);
+error_reporting(0);
 
 global $_CONFIG;
 $_CONFIG['data'] = 'data';
@@ -110,6 +110,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	public $total_not_seen = 0;
 	public $total_seen = 0;
 	public $total_search = 0;
+	public $total_genre = 0;
 
 	function __construct($logged = FALSE) {
 		$this->logged = $logged;
@@ -207,12 +208,24 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		return array_slice($sorted, $begin, $end, TRUE);
 	}
 
+	// function to get only movies with a genre given
+	public function byGenre($genre, $begin = 0, $end = PAGINATION) {
+		$result = array();
+		$genre = mb_convert_case(htmlspecialchars($genre), MB_CASE_LOWER, "UTF-8");
+		foreach($this->data as $m) {
+			if (strpos(mb_convert_case($m['genre'], MB_CASE_LOWER, "UTF-8"), $genre)!==false)
+				{ $result[$m['id']] = $m; }
+		}
+		krsort($result);
+		$this->total_genre = sizeof($result);
+		return array_slice($result, $begin, $end, TRUE);
+	}
+
 	// search function (case no sensitive). Currently: search exact whole expression
-	public function search($term, $begin = 0) {
-		$result=array();
+	public function search($term, $begin = 0, $end = PAGINATION) {
+		$result = array();
 		$s = mb_convert_case(htmlspecialchars($term), MB_CASE_LOWER, "UTF-8");
-		foreach($this->data as $m)
-		{
+		foreach($this->data as $m) {
 			$found =   (strpos(mb_convert_case($m['title'], MB_CASE_LOWER, "UTF-8"),$s)!==false)
 					|| (strpos(mb_convert_case($m['original_title'], MB_CASE_LOWER, "UTF-8"),$s)!==false)
 					|| (strpos(mb_convert_case($m['synopsis'], MB_CASE_LOWER, "UTF-8"),$s)!==false)
@@ -221,7 +234,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		}
 		krsort($result);
 		$this->total_search = sizeof($result);
-		return array_slice($result, $begin, PAGINATION, TRUE);
+		return array_slice($result, $begin, $end, TRUE);
 	}
 
 	/*
@@ -720,7 +733,7 @@ function displayGenres($genres) {
 	ksort($genre);
 	$result = '';
 	foreach ($genre as $value)
-		$result .= '<li><i class="icon-tag"></i> '.trim(mb_convert_case($value, MB_CASE_TITLE, "UTF-8")).'</li>';
+		$result .= '<li><i class="icon-tag"></i> <a href="?genre='.trim(mb_convert_case($value, MB_CASE_LOWER, "UTF-8")).'">'.trim(mb_convert_case($value, MB_CASE_TITLE, "UTF-8")).'</a></li>';
 	return $result.PHP_EOL;
 }
 // shortcut the synopsis (= summary) of the movie with [...]
@@ -1355,11 +1368,33 @@ if (isset($_GET['search'])) {
 			$tpl->assign('movie', $movies->search(htmlspecialchars($_GET['search']), $page*PAGINATION));
 	} else { $tpl->assign('movie', $movies->search(htmlspecialchars($_GET['search']))); }
 	$tpl->assign('pagination', displayPagination($page, $movies->total_search, '?search='.htmlspecialchars($_GET['search']).'&amp;'));
-	$tpl->assign('page_title', !empty($page) ?  'Box office &middot; Page '.($page+1) : 'Box office');
+	$tpl->assign('page_title', !empty($page) ?  'Search &middot; Page '.($page+1) : 'Search');
 	$tpl->assign('menu_links', Path::menu('search'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('search'));
 	$tpl->assign('search', htmlspecialchars($_GET['search']));
 	$tpl->assign('search_count', $movies->total_search);
+	$tpl->assign('token', getToken());
+	$tpl->draw('list');
+	exit();
+}
+// movies sorted with a given genre asked
+if (isset($_GET['genre'])) {
+	if (empty($_GET['genre'])) { notFound(); }
+	$movies = new Movies();
+	$movies->byGenre(htmlspecialchars($_GET['genre'])); // used to update $movies->total_genre
+	// if no result found, genre does not exist
+	if ($movies->total_genre == 0) { notFound(); }
+
+	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
+	// check if pagination is asked
+	if (!empty($_GET['page'])) {
+			checkPagination($page, $movies->total_genre);
+			$tpl->assign('movie', $movies->byGenre(htmlspecialchars($_GET['genre']), $page*PAGINATION));
+	} else { $tpl->assign('movie', $movies->byGenre(htmlspecialchars($_GET['genre']))); }
+	$tpl->assign('pagination', displayPagination($page, $movies->total_genre, '?genre='.htmlspecialchars($_GET['genre']).'&amp;'));
+	$tpl->assign('page_title', !empty($page) ? ucfirst(htmlspecialchars($_GET['genre'])).' &middot; Page '.($page+1) : ucfirst(htmlspecialchars($_GET['genre'])));
+	$tpl->assign('menu_links', Path::menu('genre'));
+	$tpl->assign('menu_links_admin', Path::menuAdmin('genre'));
 	$tpl->assign('token', getToken());
 	$tpl->draw('list');
 	exit();
@@ -1376,7 +1411,7 @@ if (empty($_GET) || isset($_GET['page'])) {
 			$tpl->assign('movie', $movies->lastMovies($page*PAGINATION));
 	} else { $tpl->assign('movie', $movies->lastMovies()); }
 	$tpl->assign('pagination', displayPagination($page, $movies->count()));
-	$tpl->assign('page_title', !empty($page) ?  'Home &middot; Page '.($page+1) : 'Home');
+	$tpl->assign('page_title', !empty($page) ?  'Page '.($page+1) : '');
 	$tpl->assign('menu_links', Path::menu('home'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('home'));
 	$tpl->assign('token', getToken());
