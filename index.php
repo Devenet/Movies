@@ -28,7 +28,7 @@ $_CONFIG['language'] = 'en';
 define('PHPPREFIX','<?php /* '); 
 define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'myMovies');
-define('MYMOVIES_VERSION', '0.4');
+define('MYMOVIES_VERSION', '1.0.0');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 define('RSS_BOXOFFICE', 'box-office.rss');
