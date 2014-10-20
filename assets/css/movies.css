@@ -24,6 +24,7 @@ label.text-muted {color: rgb(153, 153, 153);}
 .espace-right-sm {margin-right: 10px;}
 .no-espace-top {margin-top: 0;}
 .no-espace-bottom {margin-bottom: 0;}
+.espace-ng-bottom {margin-bottom: -20px;}
 
 header {margin: 20px 0 10px;}
 header h1 {display: inline;}
@@ -67,7 +68,8 @@ article.movie h3 {font-size: 18px; color: rgb(153,153,153); font-weight: normal;
 article.movie .synopsis {font-size:16px;font-family:Georgia,"DejaVu Serif","Bistream Vera Serif","Liberation Serif",serif;}
 article.movie .stars {margin-top: 20px; letter-spacing: 2px;}
 
-.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus {background-color: rgb(245, 245, 245); border-color: #dddddd; color:rgb(153, 153, 153);}
+/* .pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus {background-color: rgb(245, 245, 245); border-color: #dddddd; color:rgb(153, 153, 153);} */
+.pagination .disabled.gap span {background-color: #fafafa; cursor: default; color: #d3d3d3;}
 .highlight {background-color: #FFFF6F; border-radius:4px;}
 
 @media(max-width: 767px) {

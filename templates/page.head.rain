@@ -2,7 +2,7 @@
 <title>{#TITLE#}{if="!empty($page_title)"} &middot; {$page_title}{/if}</title>
 
 <meta name="author" content="Nicolas Devenet" />
-<meta name="robots" content="noindex, noarchive, nofollow" />
+<meta name="robots" content="{#ROBOTS#}" />
 <meta name="copyright" content="{#TITLE#}" />
 
 <link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico" />

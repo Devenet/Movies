@@ -24,11 +24,12 @@ $_CONFIG['languages'] = array(
 	'fr' => array('fr-FR, fr, en-US, en', 'French (fr), English (en)')
 );
 $_CONFIG['language'] = 'en';
+$_CONFIG['robots'] = 'noindex,nofollow,noarchive';
 
 define('PHPPREFIX','<?php /* '); 
 define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'myMovies');
-define('MYMOVIES_VERSION', '1.0.0');
+define('MYMOVIES_VERSION', '1.1.0');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 define('RSS_BOXOFFICE', 'box-office.rss');
@@ -59,11 +60,12 @@ if (!is_file($_CONFIG['ban'])) { file_put_contents($_CONFIG['ban'], '<?php'.PHP_
 //ob_start();
 $tpl = new RainTPL();
 
-if (!is_file($_CONFIG['settings'])) {define('TITLE', $_CONFIG['title']); install($tpl);}
+if (!is_file($_CONFIG['settings'])) { define('TITLE', $_CONFIG['title']); define('ROBOTS', $_CONFIG['robots']); install($tpl); }
 require($_CONFIG['settings']);
 define('TITLE', $_CONFIG['title']);
 define('PAGINATION', $_CONFIG['pagination']);
 define('IMDB_LANGUAGE', $_CONFIG['languages'][$_CONFIG['language']][0]);
+define('ROBOTS', $_CONFIG['robots']);
 
 /**
  * Rain class
@@ -237,6 +239,27 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		return array_slice($result, $begin, $end, TRUE);
 	}
 
+	// get next movie or NULL if not exists
+	public function nextMovie($current_id) {
+		if (array_key_exists($current_id, $this->data)) {
+			while(key($this->data) !== $current_id) next($this->data);
+			$result = next($this->data);
+			reset($this->data);
+			return $result;
+		}
+		return false;
+	}
+	// get previous movie or NULL if not exists
+	public function previousMovie($current_id) {
+		if (array_key_exists($current_id, $this->data)) {
+			while(key($this->data) !== $current_id) next($this->data);
+			$result = prev($this->data);
+			reset($this->data);
+			return $result;
+		}
+		return false;
+	}
+
 	/*
 	 * Write an RSS file with the movies $data given
 	 * $data: movies to write
@@ -276,7 +299,9 @@ class Movies implements Iterator, Countable, ArrayAccess {
 			$xml .= '<enclosure url="'.$img.'" length="42" type="image/jpeg" />'.PHP_EOL;
 			$xml .= '<guid isPermaLink="false">'.$movie['id'].'</guid>'.PHP_EOL;
 			$xml .= '<pubDate>'.date("D, d M Y H:i:s O", $movie['id']).'</pubDate>'.PHP_EOL;
-			$xml .= '<category domain="'.$url.'">'.$movie['genre'].'</category>'.PHP_EOL;
+			foreach (explode(',', $movie['genre']) as $genre) {
+				$xml .= '<category domain="'.$url.'?genre='.trim(mb_convert_case($genre, MB_CASE_LOWER, "UTF-8")).'">'.trim(mb_convert_case($genre, MB_CASE_TITLE, "UTF-8")).'</category>'.PHP_EOL;
+			}
 			$xml .= '<source url="'.$url.$file.'">'.TITLE.'</source>'.PHP_EOL;
 			$xml .= '</item>'.PHP_EOL;
 		}
@@ -332,7 +357,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	}
   
 	// import movies datas from json
-	public static function import($jsonDatas, $logged = FALSE){
+	public static function import($jsonDatas, $keep_ids = FALSE, $logged = FALSE){
 		global $_CONFIG;
 
 		if (!$logged) die('You are not authorized to import movies.');
@@ -347,6 +372,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		$i = 0;
 		$movies = new Movies($logged);
 		foreach($moviesDatas as $movie){
+		  $id = $keep_ids && isset($movie['id']) ? $movie['id'] : $id;
 		  while(isset($movies[$id])){
 			$id--;
 		  }
@@ -361,7 +387,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 			'original_title' => (isset($movie['original_title']) ? trim(self::html_escaped($movie['original_title'])) : NULL),
 			'duration' => (isset($movie['duration']) ? checkDuration($movie['duration']) : NULL),
 			'release_date' => (isset($movie['release_date']) ? checkReleaseDate($movie['release_date']) : NULL),
-			'country' => (isset($movie['country']) ? checkContry($movie['country']) : NULL),
+			'country' => (isset($movie['country']) ? checkCountry($movie['country']) : NULL),
 			'link_website' => (isset($movie['link_website']) ? checkLink($movie['link_website']) : NULL),
 			'link_image' => NULL
 		  );
@@ -590,6 +616,7 @@ function writeSettings() {
 	$file .= '$_CONFIG[\'hash\']='.var_export($_CONFIG['hash'], TRUE).'; ';
 	$file .= '$_CONFIG[\'salt\']='.var_export($_CONFIG['salt'], TRUE).'; ';
 	$file .= '$_CONFIG[\'title\']='.var_export($_CONFIG['title'], TRUE).'; ';
+	$file .= '$_CONFIG[\'robots\']='.var_export($_CONFIG['robots'], TRUE).'; ';
 	$file .= '$_CONFIG[\'language\']='.var_export($_CONFIG['language'], TRUE).'; ';
 	$file .= '$_CONFIG[\'pagination\']='.var_export($_CONFIG['pagination'], TRUE).'; ';
 	$file .= PHP_EOL.'?>';
@@ -649,7 +676,7 @@ function checkReleaseDate($date) {
 }
 
 // check if country given is in list
-function checkContry($country) {
+function checkCountry($country) {
 	if (empty($country) || $country == 'o') { return NULL; }
 	global $_CONFIG;
 	if (array_key_exists($country, $_CONFIG['countries'])) { return htmlspecialchars($country) ;}
@@ -720,8 +747,28 @@ function checkPagination($page, $total) {
 	$page = (int) $page+0;
 	if ($page <= 0) { header('Location: ./'); exit(); }
 	$pages = ceil($total/PAGINATION);
-	if ($page < $pages) { return TRUE; }
+	if ($page <= $pages) { return TRUE; }
 	notFound();
+}
+
+// return a string for robots meta tag
+function parseRobots($index, $follow, $archive) {
+	$result = array(
+		($index ? 'index' : 'noindex'),
+		($follow ? 'follow' : 'nofollow'),
+		($archive ? 'archive' : 'noarchive')
+	);
+	return implode(',', $result);
+}
+// split the robots string used in meta tag
+function getRobots($robots) {
+	$robots = explode(',', $robots);
+	$result = array (
+		'index' => ($robots[0] == 'index'),
+		'follow' => ($robots[1] == 'follow'),
+		'archive' => ($robots[2] == 'archive')
+	);
+	return $result;
 }
 
 /**
@@ -729,6 +776,7 @@ function checkPagination($page, $total) {
  */
 // genre in <li></li>
 function displayGenres($genres) {
+	if (empty($genres)) { return NULL; }
 	$genre = explode(",", $genres);
 	ksort($genre);
 	$result = '';
@@ -739,8 +787,8 @@ function displayGenres($genres) {
 // shortcut the synopsis (= summary) of the movie with [...]
 function displaySynopsis($synopsis, $size = 400) {
 	if (strlen($synopsis) > $size) {
-		$begin = substr($synopsis, 0, $size);
-		return $begin.'[...]';
+		$begin = mb_strcut($synopsis, 0, $size, 'UTF-8');
+		return trim($begin).'[&hellip;]';
 	}
 	return $synopsis;
 }
@@ -795,21 +843,30 @@ function displayCountryOptions($active = FALSE) {
 }
 
 // generate the <li></li> for pagination
-function displayPagination($page, $total, $prefix = '?') {
+function displayPagination($page, $total_entries, $prefix = '?') {
 	$page = (int) $page+0;
-	$pages = ceil($total/PAGINATION);
-	$offset = 2;
-	$begin = ($page-$offset <= 0) ? 0 : $page-$offset;
-	$end = ($page+$offset >= $pages) ? $pages-1 : $page+$offset;
-	if ($pages > 2*$offset && $end-$begin < 2*$offset) {
-		if ($end-$page <= $offset-1) { $begin -= $offset-$end+$page; }
-		else { $end += $offset-$page; }
+	if ($page == 0) { $page = 1; };
+	$pages = max(1, ceil($total_entries/PAGINATION));
+	$first_jump = $page > 4 && $pages > 4;
+	$last_jump = $page <= ($pages-4) && $pages > 4;
+	$min_page = intval(max($page - (4) / 2, 2));
+	$max_page = intval(min($page + (4) / 2, $pages));
+
+	$result = '';
+	$result .= '<li'.($page==1 ? ' class="disabled"' : NULL).'><a href="./'.$prefix.Path::page(max(1, $page-1)).'" title="Previous" class="tip"><i class="icon-arrow-left"></i></a></li>';
+	$result .= '<li'.($page==1 ? ' class="active"' : '').'><a href="./'.str_replace('&amp;', '', $prefix).'">1</a></li>';
+	if ($first_jump && $pages != 5) { $result .= '<li class="disabled gap"><span>&hellip;</span></li>'; }
+	else if ($first_jump) { $result .= '<li><a href="./'.$prefix.Path::page(2).'">2</a></li>'; }
+
+	for ($i=$min_page; $i<=$max_page; $i++) {
+		$result .= '<li'.($i==$page ? ' class="active"' : '').'><a href="./'.$prefix.Path::page($i).'">'.$i.'</a></li>';
 	}
-	$result = '<li'.($page==0 ? ' class="disabled"' : NULL).'><a href="./'.str_replace('&amp;', '', $prefix).'" title="First page" class="tip"><i class="icon-double-angle-left"></i></a></li>';
-	for ($i=$begin; $i<=$end; $i++) {
-		$result .= '<li'.($i==$page ? ' class="active"' : NULL).'><a href="./'.$prefix.($i>0 ? Path::page($i) : NULL).'">'.($i+1).'</a></li>';
-	}
-	$result .= '<li'.($page==$end || $total<=PAGINATION  ? ' class="disabled"' : NULL).'><a href="./'.$prefix.($total<=PAGINATION ? NULL : Path::page($pages-1)).'" title="Last page" class="tip"><i class="icon-double-angle-right"></i></a></li>';
+
+	if ($last_jump && $pages != 5) { $result .= '<li class="disabled gap"><span>&hellip;</span></li>'; }
+	else if ($last_jump) { $result .= '<li><a href="./'.$prefix.Path::page(4).'">4</a></li>'; }
+	if ($pages > 2 && $page <= $pages-3) { $result .= '<li'.($page==$pages ? ' class="active"' : '').'><a href="./'.$prefix.Path::page($pages).'">'.$pages.'</a></li>'; }
+	$result .= '<li'.($page==$pages ? ' class="disabled"' : NULL).'><a href="./'.$prefix.Path::page(min($pages, $page+1)).'" title="Next" class="tip"><i class="icon-arrow-right"></i></a></li>';
+
 	return $result;
 }
 
@@ -833,7 +890,7 @@ function install($tpl) {
 		$_CONFIG['login'] = htmlspecialchars($_POST['login']);
 		$_CONFIG['salt'] = sha1(uniqid('',true).'_'.mt_rand());
 		$_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']);
-		$_CONFIG['title'] = empty($_POST['title']) ? 'myMovies' : htmlspecialchars($_POST['title']);
+		$_CONFIG['title'] = empty($_POST['title']) ? 'myMovies' : htmlspecialchars(trim($_POST['title']));
 		$_CONFIG['language'] = !empty($_POST['locale']) && array_key_exists($_POST['locale'], $_CONFIG['languages']) ? $_POST['locale'] : 'en';
 		writeSettings();
 		header('Location: '.$_SERVER['REQUEST_URI']);
@@ -856,7 +913,7 @@ function moviePage() {
 	$id = (int) $_GET['movie']+0;
 	if (! isset($movies[$id])) { notFound(); }
 	$movie = $movies[$id];
-	
+
 	global $tpl;
 	$tpl->assign('page_title', $movie['title']);
 	$tpl->assign('menu_links', Path::menu('movie'));
@@ -869,6 +926,8 @@ function moviePage() {
 	$tpl->assign('displayGenres', displayGenres($movie['genre']));
 	$tpl->assign('token', getToken());
 	$tpl->assign('movies_count', $movies->count());
+	$tpl->assign('movie_next', $movies->nextMovie($movie['id']));
+	$tpl->assign('movie_previous', $movies->previousMovie($movie['id']));
 	$tpl->draw('movie');
 	exit();
 }
@@ -947,6 +1006,8 @@ function settingsPage() {
 			if (!empty($_POST['password'])) { $_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']); }
 			if (!empty($_POST['locale'])) { $_CONFIG['language'] = array_key_exists($_POST['locale'], $_CONFIG['languages']) ? $_POST['locale'] : 'en'; }
 			if (!empty($_POST['pagination'])) { $_CONFIG['pagination'] = max(2, $_POST['pagination']+0); }
+			if (!empty($_POST['robots'])) { $_CONFIG['robots'] = parseRobots(in_array('index', $_POST['robots']), in_array('follow', $_POST['robots']), in_array('archive', $_POST['robots']) ); }
+			else { $_CONFIG['robots'] = parseRobots(false, false, false); }
 			writeSettings();
 			header('Location: '.Path::settings().'&update');
 			exit();
@@ -959,6 +1020,7 @@ function settingsPage() {
 	$tpl->assign('menu_links_admin', Path::menuAdmin('admin'));
 	$tpl->assign('username', $_CONFIG['login']);
 	$tpl->assign('locales', displayLanguages($_CONFIG['language']));
+	$tpl->assign('robots', getRobots(ROBOTS));
 	$tpl->assign('token', getToken());
 	$tpl->draw('admin.settings');
 	exit();
@@ -1019,7 +1081,7 @@ function importPage() {
 				$file = file_get_contents($_FILES['file']['tmp_name']);
 				if (!$file) { throw new \Exception('An error occured while reading the file.'); }
 
-				$result = Movies::import($file, isLogged());
+				$result = Movies::import($file, isset($_POST['keep_ids']), isLogged());
 				if (!$result) { throw new \Exception('An error occured while importing the file.'); }
 
 				header('Location: '.Path::import().'&imported');
@@ -1063,7 +1125,7 @@ function addMovie() {
 					$inputs = array(
 						'title' => $oIMDB->getTitle(TRUE),
 						'synopsis' => ($oIMDB->getPlot() != $oIMDB->strNotFound ? $oIMDB->getPlot() : $oIMDB->getDescription()),
-						'genre' => ($oIMDB->getGenre() != $oIMDB->strNotFound ? str_replace(' /', ',', $oIMDB->getGenre()) : NULL),
+						'genre' => ($oIMDB->getGenre() != $oIMDB->strNotFound ? trim(str_replace(' /', ',', $oIMDB->getGenre()), ', ') : NULL),
 						'status' => NULL,
 						'note' => NULL,
 						'owned' => NULL,
@@ -1096,7 +1158,7 @@ function addMovie() {
 					'original_title' => (isset($_POST['original_title']) ? trim(htmlspecialchars($_POST['original_title'])) : NULL),
 					'duration' => (isset($_POST['duration']) ? checkDuration($_POST['duration']) : NULL),
 					'release_date' => (isset($_POST['release_date']) ? checkReleaseDate($_POST['release_date']) : NULL),
-					'country' => (isset($_POST['country']) ? checkContry($_POST['country']) : NULL),
+					'country' => (isset($_POST['country']) ? checkCountry($_POST['country']) : NULL),
 					'link_website' => (isset($_POST['link_website']) ? checkLink($_POST['link_website']) : NULL),
 					'link_image' => (isset($_POST['link_image']) ? checkLink($_POST['link_image']) : NULL),
 					'link_image_import' => (isset($_POST['link_image_import']) ? TRUE : NULL)
@@ -1174,7 +1236,7 @@ function editMovie() {
 				'original_title' => (isset($_POST['original_title']) ? trim(htmlspecialchars($_POST['original_title'])) : NULL),
 				'duration' => (isset($_POST['duration']) ? checkDuration($_POST['duration']) : NULL),
 				'release_date' => (isset($_POST['release_date']) ? checkReleaseDate($_POST['release_date']) : NULL),
-				'country' => (isset($_POST['country']) ? checkContry($_POST['country']) : NULL),
+				'country' => (isset($_POST['country']) ? checkCountry($_POST['country']) : NULL),
 				'link_website' => (isset($_POST['link_website']) ? checkLink($_POST['link_website']) : NULL),
 				'link_image' => (isset($_POST['link_image']) ? checkLink($_POST['link_image']) : NULL),
 				'link_image_import' => (isset($_POST['link_image_import']) ? TRUE : NULL)
@@ -1322,14 +1384,16 @@ if (isset($_GET['watchlist'])) {
 	$movies = new Movies();
 	$movies->byStatus(); // used to update $movies->total_no_seen
 
-	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
+	$page = isset($_GET['page']) ? (int) $_GET['page'] : -1;
+	if($page == 0 || $page == 1) { header('Location: ./?watchlist'); }
+	else if ($page == -1) { $page = 0; }
 	// check if pagination is asked
 	if (!empty($_GET['page'])) {
 			checkPagination($page, $movies->total_not_seen);
-			$tpl->assign('movie', $movies->byStatus($page*PAGINATION));
+			$tpl->assign('movie', $movies->byStatus(($page-1)*PAGINATION));
 	} else { $tpl->assign('movie', $movies->byStatus()); }
 	$tpl->assign('pagination', displayPagination($page, $movies->total_not_seen, '?watchlist&amp;'));
-	$tpl->assign('page_title', !empty($page) ?  'Watchlist &middot; Page '.($page+1) : 'Watchlist');
+	$tpl->assign('page_title', !empty($page) ?  'Watchlist &middot; Page '.($page) : 'Watchlist');
 	$tpl->assign('menu_links', Path::menu('soon'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('soon'));
 	$tpl->assign('token', getToken());
@@ -1341,14 +1405,16 @@ if (isset($_GET['box-office'])) {
 	$movies = new Movies();
 	$movies->byNote(); // used to update $movies->total_seen
 
-	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
+	$page = isset($_GET['page']) ? (int) $_GET['page'] : -1;
+	if($page == 0 || $page == 1) { header('Location: ./?box-office'); }
+	else if ($page == -1) { $page = 0; }
 	// check if pagination is asked
 	if (!empty($_GET['page'])) {
 			checkPagination($page, $movies->total_seen);
-			$tpl->assign('movie', $movies->byNote($page*PAGINATION));
+			$tpl->assign('movie', $movies->byNote(($page-1)*PAGINATION));
 	} else { $tpl->assign('movie', $movies->byNote()); }
 	$tpl->assign('pagination', displayPagination($page, $movies->total_seen, '?box-office&amp;'));
-	$tpl->assign('page_title', !empty($page) ?  'Box office &middot; Page '.($page+1) : 'Box office');
+	$tpl->assign('page_title', !empty($page) ?  'Box office &middot; Page '.($page) : 'Box office');
 	$tpl->assign('menu_links', Path::menu('box-office'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('box-office'));
 	$tpl->assign('token', getToken());
@@ -1361,14 +1427,16 @@ if (isset($_GET['search'])) {
 	$movies = new Movies();
 	$movies->search(htmlspecialchars($_GET['search'])); // used to update $movies->total_search
 
-	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
+	$page = isset($_GET['page']) ? (int) $_GET['page'] : -1;
+	if($page == 0 || $page == 1) { header('Location: ./?search='.htmlspecialchars($_GET['search'])); }
+	else if ($page == -1) { $page = 0; }
 	// check if pagination is asked
 	if (!empty($_GET['page'])) {
 			checkPagination($page, $movies->total_search);
-			$tpl->assign('movie', $movies->search(htmlspecialchars($_GET['search']), $page*PAGINATION));
+			$tpl->assign('movie', $movies->search(htmlspecialchars($_GET['search']), ($page-1)*PAGINATION));
 	} else { $tpl->assign('movie', $movies->search(htmlspecialchars($_GET['search']))); }
 	$tpl->assign('pagination', displayPagination($page, $movies->total_search, '?search='.htmlspecialchars($_GET['search']).'&amp;'));
-	$tpl->assign('page_title', !empty($page) ?  'Search &middot; Page '.($page+1) : 'Search');
+	$tpl->assign('page_title', !empty($page) ?  'Search &middot; Page '.($page) : 'Search');
 	$tpl->assign('menu_links', Path::menu('search'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('search'));
 	$tpl->assign('search', htmlspecialchars($_GET['search']));
@@ -1385,14 +1453,16 @@ if (isset($_GET['genre'])) {
 	// if no result found, genre does not exist
 	if ($movies->total_genre == 0) { notFound(); }
 
-	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
+	$page = isset($_GET['page']) ? (int) $_GET['page'] : -1;
+	if($page == 0 || $page == 1) { header('Location: ./?genre='.htmlspecialchars($_GET['genre'])); }
+	else if ($page == -1) { $page = 0; }
 	// check if pagination is asked
 	if (!empty($_GET['page'])) {
 			checkPagination($page, $movies->total_genre);
-			$tpl->assign('movie', $movies->byGenre(htmlspecialchars($_GET['genre']), $page*PAGINATION));
+			$tpl->assign('movie', $movies->byGenre(htmlspecialchars($_GET['genre']), ($page-1)*PAGINATION));
 	} else { $tpl->assign('movie', $movies->byGenre(htmlspecialchars($_GET['genre']))); }
 	$tpl->assign('pagination', displayPagination($page, $movies->total_genre, '?genre='.htmlspecialchars($_GET['genre']).'&amp;'));
-	$tpl->assign('page_title', !empty($page) ? ucfirst(htmlspecialchars($_GET['genre'])).' &middot; Page '.($page+1) : ucfirst(htmlspecialchars($_GET['genre'])));
+	$tpl->assign('page_title', !empty($page) ? ucfirst(htmlspecialchars($_GET['genre'])).' &middot; Page '.($page) : ucfirst(htmlspecialchars($_GET['genre'])));
 	$tpl->assign('menu_links', Path::menu('genre'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('genre'));
 	$tpl->assign('token', getToken());
@@ -1404,14 +1474,16 @@ if (isset($_GET['genre'])) {
 if (empty($_GET) || isset($_GET['page'])) {
 	$movies = new Movies();
 	
-	$page = isset($_GET['page']) ? (int) $_GET['page'] : 0;
+	$page = isset($_GET['page']) ? (int) $_GET['page'] : -1;
+	if($page == 0 || $page == 1) { header('Location: ./'); }
+	else if ($page == -1) { $page = 0; }
 	// check if pagination is asked
 	if (!empty($_GET['page'])) {
 			checkPagination($page, $movies->count());
-			$tpl->assign('movie', $movies->lastMovies($page*PAGINATION));
+			$tpl->assign('movie', $movies->lastMovies(($page-1)*PAGINATION));
 	} else { $tpl->assign('movie', $movies->lastMovies()); }
 	$tpl->assign('pagination', displayPagination($page, $movies->count()));
-	$tpl->assign('page_title', !empty($page) ?  'Page '.($page+1) : '');
+	$tpl->assign('page_title', !empty($page) ?  'Page '.($page) : '');
 	$tpl->assign('menu_links', Path::menu('home'));
 	$tpl->assign('menu_links_admin', Path::menuAdmin('home'));
 	$tpl->assign('token', getToken());

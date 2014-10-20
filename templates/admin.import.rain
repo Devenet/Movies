@@ -47,6 +47,18 @@
 		</div>
 	</div>
 
+	<div class="form-group">
+		<label class="control-label col-md-2 label-checkbox" for="keep_ids">Permalinks</label>
+		<div class="col-md-8">
+			<div class="checkbox">
+				<label for="keep_ids">
+					<input type="checkbox" name="keep_ids" id="keep_ids" checked="checked" /> Keep imported movies IDs
+				</label>
+				<p class="help-block">Imported movies will be available with same permalinks as exported movies (except if it will erase an exciting movie permarlink).</p>
+			</div>
+		</div>
+	</div>
+
 	<input type="hidden" name="token" value="{$token}" />
 	<div class="form-group form-controls">
 		<div class="col-md-8 col-md-offset-2">

@@ -48,6 +48,13 @@
 </article>
 </div>
 
+<div class="container espace-top espace-ng-bottom">
+	<ul class="pager">
+		{if="!empty($movie_previous)"}<li class="previous"><a href="{$movie_previous.id|Path::movie}"><i class="icon-arrow-left"></i> {$movie_previous.title}</a></li>{/if}
+		{if="!empty($movie_next)"}<li class="next"><a href="{$movie_next.id|path::movie}">{$movie_next.title} <i class="icon-arrow-right"></i></a></li>{/if}
+	</ul>
+</div>
+
 {include="page.foot"}
 </body>
 </html>
