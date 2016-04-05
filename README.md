@@ -1,11 +1,11 @@
-# ![myMovies](https://raw.github.com/nicolabricot/myMovies/gh-pages/images/movies_32x32.png) myMovies 
+# ![MyMovies](https://raw.githubusercontent.com/nicolabricot/MyMovies/master/assets/icon/favicon.png) MyMovies
 
 __Light web application to manage movies and track their state__  
 
 
 
-Version 1.1.0 is now available!  
-[Download the last version](https://github.com/nicolabricot/myMovies/releases)
+Version 1.1 is now available!  
+[Download the last version](https://github.com/nicolabricot/MyMovies/releases)
 
 
 Main features:
@@ -31,10 +31,10 @@ Main features:
 - Mobile friendly (Bootstrap v3.0 with responsive design)
 - IE < 7 not friendly (not my problem)
 - Export and import movies with JSON file (it's possible to keep data private)
- 
-![myMovies](https://raw.github.com/nicolabricot/myMovies/master/myMovies.jpg)
+
+![MyMovies](https://raw.github.com/nicolabricot/MyMovies/master/MyMovies.jpg)
 
 
 
-Thanks to [contributors](https://github.com/nicolabricot/myMovies/graphs/contributors) :)  
+Thanks to [contributors](https://github.com/nicolabricot/MyMovies/graphs/contributors) :)  
 Inspired by [Shaarli](https://github.com/sebsauvage/Shaarli) and [HelloHappy](http://books.hellohappy.org/).

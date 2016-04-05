@@ -1,5 +1,5 @@
 /*!
- * Movies 
+ * Movies
  *
  * Copyright 2013 Nicolas Devenet
  */
@@ -37,7 +37,7 @@ header .navbar-brand:hover {color:#428bca;}
 .navbar-movies li.rss a:hover {color: #FF7A4D; border-color: #FF7A4D;}
 footer {margin: 20px auto 20px;}
 footer hr {border-top:2px solid #428bca;}
-footer p {font-size: 12px;}
+footer p {font-size:12px; margin-bottom:0;}
 footer a.normal {color: #888;}
 footer a.normal:hover {color: #555; text-decoration: underline;}
 
@@ -49,6 +49,7 @@ article.movies h2 a {text-decoration: none;}
 article.movies h2 small {display: block; font-size: 14px;}
 article.movies .row {margin-top: 20px;}
 article.movies .kinds {font-size: 12px;}
+article.movies .description {font-family:Georgia,"DejaVu Serif","Bistream Vera Serif","Liberation Serif",serif;}
 .stars {margin: 10px auto; font-size: 16px;}
 .stars i {margin-right: 2px;}
 .stars.stars-0 {color: #999999;}

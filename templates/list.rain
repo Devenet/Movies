@@ -11,7 +11,7 @@
 <div class="row espace-bottom">
 <div class="col-md-8 col-md-offset-2">
 	<div class="panel panel-primary">
-		<div class="panel-body text-center">{$search_count} results for <strong>{$search}</strong></div>
+		<div class="panel-body text-center">{$search_count} result{if="$search_count>1"}s{/if} for <strong>{$search}</strong></div>
 	</div>
 </div>
 </div>
@@ -26,7 +26,7 @@
 	</h2>
 
 	<ul class="infos list-inline text-muted">
-		<li class="status espace-right-sm"><span class="{if="$value.status == Movie::SEEN"}text-success{else}text-warning{/if}">{$value.status|displayStatus}</span></li>
+		<li class="status espace-right-sm"><span class="{if="$value.status == Movie::SEEN"}text-success{else}text-muted{/if}">{$value.status|displayStatus}</span></li>
 		{if="!empty($value.duration)"}<li>{$value.duration} min</li>{/if}
 		{if="!empty($value.release_date)"}<li><span class="tip" data-title="Release&nbsp;date"><i class="icon-calendar"></i></span> {$value.release_date}</li>{/if}
 		{if="!empty($value.country)"}<li class="espace-left-sm">{$value.country|displayFlag}</li>{/if}
@@ -56,6 +56,8 @@
 	</div>
 </article>
 {if="$counter%2"}<div class="clearfix"></div>{/if}
+{else}
+<p class="text-center espace-top-lg espace-bottom-lg">Holy crap! No book to display…</p>
 {/loop}
 </div>
 

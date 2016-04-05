@@ -1,12 +1,31 @@
 <meta charset="utf-8" />
-<title>{#TITLE#}{if="!empty($page_title)"} &middot; {$page_title}{/if}</title>
+<title>{if="!empty($page_title)"} {$page_title} &middot; {/if}{#TITLE#}</title>
 
-<meta name="author" content="Nicolas Devenet" />
-<meta name="robots" content="{#ROBOTS#}" />
-<meta name="copyright" content="{#TITLE#}" />
+<meta name="author" content="Nicolas Devenet">
+<meta name="robots" content="{#ROBOTS#}">
+<meta name="copyright" content="{#TITLE#}">
 
-<link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico" />
-<link rel="icon" type="image/png" href="assets/favicon.png" />
+<link rel="apple-touch-icon" sizes="57x57" href="assets/icon/apple-touch-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="assets/icon/apple-touch-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="assets/icon/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="assets/icon/apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="assets/icon/apple-touch-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="assets/icon/apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="assets/icon/apple-touch-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="assets/icon/apple-touch-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/icon/apple-touch-icon-180x180.png">
+<link rel="icon" type="image/png" href="assets/icon/favicon.png" sizes="32x32">
+<link rel="icon" type="image/png" href="assets/icon/favicon-194x194.png" sizes="194x194">
+<link rel="icon" type="image/png" href="assets/icon/favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="assets/icon/android-chrome-192x192.png" sizes="192x192">
+<link rel="icon" type="image/png" href="assets/icon/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="assets/icon/manifest.json">
+<link rel="mask-icon" href="assets/icon/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="shortcut icon" href="assets/icon/favicon.ico">
+<meta name="msapplication-TileColor" content="#2d89ef">
+<meta name="msapplication-TileImage" content="assets/icon/mstile-144x144.png">
+<meta name="msapplication-config" content="assets/icon/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
 
 <link rel="alternate" type="application/rss+xml" href="{#RSS#}" title="{#TITLE#}" />
 <link rel="alternate" type="application/rss+xml" href="{#RSS_BOXOFFICE#}" title="{#TITLE#} &middot; Box office" />

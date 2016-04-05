@@ -14,7 +14,7 @@
 			<h2>
 				{if="isLogged()"}<span class="movie-tools"><a href="{$id|Path::edit}" class="text-success tip" title="Edit&nbsp;movie" data-placement="right"><i class="icon-pencil"></i></a> <a href="{$id|Path::delete}&amp;token={$token}" class="text-danger tip" title="Delete&nbsp;movie" data-placement="right" onclick="return confirmDeleteMovie('{$movie['title']}')"><i class="icon-trash"></i></a></span>{/if}
 				{$movie['title']}
-				<span class="pull-right espace-right {if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus}</span>
+				<!--<span class="pull-right espace-right {if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus}</span>-->
 			</h2>
 		</div>
 		{if="!empty($movie['original_title'])"}<h3>{$movie['original_title']}</h3>{/if}
@@ -28,7 +28,7 @@
 	</div>
 	<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 aside text-muted pull-right">
 		<div class="espace-bottom">
-			<p><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus} {if="$movie['status'] == Movie::SEEN"}Already seen{else}Not seen yet{/if}</span></p>
+			<p><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-muted{/if}">{$displayStatus} {if="$movie['status'] == Movie::SEEN"}Already seen{else}Not seen yet{/if}</span></p>
 			{if="$movie['owned']"}<p><i class="icon-film"></i> I have it</p>{/if}
 		</div>
 		{if="!empty($movie['duration'])"}<p>{$movie['duration']} min</p>{/if}
