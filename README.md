@@ -32,7 +32,7 @@ Main features:
 - IE < 7 not friendly (not my problem)
 - Export and import movies with JSON file (it's possible to keep data private)
 
-![MyMovies](https://raw.github.com/nicolabricot/MyMovies/master/MyMovies.jpg)
+![MyMovies](https://raw.github.com/nicolabricot/MyMovies/master/myMovies.jpg)
 
 
 
