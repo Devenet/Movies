@@ -29,7 +29,7 @@ $_CONFIG['robots'] = 'noindex,nofollow,noarchive';
 define('PHPPREFIX','<?php /* ');
 define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'MyMovies');
-define('MYMOVIES_VERSION', '1.1.1');
+define('MYMOVIES_VERSION', '1.1.2');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 define('RSS_BOXOFFICE', 'box-office.rss');
@@ -42,7 +42,7 @@ session_set_cookie_params($cookie['lifetime'], $cookiedir, $_SERVER['HTTP_HOST']
 ini_set('session.use_cookies', 1);
 ini_set('session.use_only_cookies', 1);
 ini_set('session.use_trans_sid', false);
-session_name('myMovies');
+session_name('MyMovies_'.md5($_SERVER['SCRIPT_NAME']));
 if (session_id() == '') session_start();
 
 // check right before create directories
@@ -903,7 +903,7 @@ function install($tpl) {
 		$_CONFIG['login'] = htmlspecialchars($_POST['login']);
 		$_CONFIG['salt'] = sha1(uniqid('',true).'_'.mt_rand());
 		$_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']);
-		$_CONFIG['title'] = empty($_POST['title']) ? 'myMovies' : htmlspecialchars(trim($_POST['title']));
+		$_CONFIG['title'] = empty($_POST['title']) ? 'MyMovies' : htmlspecialchars(trim($_POST['title']));
 		$_CONFIG['language'] = !empty($_POST['locale']) && array_key_exists($_POST['locale'], $_CONFIG['languages']) ? $_POST['locale'] : 'en';
 		writeSettings();
 		header('Location: '.$_SERVER['REQUEST_URI']);

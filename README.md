@@ -1,11 +1,11 @@
-# ![MyMovies](https://raw.githubusercontent.com/nicolabricot/MyMovies/master/assets/icon/favicon.png) MyMovies
+# ![MyMovies](https://raw.githubusercontent.com/Devenet/MyMovies/master/assets/icon/favicon.png) MyMovies
 
 __Light web application to manage movies and track their state__  
 
 
 
 Version 1.1 is now available!  
-[Download the last version](https://github.com/nicolabricot/MyMovies/releases)
+[Download the last version](https://github.com/Devenet/MyMovies/releases)
 
 
 Main features:
@@ -32,9 +32,9 @@ Main features:
 - IE < 7 not friendly (not my problem)
 - Export and import movies with JSON file (it's possible to keep data private)
 
-![MyMovies](https://raw.github.com/nicolabricot/MyMovies/master/myMovies.jpg)
+![MyMovies](https://raw.github.com/Devenet/MyMovies/master/MyMovies.jpg)
 
 
 
-Thanks to [contributors](https://github.com/nicolabricot/MyMovies/graphs/contributors) :)  
-Inspired by [Shaarli](https://github.com/sebsauvage/Shaarli) and [HelloHappy](http://books.hellohappy.org/).
+Thanks to [contributors](https://github.com/Devenet/MyMovies/graphs/contributors) :)  
+Inspired by [Shaarli](https://github.com/sebsauvage/Shaarli) and [HelloHappy](http://reading.chad.is).

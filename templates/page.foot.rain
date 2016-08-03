@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col-lg-12">
 	<div class="pull-left">
-		<p><strong><a href="https://github.com/nicolabricot/myBooks" rel="external" data-version="v{#MYMOVIES_VERSION#}">{#MYMOVIES#}</a></strong> &middot; Light web application to manage movies and track their state</p>
+		<p><strong><a href="https://github.com/Devenet/MyMovies" rel="external" data-version="v{#MYMOVIES_VERSION#}">{#MYMOVIES#}</a></strong> &middot; Light web application to manage movies and track their state</p>
 		<p class="text-muted inspiration">Made with <i class="icon-heart"></i> by <a href="http://nicolas.devenet.info" class="normal" rel="external">Nicolas Devenet</a> &middot; <small>Inspired by <a href="https://github.com/sebsauvage/Shaarli" class="normal" rel="external">Shaarli</a> and <a href="http://reading.chad.is/" class="normal" rel="external">HelloHappy</a>
 			&middot; TV image from <a href="https://www.iconfinder.com/iconsets/windows-8-metro-style" rel="external" class="normal" >Visual Pharm</a></small>
 		</p>

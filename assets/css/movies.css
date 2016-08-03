@@ -28,7 +28,7 @@ label.text-muted {color: rgb(153, 153, 153);}
 
 header {margin: 20px 0 10px;}
 header h1 {display: inline;}
-header .navbar-brand {font-family:Georgia,"DejaVu Serif","Bistream Vera Serif","Liberation Serif",serif;}
+header .navbar-brand {font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;}
 header .navbar-brand img {margin-right: 5px;}
 header .navbar-brand:hover {color:#428bca;}
 .page-header h2 {margin-top: 0;}
