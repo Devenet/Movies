@@ -66,6 +66,7 @@ define('TITLE', $_CONFIG['title']);
 define('PAGINATION', $_CONFIG['pagination']);
 define('IMDB_LANGUAGE', $_CONFIG['languages'][$_CONFIG['language']][0]);
 define('ROBOTS', $_CONFIG['robots']);
+define('BASE_LANG', $_CONFIG['language']);
 define('BASE_URL', (empty($_SERVER['REQUEST_SCHEME']) ? 'http' : $_SERVER['REQUEST_SCHEME']).'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/');
 
 /**
@@ -962,7 +963,7 @@ function moviePage() {
 	$tpl->assign('movie_previous', $movies->previousMovie($movie['id']));
 	$tpl->assign('social', [
 		'title' => $movie['title'],
-		'description' => ($movie['status']==Movie::SEEN ? displaySimpleNote($movie['note']) : 'Not seen yet').' — '. displaySynopsis($movie['synopsis'], 180),
+		'description' => ($movie['status']==Movie::SEEN ? displaySimpleNote($movie['note']) : 'Not seen yet').' — '. displaySynopsis($movie['synopsis'], 250),
 		'image' => Movies::CompleteImageURI($movie),
 		'url' => str_replace('./', BASE_URL, Path::movie($movie['id']))
 	]);

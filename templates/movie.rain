@@ -1,7 +1,8 @@
 <!doctype html>
-<html itemscope itemtype="http://schema.org/Article">
+<html lang="{#BASE_LANG#}" itemscope itemtype="http://schema.org/Article">
 <head>
 {include="page.head"}
+<meta name="description" content="{$social.description}" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@devenet" />
 <meta name="twitter:title" content="{$social.title}" />
