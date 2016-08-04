@@ -66,6 +66,7 @@ define('TITLE', $_CONFIG['title']);
 define('PAGINATION', $_CONFIG['pagination']);
 define('IMDB_LANGUAGE', $_CONFIG['languages'][$_CONFIG['language']][0]);
 define('ROBOTS', $_CONFIG['robots']);
+define('BASE_URL', (empty($_SERVER['REQUEST_SCHEME']) ? 'http' : $_SERVER['REQUEST_SCHEME']).'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/');
 
 /**
  * Rain class
@@ -267,6 +268,17 @@ class Movies implements Iterator, Countable, ArrayAccess {
 		return false;
 	}
 
+	// return the full URI to image linked to a given movie
+	public static function CompleteImageURI($movie)
+	{
+		global $_CONFIG;
+		$img = !empty($movie['link_image']) ? $movie['link_image'] : BASE_URL.'assets/img/movie.jpg';
+		// if img is hosted in local, we have to add server URL before...
+		if (substr( $img, 0, strlen($_CONFIG['images'].'/') ) === $_CONFIG['images'].'/') { $img = BASE_URL.$img; }
+
+		return $img;
+	}
+
 	/*
 	 * Write an RSS file with the movies $data given
 	 * $data: movies to write
@@ -275,41 +287,36 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	 */
 	private function updateRSS($data, $title, $file) {
 		global $_CONFIG;
-		$url = (empty($_SERVER['REQUEST_SCHEME']) ? 'http' : $_SERVER['REQUEST_SCHEME']).'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/';
 		$xml  = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
 		$xml .= '<rss version="2.0"  xmlns:atom="http://www.w3.org/2005/Atom">'.PHP_EOL;
 		$xml .= '<channel>'.PHP_EOL;
-		$xml .= '<atom:link href="'.$url.$file.'" rel="self" type="application/rss+xml" />'.PHP_EOL;
+		$xml .= '<atom:link href="'.BASE_URL.$file.'" rel="self" type="application/rss+xml" />'.PHP_EOL;
 		$xml .= '<title>'.$title.'</title>'.PHP_EOL;
-		$xml .= '<link>'.$url.'</link>'.PHP_EOL;
+		$xml .= '<link>'.BASE_URL.'</link>'.PHP_EOL;
 		$xml .= '<description>RSS feed of '.$title.'</description>'.PHP_EOL;
 		$xml .= '<pubDate>'.date("D, d M Y H:i:s O").'</pubDate>'.PHP_EOL;
-		$xml .= '<copyright>'.$url.'</copyright>'.PHP_EOL;
+		$xml .= '<copyright>'.BASE_URL.'</copyright>'.PHP_EOL;
 		$xml .= '<language>'.$_CONFIG['language'].'</language>'.PHP_EOL;
 		$xml .= '<generator>'.MYMOVIES.'</generator>'.PHP_EOL;
 		$xml .= '<image>'.PHP_EOL;
 		$xml .= '<title>'.$title.'</title>'.PHP_EOL;
-		$xml .= '<url>'.$url.'assets/img/movies_48x48.png</url>'.PHP_EOL;
-		$xml .= '<link>'.$url.'</link>'.PHP_EOL;
+		$xml .= '<url>'.BASE_URL.'assets/img/movies_48x48.png</url>'.PHP_EOL;
+		$xml .= '<link>'.BASE_URL.'</link>'.PHP_EOL;
 		$xml .= '<width>48</width>'.PHP_EOL;
 		$xml .= '<height>48</height>'.PHP_EOL;
 		$xml .= '</image>'.PHP_EOL;
 		foreach ($data as $id => $movie) {
 			$xml .= '<item>'.PHP_EOL;
 			$xml .= '<title>'. $movie['title'] .'</title>'.PHP_EOL;
-			$xml .= '<link>'.$url.substr(Path::movie($movie['id']), 2).'</link>'.PHP_EOL;
+			$xml .= '<link>'.BASE_URL.substr(Path::movie($movie['id']), 2).'</link>'.PHP_EOL;
 			$xml .= '<description><![CDATA[<strong>'.($movie['status']==Movie::SEEN ? 'Movie seen &middot; Rated '.$movie['note'].'/10' : 'Movie not seen').'</strong><br />'.htmlspecialchars_decode(htmlentities($movie['synopsis'], ENT_COMPAT, 'UTF-8')).']]></description>'.PHP_EOL;
-			// trasform image url if needed
-			$img = !empty($movie['link_image']) ? $movie['link_image'] : $url.'assets/img/movie.jpg';
-			// if img is hosted in local, we have to add $url before...
-			if (substr( $img, 0, strlen($_CONFIG['images'].'/') ) === $_CONFIG['images'].'/') { $img = $url.$img; }
-			$xml .= '<enclosure url="'.$img.'" length="42" type="image/jpeg" />'.PHP_EOL;
+			$xml .= '<enclosure url="'.Movies::CompleteImageURI($movie).'" length="42" type="image/jpeg" />'.PHP_EOL;
 			$xml .= '<guid isPermaLink="false">'.$movie['id'].'</guid>'.PHP_EOL;
 			$xml .= '<pubDate>'.date("D, d M Y H:i:s O", $movie['id']).'</pubDate>'.PHP_EOL;
 			foreach (explode(',', $movie['genre']) as $genre) {
-				$xml .= '<category domain="'.$url.'?genre='.trim(mb_convert_case($genre, MB_CASE_LOWER, "UTF-8")).'">'.trim(mb_convert_case($genre, MB_CASE_TITLE, "UTF-8")).'</category>'.PHP_EOL;
+				$xml .= '<category domain="'.BASE_URL.'?genre='.trim(mb_convert_case($genre, MB_CASE_LOWER, "UTF-8")).'">'.trim(mb_convert_case($genre, MB_CASE_TITLE, "UTF-8")).'</category>'.PHP_EOL;
 			}
-			$xml .= '<source url="'.$url.$file.'">'.TITLE.'</source>'.PHP_EOL;
+			$xml .= '<source url="'.BASE_URL.$file.'">'.TITLE.'</source>'.PHP_EOL;
 			$xml .= '</item>'.PHP_EOL;
 		}
 		$xml .= '</channel>'.PHP_EOL;
@@ -816,6 +823,18 @@ function displayNote($note) {
 		$result .= '<i class="icon-star-empty"></i>';
 	return $result.'</div>'.PHP_EOL;
 }
+// Convert note into HTML stars
+function displaySimpleNote($note) {
+	$note = $note/2;
+	$full_stars = floor($note);
+	$half_star = (2*$note) % 2;
+	$result = '';
+	for ($i=0; $i<$full_stars; $i++)
+		$result .= '★';
+	if ($half_star == 1)
+		$result .= '☆';
+	return $result;
+}
 // remplace status by icon
 function displayStatus($status) {
 	$result = '<span class="tip" data-title="';
@@ -941,6 +960,12 @@ function moviePage() {
 	$tpl->assign('movies_count', $movies->count());
 	$tpl->assign('movie_next', $movies->nextMovie($movie['id']));
 	$tpl->assign('movie_previous', $movies->previousMovie($movie['id']));
+	$tpl->assign('social', [
+		'title' => $movie['title'],
+		'description' => ($movie['status']==Movie::SEEN ? displaySimpleNote($movie['note']) : 'Not seen yet').' — '. displaySynopsis($movie['synopsis'], 180),
+		'image' => Movies::CompleteImageURI($movie),
+		'url' => str_replace('./', BASE_URL, Path::movie($movie['id']))
+	]);
 	$tpl->draw('movie');
 	exit();
 }
