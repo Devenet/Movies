@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html itemscope itemtype="http://schema.org/Article">
 <head>
 {include="page.head"}
 <meta name="twitter:card" content="summary" />
@@ -7,13 +7,15 @@
 <meta name="twitter:title" content="{$social.title}" />
 <meta name="twitter:description" content="{$social.description}" />
 <meta name="twitter:image" content="{$social.image}">
-<meta property="og:title" content="{$movie['title']}" />
+<meta property="og:title" content="{$social.title}" />
 <meta property="og:type" content="article" />
-<meta property="og:article:author" content="{#TITLE#}" />
 <meta property="og:url" content="{$social.url}" />
 <meta property="og:image" content="{$social.image}" />
 <meta property="og:description" content="{$social.description}" />
 <meta property="og:site_name" content="{#TITLE#}" />
+<meta itemprop="name" content="{$social.title}">
+<meta itemprop="description" content="{$social.description}">
+<meta itemprop="image" content="{$social.image}">
 </head>
 <body>
 {include="page.menu"}
