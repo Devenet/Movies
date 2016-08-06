@@ -1,7 +1,23 @@
 <!doctype html>
-<html>
+<html lang="{#BASE_LANG#}" itemscope itemtype="http://schema.org/Article">
 <head>
 {include="page.head"}
+<link rel="canonical" href="{$social.url}" />
+<meta name="description" content="{$social.description}" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@devenet" />
+<meta name="twitter:title" content="{$social.title}" />
+<meta name="twitter:description" content="{$social.description}" />
+<meta name="twitter:image" content="{$social.image}">
+<meta property="og:title" content="{$social.title}" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="{$social.url}" />
+<meta property="og:image" content="{$social.image}" />
+<meta property="og:description" content="{$social.description}" />
+<meta property="og:site_name" content="{#TITLE#}" />
+<meta itemprop="name" content="{$social.title}">
+<meta itemprop="description" content="{$social.description}">
+<meta itemprop="image" content="{$social.image}">
 </head>
 <body>
 {include="page.menu"}
@@ -12,7 +28,12 @@
 	<div class="col-lg-12">
 		<div class="page-header">
 			<h2>
-				{if="isLogged()"}<span class="movie-tools"><a href="{$id|Path::edit}" class="text-success tip" title="Edit&nbsp;movie" data-placement="right"><i class="icon-pencil"></i></a> <a href="{$id|Path::delete}&amp;token={$token}" class="text-danger tip" title="Delete&nbsp;movie" data-placement="right" onclick="return confirmDeleteMovie('{$movie['title']}')"><i class="icon-trash"></i></a></span>{/if}
+				{if="isLogged()"}
+				<span class="movie-tools">
+					<a href="{$id|Path::edit}" class="text-success tip" title="Edit&nbsp;movie" data-placement="right"><i class="icon-pencil"></i></a>
+					<a href="{$id|Path::delete}&amp;token={$token}" class="text-danger tip" title="Delete&nbsp;movie" data-placement="right" onclick="return confirmDeleteMovie('{$movie['title']}')"><i class="icon-trash"></i></a>
+				</span>
+				{/if}
 				{$movie['title']}
 				<!--<span class="pull-right espace-right {if="$movie['status'] == Movie::SEEN"}text-success{else}text-warning{/if}">{$displayStatus}</span>-->
 			</h2>
@@ -42,6 +63,11 @@
 	<div class="clearfix visible-sm"></div>
 	<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 		<p class="synopsis">{$movie['synopsis']}</p>
+		<ul class="list-inline social-share espace-top-lg text-center">
+			<li><a href="https://twitter.com/home?status={$social.twitter}" rel="external" title="Share on Twitter" class="btn tip" data-placement="top"><span class="icon-twitter"></span></a></li>
+			<li><a href="https://www.facebook.com/sharer/sharer.php?u={$social.url|urlencode}" rel="external" title="Share on Facebook" class="btn tip" data-placement="top"><span class="icon-facebook"></span></a></li>
+			<li><a href="https://plus.google.com/share?url={$social.url|urlencode}" rel="external" title="Share on Google+" class="btn tip" data-placement="top"><span class="icon-google-plus"></span></a></li>
+		</ul>
 	</div>
 </div>
 
