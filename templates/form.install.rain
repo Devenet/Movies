@@ -41,30 +41,39 @@
 	<div class="form-group">
 		<label for="login" class="control-label col-md-2">Login</label>
 		<div class="col-md-8">
-			<input type="text" class="form-control" id="login" name="login" placeholder="Username" autofocus/>
+			<input type="text" class="form-control" id="login" name="login" placeholder="Username" autofocus required/>
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="password" class="control-label col-md-2">Password</label>
 		<div class="col-md-8">
-			<input type="password" class="form-control" id="password" name="password" placeholder="Password" />
+			<input type="password" class="form-control" id="password" name="password" placeholder="Password" required/>
+		</div>
+	</div>
+
+	<div class="form-group espace-top-lg no-espace-bottom">
+		<label for="title" class="control-label col-md-2">Title</label>
+		<div class="col-md-8">
+			<input type="text" class="form-control" id="title" name="title" placeholder="{#MYMOVIES#}" value="{#MYMOVIES#}" />
+			<p class="help-block">You can edit it later <i class="icon-smile"></i>.</p>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="author" class="control-label col-md-2">Author</label>
+		<div class="col-md-8">
+			<input type="text" class="form-control" id="author" name="author" placeholder="Nicolas Devenet" />
+			<p class="help-block">Social share: it’s displayed when you post the URL of a movie page on Twitter, Facebook, …
+			<br>If not set, your login will be used.</p>
 		</div>
 	</div>
 
 	<div class="form-group espace-top-lg">
-		<label for="title" class="control-label col-md-2">Title of the page</label>
-		<div class="col-md-8">
-			<input type="text" class="form-control" id="title" name="title" value="{#MYMOVIES#}" />
-			<p class="help-block">You can change it later if needed <i class="icon-smile"></i>.</p>
-		</div>
-	</div>
-	<div class="form-group">
 		<label for="login" class="control-label col-md-2">Prefered language</label>
 		<div class="col-md-8">
 			<select class="form-control" id="locale" name="locale">
 				{$locales}
 			</select>
-			<p class="help-block">Used for IMDB search when importing information to add a movie.</p>
+			<p class="help-block">Used for IMDB search when importing a movie.</p>
 		</div>
 	</div>
 

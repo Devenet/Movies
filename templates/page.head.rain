@@ -1,9 +1,10 @@
 <meta charset="utf-8" />
 <title>{if="!empty($page_title)"}{$page_title} &middot; {/if}{#TITLE#}</title>
 
-<meta name="author" content="Nicolas Devenet">
+<meta name="author" content="{#AUTHOR#}">
 <meta name="robots" content="{#ROBOTS#}">
-<meta name="copyright" content="{#TITLE#}">
+<meta name="copyright" content="Nicolas Devenet">
+<meta name="generator" content="{#MYMOVIES#} v{$MyMoviesVersion}" />
 
 <link rel="apple-touch-icon" sizes="57x57" href="assets/icon/apple-touch-icon-57x57.png">
 <link rel="apple-touch-icon" sizes="60x60" href="assets/icon/apple-touch-icon-60x60.png">

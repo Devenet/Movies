@@ -2,6 +2,7 @@
 <html lang="{#BASE_LANG#}" itemscope itemtype="http://schema.org/Article">
 <head>
 {include="page.head"}
+<link rel="canonical" href="{$social.url}" />
 <meta name="description" content="{$social.description}" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@devenet" />
@@ -62,6 +63,11 @@
 	<div class="clearfix visible-sm"></div>
 	<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 		<p class="synopsis">{$movie['synopsis']}</p>
+		<ul class="list-inline social-share espace-top-lg text-center">
+			<li><a href="https://twitter.com/home?status={$social.twitter}" rel="external" title="Share on Twitter" class="btn tip" data-placement="top"><span class="icon-twitter"></span></a></li>
+			<li><a href="https://www.facebook.com/sharer/sharer.php?u={$social.url|urlencode}" rel="external" title="Share on Facebook" class="btn tip" data-placement="top"><span class="icon-facebook"></span></a></li>
+			<li><a href="https://plus.google.com/share?url={$social.url|urlencode}" rel="external" title="Share on Google+" class="btn tip" data-placement="top"><span class="icon-google-plus"></span></a></li>
+		</ul>
 	</div>
 </div>
 

@@ -29,7 +29,7 @@ $_CONFIG['robots'] = 'noindex,nofollow,noarchive';
 define('PHPPREFIX','<?php /* ');
 define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'MyMovies');
-define('MYMOVIES_VERSION', '1.1.2');
+define('MYMOVIES_VERSION', '1.2.0');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 define('RSS_BOXOFFICE', 'box-office.rss');
@@ -60,14 +60,17 @@ if (!is_file($_CONFIG['ban'])) { file_put_contents($_CONFIG['ban'], '<?php'.PHP_
 //ob_start();
 $tpl = new RainTPL();
 
-if (!is_file($_CONFIG['settings'])) { define('TITLE', $_CONFIG['title']); define('ROBOTS', $_CONFIG['robots']); install($tpl); }
+if (!is_file($_CONFIG['settings'])) { define('TITLE', $_CONFIG['title']); define('ROBOTS', $_CONFIG['robots']); define('AUTHOR', 'Nicolas Devenet'); install($tpl); }
 require($_CONFIG['settings']);
 define('TITLE', $_CONFIG['title']);
 define('PAGINATION', $_CONFIG['pagination']);
 define('IMDB_LANGUAGE', $_CONFIG['languages'][$_CONFIG['language']][0]);
 define('ROBOTS', $_CONFIG['robots']);
+define('AUTHOR', empty($_CONFIG['author']) ? $_CONFIG['login'] : $_CONFIG['author'] );
 define('BASE_LANG', $_CONFIG['language']);
 define('BASE_URL', (empty($_SERVER['REQUEST_SCHEME']) ? 'http' : $_SERVER['REQUEST_SCHEME']).'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/');
+
+$tpl->assign('MyMoviesVersion', preg_replace('#(\d+\.\d+)(\.\d+)#', '$1', MYMOVIES_VERSION));
 
 /**
  * Rain class
@@ -633,6 +636,7 @@ function writeSettings() {
 	$file .= '$_CONFIG[\'hash\']='.var_export($_CONFIG['hash'], TRUE).'; ';
 	$file .= '$_CONFIG[\'salt\']='.var_export($_CONFIG['salt'], TRUE).'; ';
 	$file .= '$_CONFIG[\'title\']='.var_export($_CONFIG['title'], TRUE).'; ';
+	$file .= '$_CONFIG[\'author\']='.var_export($_CONFIG['author'], TRUE).'; ';
 	$file .= '$_CONFIG[\'robots\']='.var_export($_CONFIG['robots'], TRUE).'; ';
 	$file .= '$_CONFIG[\'language\']='.var_export($_CONFIG['language'], TRUE).'; ';
 	$file .= '$_CONFIG[\'pagination\']='.var_export($_CONFIG['pagination'], TRUE).'; ';
@@ -924,6 +928,7 @@ function install($tpl) {
 		$_CONFIG['salt'] = sha1(uniqid('',true).'_'.mt_rand());
 		$_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']);
 		$_CONFIG['title'] = empty($_POST['title']) ? 'MyMovies' : htmlspecialchars(trim($_POST['title']));
+		$_CONFIG['author'] = empty($_POST['author']) ? $_CONFIG['login'] : htmlspecialchars(trim($_POST['author']));
 		$_CONFIG['language'] = !empty($_POST['locale']) && array_key_exists($_POST['locale'], $_CONFIG['languages']) ? $_POST['locale'] : 'en';
 		writeSettings();
 		header('Location: '.$_SERVER['REQUEST_URI']);
@@ -961,11 +966,13 @@ function moviePage() {
 	$tpl->assign('movies_count', $movies->count());
 	$tpl->assign('movie_next', $movies->nextMovie($movie['id']));
 	$tpl->assign('movie_previous', $movies->previousMovie($movie['id']));
+	$social_url = str_replace('./', BASE_URL, Path::movie($movie['id']));
 	$tpl->assign('social', [
 		'title' => $movie['title'],
 		'description' => ($movie['status']==Movie::SEEN ? displaySimpleNote($movie['note']) : 'Not seen yet').' — '. displaySynopsis($movie['synopsis'], 250),
 		'image' => Movies::CompleteImageURI($movie),
-		'url' => str_replace('./', BASE_URL, Path::movie($movie['id']))
+		'twitter' => urlencode(($movie['status']==Movie::SEEN ? 'I’ve seen' : 'I want to see').' “'.$movie['title'].'” via #MyMovies '.$social_url),
+		'url' => $social_url
 	]);
 	$tpl->draw('movie');
 	exit();
@@ -1047,6 +1054,7 @@ function settingsPage() {
 			if (!empty($_POST['pagination'])) { $_CONFIG['pagination'] = max(2, $_POST['pagination']+0); }
 			if (!empty($_POST['robots'])) { $_CONFIG['robots'] = parseRobots(in_array('index', $_POST['robots']), in_array('follow', $_POST['robots']), in_array('archive', $_POST['robots']) ); }
 			else { $_CONFIG['robots'] = parseRobots(false, false, false); }
+			$_CONFIG['author'] = empty($_POST['author']) ? $_CONFIG['login'] : htmlspecialchars(trim($_POST['author']));
 			writeSettings();
 			header('Location: '.Path::settings().'&update');
 			exit();
