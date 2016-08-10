@@ -29,7 +29,7 @@ $_CONFIG['robots'] = 'noindex,nofollow,noarchive';
 define('PHPPREFIX','<?php /* ');
 define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'MyMovies');
-define('MYMOVIES_VERSION', '1.2.0');
+define('MYMOVIES_VERSION', '1.2.1');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 define('RSS_BOXOFFICE', 'box-office.rss');
@@ -809,7 +809,7 @@ function displayGenres($genres) {
 function displaySynopsis($synopsis, $size = 400) {
 	if (strlen($synopsis) > $size) {
 		$begin = mb_strcut($synopsis, 0, $size, 'UTF-8');
-		return trim($begin).'[&hellip;]';
+		return trim($begin).'[…]';
 	}
 	return $synopsis;
 }
@@ -892,14 +892,14 @@ function displayPagination($page, $total_entries, $prefix = '?') {
 	$result = '';
 	$result .= '<li'.($page==1 ? ' class="disabled"' : NULL).'><a href="./'.$prefix.Path::page(max(1, $page-1)).'" title="Previous" class="tip"><i class="icon-arrow-left"></i></a></li>';
 	$result .= '<li'.($page==1 ? ' class="active"' : '').'><a href="./'.str_replace('&amp;', '', $prefix).'">1</a></li>';
-	if ($first_jump && $pages != 5) { $result .= '<li class="disabled gap"><span>&hellip;</span></li>'; }
+	if ($first_jump && $pages != 5) { $result .= '<li class="disabled gap"><span>…</span></li>'; }
 	else if ($first_jump) { $result .= '<li><a href="./'.$prefix.Path::page(2).'">2</a></li>'; }
 
 	for ($i=$min_page; $i<=$max_page; $i++) {
 		$result .= '<li'.($i==$page ? ' class="active"' : '').'><a href="./'.$prefix.Path::page($i).'">'.$i.'</a></li>';
 	}
 
-	if ($last_jump && $pages != 5) { $result .= '<li class="disabled gap"><span>&hellip;</span></li>'; }
+	if ($last_jump && $pages != 5) { $result .= '<li class="disabled gap"><span>…</span></li>'; }
 	else if ($last_jump) { $result .= '<li><a href="./'.$prefix.Path::page(4).'">4</a></li>'; }
 	if ($pages > 2 && $page <= $pages-3) { $result .= '<li'.($page==$pages ? ' class="active"' : '').'><a href="./'.$prefix.Path::page($pages).'">'.$pages.'</a></li>'; }
 	$result .= '<li'.($page==$pages ? ' class="disabled"' : NULL).'><a href="./'.$prefix.Path::page(min($pages, $page+1)).'" title="Next" class="tip"><i class="icon-arrow-right"></i></a></li>';
@@ -969,7 +969,7 @@ function moviePage() {
 	$social_url = str_replace('./', BASE_URL, Path::movie($movie['id']));
 	$tpl->assign('social', [
 		'title' => $movie['title'],
-		'description' => ($movie['status']==Movie::SEEN ? displaySimpleNote($movie['note']) : 'Not seen yet').' — '. displaySynopsis($movie['synopsis'], 250),
+		'description' => ($movie['status']==Movie::SEEN ? displaySimpleNote($movie['note']) : 'Not seen yet').' — '. str_replace('<br />', '', displaySynopsis($movie['synopsis'], 250)),
 		'image' => Movies::CompleteImageURI($movie),
 		'twitter' => urlencode(($movie['status']==Movie::SEEN ? 'I’ve seen' : 'I want to see').' “'.$movie['title'].'” via #MyMovies '.$social_url),
 		'url' => $social_url

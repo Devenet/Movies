@@ -10,12 +10,14 @@
 <meta name="twitter:description" content="{$social.description}" />
 <meta name="twitter:image" content="{$social.image}">
 <meta property="og:title" content="{$social.title}" />
+<meta itemprop="og:headline" content="{$social.title}" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="{$social.url}" />
 <meta property="og:image" content="{$social.image}" />
 <meta property="og:description" content="{$social.description}" />
 <meta property="og:site_name" content="{#TITLE#}" />
 <meta itemprop="name" content="{$social.title}">
+<meta itemprop="headline" content="{$social.title}" />
 <meta itemprop="description" content="{$social.description}">
 <meta itemprop="image" content="{$social.image}">
 </head>
