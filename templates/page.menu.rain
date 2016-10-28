@@ -22,6 +22,7 @@
 			</div>
 		</form>
 		<ul class="nav navbar-nav">
+			<li class="random"><a href="./?random" class="tip" title="Random&nbsp;movie"><i class="icon-random"></i></a></li>
 			{if="isLogged()"}
 			{$menu_links_admin}
 			<li><a href="{""|Path::signout}" title="Sign&nbsp;out" class="tip"><i class="icon-signout"></i></a></li>

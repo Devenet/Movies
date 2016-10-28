@@ -4,7 +4,7 @@ __Light web application to manage movies and track their state__
 
 
 
-Version 1.1 is now available!  
+Version 1.3 is now available!  
 [Download the last version](https://github.com/Devenet/MyMovies/releases)
 
 

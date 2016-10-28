@@ -29,7 +29,7 @@ $_CONFIG['robots'] = 'noindex,nofollow,noarchive';
 define('PHPPREFIX','<?php /* ');
 define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'MyMovies');
-define('MYMOVIES_VERSION', '1.2.1');
+define('MYMOVIES_VERSION', '1.3.0');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 define('RSS_BOXOFFICE', 'box-office.rss');
@@ -69,6 +69,8 @@ define('ROBOTS', $_CONFIG['robots']);
 define('AUTHOR', empty($_CONFIG['author']) ? $_CONFIG['login'] : $_CONFIG['author'] );
 define('BASE_LANG', $_CONFIG['language']);
 define('BASE_URL', (empty($_SERVER['REQUEST_SCHEME']) ? 'http' : $_SERVER['REQUEST_SCHEME']).'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/');
+define('CURRENT_URL_QUERY', htmlspecialchars(parse_url($_SERVER[REQUEST_URI], PHP_URL_QUERY)));
+
 
 $tpl->assign('MyMoviesVersion', preg_replace('#(\d+\.\d+)(\.\d+)#', '$1', MYMOVIES_VERSION));
 
@@ -191,6 +193,11 @@ class Movies implements Iterator, Countable, ArrayAccess {
 	public function all() {
 		krsort($this->data);
 		return $this->data;
+	}
+
+	// random movie
+	public function random() {
+		return $this->data[array_rand($this->data)];
 	}
 
 	// last movies inserted
@@ -461,10 +468,16 @@ abstract class Path {
 		return $result.($tpl ? '</li>' : NULL);
 	}
 	static function menu($active) {
-		return self::url('home', 'All', $active).self::url('box-office', 'Box office', $active).self::url('soon', 'Watchlist', $active).'<li class="rss"><a href="./?rss-feeds" class="tip" title="RSS&nbsp;feeds"><i class="icon-rss"></i></a></li>'.PHP_EOL;
+		return self::url('home', 'All', $active)
+					.self::url('box-office', 'Box office', $active)
+					.self::url('soon', 'Watchlist', $active)
+					.'<li class="rss'.($active=='rss'?' active':'').'"><a href="./?rss-feeds" class="tip" title="RSS&nbsp;feeds"><i class="icon-rss"></i></a></li>'
+					.PHP_EOL;
 	}
 	static function menuAdmin($active) {
-		return self::url_admin('add', 'Movie', $active).self::url_admin('admin', 'Admin', $active).PHP_EOL;
+		return self::url_admin('add', 'Movie', $active)
+					.self::url_admin('admin', 'Admin', $active)
+					.PHP_EOL;
 	}
 	static function movie($id) {
 		$movies = new Movies(isLogged());
@@ -977,6 +990,14 @@ function moviePage() {
 		'url' => $social_url
 	]);
 	$tpl->draw('movie');
+	exit();
+}
+
+// redirection to a random movie
+function randomMovie() {
+	$movies = new Movies();
+	$movie = $movies->random();
+	header('Location: '.str_replace('./', BASE_URL, Path::movie($movie['id'])));
 	exit();
 }
 
@@ -1543,6 +1564,8 @@ if (empty($_GET) || isset($_GET['page'])) {
 if (!empty($_GET['movie'])) {moviePage();}
 // rss feeds asked
 if (isset($_GET['rss-feeds'])) {rssPage();}
+// random movie 
+if (isset($_GET['random'])) {randomMovie();}
 // admin asked
 if (isset($_GET['admin'])) {administration();}
 // login asked
