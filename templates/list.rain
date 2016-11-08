@@ -57,7 +57,7 @@
 </article>
 {if="$counter%2"}<div class="clearfix"></div>{/if}
 {else}
-<p class="text-center espace-top-lg espace-bottom-lg">Holy crap! No book to display…</p>
+<p class="text-center espace-top-lg espace-bottom-lg">Holy crap! No movie to display…</p>
 {/loop}
 </div>
 

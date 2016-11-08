@@ -29,7 +29,7 @@ $_CONFIG['robots'] = 'noindex,nofollow,noarchive';
 define('PHPPREFIX','<?php /* ');
 define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'MyMovies');
-define('MYMOVIES_VERSION', '1.3.0');
+define('MYMOVIES_VERSION', '1.3.1');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 define('RSS_BOXOFFICE', 'box-office.rss');
