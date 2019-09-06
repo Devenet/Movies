@@ -29,7 +29,7 @@ $_CONFIG['robots'] = 'noindex,nofollow,noarchive';
 define('PHPPREFIX','<?php /* ');
 define('PHPSUFFIX',' */ ?>');
 define('MYMOVIES', 'MyMovies');
-define('MYMOVIES_VERSION', '1.4.0');
+define('MYMOVIES_VERSION', '1.4.1');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 define('RSS_BOXOFFICE', 'box-office.rss');
@@ -69,7 +69,7 @@ define('ROBOTS', $_CONFIG['robots']);
 define('AUTHOR', empty($_CONFIG['author']) ? $_CONFIG['login'] : $_CONFIG['author'] );
 define('BASE_LANG', $_CONFIG['language']);
 define('BASE_URL', (empty($_SERVER['REQUEST_SCHEME']) ? 'http' : $_SERVER['REQUEST_SCHEME']).'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/');
-define('CURRENT_URL_QUERY', htmlspecialchars(parse_url($_SERVER[REQUEST_URI], PHP_URL_QUERY)));
+define('CURRENT_URL_QUERY', htmlspecialchars(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY)));
 
 
 $tpl->assign('MyMoviesVersion', preg_replace('#(\d+\.\d+)(\.\d+)#', '$1', MYMOVIES_VERSION));
@@ -1427,7 +1427,7 @@ function signin() {
 				session_set_cookie_params(0, $cookiedir, $_SERVER['HTTP_HOST']);
 				session_regenerate_id(TRUE);
 				// check if we need to redirect the user
-				$target = (isset($_GET['target']) && targetIsAllowed($_GET['target'])) ? Path::$_GET['target']() : './';
+				$target = (isset($_GET['target']) && targetIsAllowed($_GET['target'])) ? Path::{$_GET['target']}() : './';
 				header('Location: '.$target);
 				exit();
 			}
