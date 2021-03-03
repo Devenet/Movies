@@ -11,15 +11,6 @@
   <div class="col-md-12">
 	<div class="page-header no-espace-top">
 		<h2>{$page_title}</h2>
-		{if="!empty($display_search)"}
-		<form method="post" action="{$target_search}" class="form-inline search-inline">
-			<div class="input-group">
-				<input type="text" class="form-control" id="fast_search" name="fast_search" placeholder="Easy import" {if="!empty($inputs['search'])"}value="{$inputs['search']}"{/if} />
-				<input type="hidden" name="token" value="{$token}" />
-				<span class="input-group-btn"><button class="btn btn-info" type="submit"><i class="icon-search icon-white"></i> IMDB</button></span>
-			</div>
-		</form>
-		{/if}
 	</div>
   </div>
 </div>

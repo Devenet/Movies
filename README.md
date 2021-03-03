@@ -11,7 +11,6 @@ Version 1.3 is now available!
 Main features:
 - Simple & fast
 - Intuitive
-- Get movies from IMDB (need cURL extension)
 - Script on one file
 - No database (data saved in a file)
 - Easy installation
@@ -27,7 +26,6 @@ Main features:
   - Movie poster (link or imported image)
 - RSS feeds for last movies, box office and watchlist
 - Choice of number of movies per page
-- Choice of prefered language for IMDB search
 - Mobile friendly (Bootstrap v3.0 with responsive design)
 - IE < 7 not friendly (not my problem)
 - Export and import movies with JSON file (it's possible to keep data private)

@@ -15,16 +15,6 @@
 </div>
 </div>
 
-{if="!empty($error_curl)"}
-<div class="row">
-<div class="col-md-8 col-md-offset-2">
-	<div class="alert alert-info">
-		<strong>Oh damn!</strong> The cURL extension was not found or is disabled on your server.
-		<br />You can still use the application but the IMDB search will not work until you activate it <i class="icon-smile"></i>.
-	</div>
-</div>
-</div>
-{/if}
 {if="!empty($error_img)"}
 <div class="row">
 <div class="col-md-8 col-md-offset-2">
