@@ -1,14 +1,14 @@
-# ![MyMovies](https://raw.githubusercontent.com/Devenet/MyMovies/master/assets/icon/favicon.png) MyMovies
+# ![Movies](https://raw.githubusercontent.com/Devenet/Movies/master/assets/icon/favicon.png) Movies
 
 __Light web application to manage movies and track their state__  
 
 
 
-Version 1.3 is now available!  
-[Download the last version](https://github.com/Devenet/MyMovies/releases)
+Version 1.5 is now available!  
+[Download the last version](https://github.com/Devenet/Movies/releases)
 
 
-Main features:
+Main features:  
 - Simple & fast
 - Intuitive
 - Script on one file
@@ -30,9 +30,9 @@ Main features:
 - IE < 7 not friendly (not my problem)
 - Export and import movies with JSON file (it's possible to keep data private)
 
-![MyMovies](https://raw.github.com/Devenet/MyMovies/master/MyMovies.jpg)
+![Movies](https://raw.github.com/Devenet/Movies/master/Movies.jpg)
 
 
 
-Thanks to [contributors](https://github.com/Devenet/MyMovies/graphs/contributors) :)  
-Inspired by [Shaarli](https://github.com/sebsauvage/Shaarli) and [HelloHappy](http://reading.chad.is).
+Thanks to [contributors](https://github.com/Devenet/Movies/graphs/contributors) :)  
+Inspired by [Shaarli](https://github.com/sebsauvage/Shaarli).

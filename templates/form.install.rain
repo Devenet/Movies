@@ -10,7 +10,7 @@
 <div class="container">
 <div class="row">
 <div class="col-md-12">
-	<h3>It looks like it is the first time you run “{#MYMOVIES#}”. <br />Please configure it!</h3>
+	<h3>It looks like it is the first time you run “{#MOVIES#}”. <br />Please configure it!</h3>
 	<hr />
 </div>
 </div>
@@ -44,7 +44,7 @@
 	<div class="form-group espace-top-lg no-espace-bottom">
 		<label for="title" class="control-label col-md-2">Title</label>
 		<div class="col-md-8">
-			<input type="text" class="form-control" id="title" name="title" placeholder="{#MYMOVIES#}" value="{#MYMOVIES#}" />
+			<input type="text" class="form-control" id="title" name="title" placeholder="{#MOVIES#}" value="{#MOVIES#}" />
 			<p class="help-block">You can edit it later <i class="icon-smile"></i>.</p>
 		</div>
 	</div>
