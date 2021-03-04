@@ -1,0 +1,8 @@
+<footer class="p-4 mt-5 bg-light">
+  <div class="container">
+    &copy;{function="date('Y')"}  &mdash; {#AUTHOR#}
+    <br><small class="text-muted">Powered by <a href="https://github.com/Devenet/Movies" rel="external" data-version="v{#MOVIES_VERSION#}" title="Light web application to manage movies and track their state">{#MOVIES#}</a> &middot; Developed by <a href="http://nicolas.devenet.info" class="link-secondary" rel="external">Nicolas Devenet</a>.</small>
+  </div>
+</footer>
+
+<script src="themes/default/assets/bootstrap.bundle.min.js"></script>
