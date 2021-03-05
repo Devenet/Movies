@@ -1,0 +1,31 @@
+<!doctype html>
+<html class="h-100">
+<head>
+  {include="page.head"}
+</head>
+<body class="d-flex flex-column h-100">
+  <div class="flex-shrink-0 mb-5">
+    {include="page.header"}
+
+    <main class="container">
+      <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+          <h1>Not found</h1>
+    
+          <div class="mt-4 card">
+            <div class="card-header">Error 404</div>
+            <div class="card-body">The requested URL was not found on this server.</div>
+          </div>
+
+          <p class="mt-4">
+            And now?
+            <br><a href=".">Browse all movies</a> or use the search to find what you were looking for.
+          </p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  {include="page.footer"}
+</body>
+</html>
