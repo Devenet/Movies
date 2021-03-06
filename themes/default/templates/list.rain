@@ -1,0 +1,71 @@
+<!doctype html>
+<html class="h-100">
+<head>
+  {include="page.head"}
+</head>
+<body class="d-flex flex-column h-100">
+  <div class="flex-shrink-0">
+    {include="page.header"}
+
+    <main class="container">
+      {if="!empty($search)"}
+      <div class="card my-4 border-{if="$search_count>0"}success{else}danger{/if} text-{if="$search_count>0"}success{else}danger{/if}">
+        <div class="card-body text-center"><i class="bi bi-search"></i> There {if="$search_count>1"}are{else}is{/if} {$search_count} result{if="$search_count>1"}s{/if} for <q>{$search}</q>.</div>
+      </div>
+      {/if}
+
+      <div class="row gy-4">
+      {loop="movie"}
+        <article class="col-lg-6 mb-2 clearfix">
+          <h2 class="mb-0"><a class="text-decoration-none" href="{$value.id|Path::movie}" title="{$value.title}">{$value.title}</a></h2>
+          {if="!empty($value.original_title)"}<h3 class="h6 fw-normal text-muted">{$value.original_title}</h3>{/if}
+
+          <ul class="mt-3 list-inline text-muted">
+            <li class="list-inline-item me-3"><span class="{if="$value.status == Movie::SEEN"}text-success{else}text-muted{/if}" data-bs-toggle="tooltip" title="{$value.status|displayStatus}"><i class="bi bi-{if="$value.status == Movie::SEEN"}check-circle-fill{else}eye-slash{/if}"></i></span></li>
+            {if="!empty($value.release_date)"}<li class="list-inline-item ms-2"><span class="font-sm" data-bs-toggle="tooltip" data-bs-container="body" title="Release&nbsp;year"><i class="bi bi-camera-reels fs-6"></i> {$value.release_date | substr(0,4)}</span></li>{/if}
+            {if="!empty($value.country)"}<li class="list-inline-item ms-2">{$value.country|displayFlag}</li>{/if}
+            {if="!empty($value.link_website)"}<li class="list-inline-item ms-3"><a href="{$value.link_website}" rel="external" class="normal text-muted" data-bs-toggle="tooltip" title="External&nbsp;information"><i class="bi bi-info-circle"></i></a></li>{/if}
+            {if="isLogged()"}<li class="list-inline-item float-end me-2">
+              <a href="{$value.id|Path::edit}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+              <a href="{$value.id|Path::delete}&amp;token={$token}" class="ms-2 me-2 text-danger" data-bs-toggle="tooltip" title="Delete&nbsp;movie" onclick="return confirmDeleteMovie('{$value.title}')"><i class="bi bi-trash"></i></a>
+            </li>{/if}
+          </ul>
+
+          <div class="row">
+            <div class="col-md-3 mb-3 text-center">
+              <a href="{$value.id|Path::movie}"><img src="{if="$value.link_image != NULL"}{$value.link_image}{else}themes/default/assets/img/movie.jpg{/if}" alt="{$value.title}" class="img-fluid img-thumbnail"></a>
+              {if="$value.status == Movie::SEEN"}<div class="mt-2">{$value.note|displayNote}</div>{/if}
+            </div>
+            <div class="col-md-9">
+              <p class="mb-2">{$value.synopsis|displaySynopsis}</p>
+              <p><a href="{$value.id|Path::movie}" class="link-secondary">Read more</a></p>
+              {$genres=displayGenres($value.genre)}
+              <ul class="list-inline text-muted font-sm">
+              {loop="genres"}<li class="list-inline-item"><a href="./?genre={$value}" class="link-secondary text-decoration-none"><i class="bi bi-tag"></i> {function="displayGenre($value)"}</a></li>{/loop}
+              </ul>
+            </div>
+          </div>
+        </article>
+      {else}
+        <p class="text-center my-5">
+          <b>Damn!</b>
+          <br>No movie to display.
+        </p>
+      {/loop}
+      </div>
+
+      <nav class="my-5">
+        <ul class="pagination justify-content-center">
+          {$pagination}
+        </ul>
+      </nav>
+    </main>
+  </div>
+
+  {include="page.footer"}
+  {if="!empty($search)"}
+  <script src="assets/js/jquery.highlight.js"></script>
+  <script>$(function() { $('.movies').highlight("{$search}"); });</script>
+  {/if}
+</body>
+</html>
