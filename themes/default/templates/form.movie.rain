@@ -1,0 +1,113 @@
+<!doctype html>
+<html class="h-100">
+<head>
+  {include="page.head"}
+</head>
+<body class="d-flex flex-column h-100">
+  <div class="flex-shrink-0">
+    {include="page.header"}
+
+    <main class="container">
+      <h1 class="mb-3">{$page_title}</h1>
+
+      {if="!empty($error)"}
+      <div class="row">
+          <div class="col-md-8 col-md-offset-2">
+              <div class="alert alert-danger text-center">
+                  <strong>Oh damn!</strong> {$error}
+              </div>
+          </div>
+      </div>
+      {/if}
+
+      <form method="post" action="{$target}" class="row mb-3">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="title" class="form-label text-primary">Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Moi, moche et méchant" {if="!empty($inputs['title'])"}value="{$inputs['title']}"{/if} autofocus>
+          </div>
+          <div class="mb-3">
+            <label for="synopsis" class="form-label text-primary">Synopsis</label>
+            <textarea class="form-control" id="synopsis" name="synopsis" rows="8" placeholder="The awesome story in a nutshell" >{if="!empty($inputs['synopsis'])"}{$inputs['synopsis']}{/if}</textarea>
+          </div>
+          <div class="mb-3">
+            <label for="genre" class="form-label">Genre</label>
+            <input type="text" class="form-control" id="genre" name="genre" placeholder="Action, Comedy" {if="!empty($inputs['genre'])"}value="{$inputs['genre']}"{/if}>
+          </div>
+
+          <div class="card bg-light mb-3">
+            <div class="card-body">
+              <div class="mb-2 form-check">
+                <input type="checkbox" class="form-check-input" name="status" id="status" {if="!empty($inputs['status'])"}checked="checked"{/if}>
+                <label for="status" class="form-check-label text-primary">I have already seen it</label>
+              </div>
+              <div class="mb-3">
+                <label for="note" class="form-label">Rating (ouf of 10)</label>
+                <input type="number" class="form-control" id="note" name="note" min="0" max="10" step="1" value="{if="!empty($inputs['note'])"}{$inputs['note']}{else}5{/if}">
+              </div>
+              <div class="mt-3 form-check">
+                <input type="checkbox" class="form-check-input" name="owned" id="owned" {if="!empty($inputs['owned'])"}checked="checked"{/if}>
+                <label for="owned" class="form-check-label">I have it</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="original_title" class="form-label text-muted">Original title</label>
+            <input type="text" class="form-control" id="original_title" name="original_title" placeholder="Despicable Me" {if="!empty($inputs['original_title'])"}value="{$inputs['original_title']}"{/if}>
+          </div>
+          <div class="mb-3">
+            <label for="duration" class="form-label">Duration (minutes)</label>
+            <input type="number" class="form-control" id="duration" name="duration"  min="0" max="300" step="1" placeholder="90" value="{if="!empty($inputs['duration'])"}{$inputs['duration']}{/if}">
+          </div>
+          <div class="mb-3">
+            <label for="release_date" class="form-label">Release date</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+              <input type="date" class="form-control" id="release_date" name="release_date" placeholder="{$today}" {if="!empty($inputs['release_date'])"}value="{$inputs['release_date']}"{/if}>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="country" class="form-label">Country</label>
+            <select class="form-select" id="country" name="country">
+              {$countries}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="link_website" class="form-label">External information</label>
+              <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                  <input type="url" class="form-control" id="link_website" name="link_website" placeholder="https://movies.com/film/despicable-me.html" {if="!empty($inputs['link_website'])"}value="{$inputs['link_website']}"{/if}>
+              </div>
+          </div>
+          <div class="mb-2">
+              <label for="link_image" class="form-label">URL to movie poster</label>
+              <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                  <input type="text" class="form-control" id="link_image" name="link_image" placeholder="https://movies.com/images/despicable-me.jpg" {if="!empty($inputs['link_image'])"}value="{$inputs['link_image']}"{/if}>
+              </div>
+          </div>
+          <div class="mb-3">
+            <input type="checkbox" class="form-check-input" name="link_image_import" id="link_image_import" {if="!empty($inputs['link_image_import'])"}checked="checked"{/if}>
+            <label for="link_image_import" class="form-check-label">Import movie poster</label>
+          </div>
+        </div>
+        <div class="col-md-12 mt-4 mb-3 clearfix">
+          <input type="hidden" name="token" value="{$token}">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="reset" class="btn btn-outline-secondary ms-2">Reset</button>
+          {if="!empty($delete)"}<a href="{$delete}&amp;token={$token}" class="btn btn-danger float-end" onclick="return confirmDeleteMovie('{$inputs['title']}')">Delete</a>{/if}
+        </div>
+      </form>
+    </main>
+  </div>
+
+  {include="page.footer"}
+  <script>
+    var view = document.getElementById('status'), note = document.getElementById('note').parentNode;
+    note.style.display = view.checked ? 'block' : 'none';
+    view.addEventListener('change', function(e) { note.style.display = e.currentTarget.checked ? 'block' : 'none'; });
+  </script>
+</body>
+</html>
