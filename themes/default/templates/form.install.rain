@@ -13,7 +13,7 @@
         
       {if="!empty($error_img)"}
       <div class="alert alert-warning">
-        <strong>Damn!</strong> It seems that the PHP library GD is disabled or not installed on your server (the function <code>imagecreatefromjpeg()</code> is undefined).
+        <b>Damn!</b> It seems that the <i>GD library</i> is disabled or not installed on your server (the PHP function <code>imagecreatefromjpeg()</code> is undefined).
         <br>You can still use the application but you will not be able to import images from URL and generate thumbnails until you activate it.
       </div>
       {/if}
