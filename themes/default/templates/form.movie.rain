@@ -11,24 +11,20 @@
       <h1 class="mb-3">{$page_title}</h1>
 
       {if="!empty($error)"}
-      <div class="row">
-          <div class="col-md-8 col-md-offset-2">
-              <div class="alert alert-danger text-center">
-                  <strong>Oh damn!</strong> {$error}
-              </div>
-          </div>
+      <div class="alert alert-danger">
+        <b>Damn!</b> {$error}
       </div>
       {/if}
 
-      <form method="post" action="{$target}" class="row mb-3">
+      <form method="post" action="{$form_action}" class="row mb-3">
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="title" class="form-label text-primary">Title</label>
-            <input type="text" class="form-control" id="title" name="title" placeholder="Moi, moche et méchant" {if="!empty($inputs['title'])"}value="{$inputs['title']}"{/if} autofocus>
+            <label for="title" class="form-label text-primary">Title <span class="form-text">(required)</span></label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Moi, moche et méchant" {if="!empty($inputs['title'])"}value="{$inputs['title']}"{/if} required autofocus>
           </div>
           <div class="mb-3">
-            <label for="synopsis" class="form-label text-primary">Synopsis</label>
-            <textarea class="form-control" id="synopsis" name="synopsis" rows="8" placeholder="The awesome story in a nutshell" >{if="!empty($inputs['synopsis'])"}{$inputs['synopsis']}{/if}</textarea>
+            <label for="synopsis" class="form-label text-primary">Synopsis <span class="form-text">(required)</span></label>
+            <textarea class="form-control" id="synopsis" name="synopsis" rows="8" placeholder="The awesome story in a nutshell" required>{if="!empty($inputs['synopsis'])"}{$inputs['synopsis']}{/if}</textarea>
           </div>
           <div class="mb-3">
             <label for="genre" class="form-label">Genre</label>

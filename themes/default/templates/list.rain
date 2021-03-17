@@ -8,9 +8,11 @@
     {include="page.header"}
 
     <main class="container">
+      <h1 class="visually-hidden">{#TITLE#}</h1>
+
       {if="!empty($search)"}
       <div class="card my-4 border-{if="$search_count>0"}success{else}danger{/if} text-{if="$search_count>0"}success{else}danger{/if}">
-        <div class="card-body text-center"><i class="bi bi-search"></i> There {if="$search_count>1"}are{else}is{/if} {$search_count} result{if="$search_count>1"}s{/if} for <q>{$search}</q>.</div>
+        <div class="card-body text-center"><i class="bi bi-search"></i> There {if="$search_count>1"}are {$search_count}{elseif="$search_count == 0"}is no{else}is one{/if} result{if="$search_count>1"}s{/if} for <q>{$search}</q>.</div>
       </div>
       {/if}
 
@@ -22,9 +24,10 @@
 
           <ul class="mt-3 list-inline text-muted">
             <li class="list-inline-item me-3"><span class="{if="$value.status == Movie::SEEN"}text-success{else}text-muted{/if}" data-bs-toggle="tooltip" title="{$value.status|displayStatus}"><i class="bi bi-{if="$value.status == Movie::SEEN"}check-circle-fill{else}eye-slash{/if}"></i></span></li>
-            {if="!empty($value.release_date)"}<li class="list-inline-item ms-2"><span class="font-sm" data-bs-toggle="tooltip" data-bs-container="body" title="Release&nbsp;year"><i class="bi bi-camera-reels fs-6"></i> {$value.release_date | substr(0,4)}</span></li>{/if}
+            {if="!empty($value.duration)"}<li class="list-inline-item ms-2"><span class="font-sm">{$value.duration} min</span></li>{/if}
+            {if="!empty($value.release_date)"}<li class="list-inline-item ms-2"><span class="font-sm" data-bs-toggle="tooltip" data-bs-container="body" title="Release&nbsp;date"><i class="bi bi-calendar-event fs-6"></i> {$value.release_date}</span></li>{/if}
             {if="!empty($value.country)"}<li class="list-inline-item ms-2">{$value.country|displayFlag}</li>{/if}
-            {if="!empty($value.link_website)"}<li class="list-inline-item ms-3"><a href="{$value.link_website}" rel="external" class="normal text-muted" data-bs-toggle="tooltip" title="External&nbsp;information"><i class="bi bi-info-circle"></i></a></li>{/if}
+            <!-- {if="!empty($value.link_website)"}<li class="list-inline-item ms-3"><a href="{$value.link_website}" rel="external" class="normal text-muted" data-bs-toggle="tooltip" title="External&nbsp;information"><i class="bi bi-info-circle"></i></a></li>{/if} -->
             {if="isLogged()"}<li class="list-inline-item float-end me-2">
               <a href="{$value.id|Path::edit}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
               <a href="{$value.id|Path::delete}&amp;token={$token}" class="ms-2 me-2 text-danger" data-bs-toggle="tooltip" title="Delete&nbsp;movie" onclick="return confirmDeleteMovie('{$value.title}')"><i class="bi bi-trash"></i></a>

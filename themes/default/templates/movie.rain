@@ -56,12 +56,12 @@
 
           <div class="col-md-12 col-lg-2 offset-lg-1">
             <ul class="list-unstyled list-smd-inline lh-lg">
-              <li><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-muted{/if}">{if="$movie['status'] == Movie::SEEN"}<i class="bi bi-check-circle-fill"></i> Already seen{else}<i class="bi bi-eye-close"></i> Not seen yet{/if}</span></li>
+              <li><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-muted{/if}">{if="$movie['status'] == Movie::SEEN"}<i class="bi bi-check-circle-fill"></i> Already seen{else}<i class="bi bi-eye-slash"></i> Not seen yet{/if}</span></li>
               {if="$movie['owned']"}<li><span><i class="bi bi-hdd"></i> I have it</span></li>{/if}
             </ul>
             <ul class="list-unstyled list-smd-inline lh-lg mt-3">
-              {if="!empty($movie['duration'])"}<li><i class="bi bi-stopwatch"></i> {$movie['duration']} min</li>{/if}
-              {if="!empty($movie['release_date'])"}<li><span data-bs-toggle="tooltip" data-bs-placement="left" title="Release date"><i class="bi bi-camera-reels"></i> {$movie['release_date']}</span></li>{/if}
+              {if="!empty($movie['duration'])"}<li>{$movie['duration']} min</li>{/if}
+              {if="!empty($movie['release_date'])"}<li><span data-bs-toggle="tooltip" data-bs-placement="left" title="Release date"><i class="bi bi-calendar-event"></i> {$movie['release_date']}</span></li>{/if}
               {if="!empty($country)"}<li>{$country|displayFlagWithName}</li>{/if}
             </ul>
 
@@ -69,7 +69,7 @@
               {loop="displayGenres"}<li><a href="./?genre={$value}" class="link-secondary text-decoration-none"><i class="bi bi-tag"></i> {function="displayGenre($value)"}</a></li>{/loop}
             </ul>
 
-            {if="!empty($movie['link_website'])"}<p><a href="{$movie['link_website']}" class="text-decoration-none" rel="external" ><i class="bi bi-info-circle"></i> more online</a></p>{/if}
+            {if="!empty($movie['link_website'])"}<p><a href="{$movie['link_website']}" class="text-decoration-none" rel="external" ><i class="bi bi-info-circle"></i> More online</a></p>{/if}
           </div>
         </div>
       </article>
