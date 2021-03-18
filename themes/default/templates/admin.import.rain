@@ -1,0 +1,59 @@
+<!doctype html>
+<html class="h-100">
+<head>
+  {include="page.head"}
+</head>
+<body class="d-flex flex-column h-100">
+  <div class="flex-shrink-0">
+    {include="page.header"}
+
+    <main class="container">
+      <h1>Import movies</h1>
+
+      <p>This wizard will import movies from a JSON file into your database.</p>
+      
+      {if="!empty($imported)"}
+      <div class="alert alert-success text-center">
+        <b>Yippee!</b> Movies have been well imported.
+      </div>
+      {/if}
+      {if="!empty($error)"}
+      <div class="alert alert-danger">
+        <b>Damn!</b> {$error}
+      </div>
+      {/if}
+
+      <form class="row mb-3 mt-4" method="post" enctype="multipart/form-data">
+        <div class="row mb-3">
+          <label for="file" class="col-lg-2 col-form-label">File</label>
+          <div class="col-lg-10">
+            <input class="form-control" type="file" name="file" id="file" accept=".json, application/json, application/octet-stream">
+          </div>
+        </div>
+        <fieldset class="row mb-3">
+          <legend class="col-form-label col-lg-2 pt-0">Permalinks</legend>
+          <div class="col-lg-10">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="keep_ids" id="keep_ids">
+              <label class="form-check-label" for="keep_ids">Keep imported movie permalinks</label>
+            </div>
+            <div class="form-text">Keep imported movie permalinks, except if it will erase an existing permarlink.</div>
+          </div>
+        </fieldset>
+
+        <input type="hidden" name="token" value="{$token}">
+
+        <div class="row mb-3 mt-4">
+          <div class="col-lg-10 offset-lg-2">
+            <button type="submit" class="btn btn-primary">Import</button>
+            <button type="reset" class="btn btn-outline-secondary ms-2">Reset</button>
+          </div>
+        </div>
+      </form>
+
+    </main>
+  </div>
+
+  {include="page.footer"}
+</body>
+</html>
