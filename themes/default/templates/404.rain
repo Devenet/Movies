@@ -17,10 +17,7 @@
             <div class="card-body">The requested URL was not found on this server.</div>
           </div>
 
-          <p class="mt-4">
-            And now?
-            <br><a href=".">Browse all movies</a> or use the search to find what you were looking for.
-          </p>
+          <p class="mt-4"><a href=".">Browse all movies</a> or use the search to find what you were looking for.</p>
         </div>
       </div>
     </main>

@@ -43,8 +43,8 @@
 
             {if="isLogged()"}
             <div class="mt-lg-5 my-4">
-              <a href="{$id|Path::edit}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
-              <a href="{$id|Path::delete}&amp;token={$token}" class="ms-2 btn btn-sm btn-outline-danger" onclick="return confirmDeleteMovie('{$movie["title"]}')"><i class="bi bi-trash"></i> Delete</a>
+              <a href="{$id|Path::EditMovie}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+              <a href="{$id|Path::DeleteMovie}&amp;token={$token}" class="ms-2 btn btn-sm btn-outline-danger" onclick="return confirmDeleteMovie('{$movie["title"]}')"><i class="bi bi-trash"></i> Delete</a>
             </div>
             {/if}
 
@@ -76,8 +76,8 @@
 
       <nav class="mt-5 mb-4 clearfix">
         <ul class="list-inline">
-          {if="!empty($movie_previous)"}<li class="list-inline-item float-start"><a href="{$movie_previous.id|Path::movie}"><i class="bi bi-arrow-left-circle me-2"></i>{$movie_previous.title}</a></li>{/if}
-          {if="!empty($movie_next)"}<li class="list-inline-item float-end"><a href="{$movie_next.id|path::movie}">{$movie_next.title}<i class="bi bi-arrow-right-circle ms-2"></i></a></li>{/if}
+          {if="!empty($movie_previous)"}<li class="list-inline-item float-start"><a href="{$movie_previous.id|Path::Movie}"><i class="bi bi-arrow-left-circle me-2"></i>{$movie_previous.title}</a></li>{/if}
+          {if="!empty($movie_next)"}<li class="list-inline-item float-end"><a href="{$movie_next.id|path::Movie}">{$movie_next.title}<i class="bi bi-arrow-right-circle ms-2"></i></a></li>{/if}
         </ul>
       </nav>
     </main>
