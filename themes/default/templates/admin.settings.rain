@@ -21,8 +21,8 @@
         <div class="row mb-3">
           <label for="login" class="col-lg-2 col-form-label">Username</label>
           <div class="col-lg-10">
-            <input type="text" class="form-control" id="login" name="login" value="{$username}" aria-describedby="h_login" disabled>
-            <div id="h_login" class="form-text">To change your username, please delete file <code>data/settings.php</code>.</div>
+            <input type="text" class="form-control" id="login" name="login" value="{$settings_username}" aria-describedby="h_login" disabled>
+            <div id="h_login" class="form-text">To change your username, please delete file <code>{$settings_file}</code>.</div>
           </div>
         </div>
         <div class="row mb-3">
@@ -42,7 +42,7 @@
         <div class="row mb-3">
           <label for="author" class="col-lg-2 col-form-label">Author</label>
           <div class="col-lg-10">
-            <input type="text" class="form-control" id="author" name="author" placeholder="Nicolas Devenet" value="{#AUTHOR#}" aria-describedby="h_author">
+            <input type="text" class="form-control" id="author" name="author" placeholder="Alan Turing" value="{#AUTHOR#}" aria-describedby="h_author">
             <div id="h_author" class="form-text">
               Used for copyright notice and for social sharing (when you post the link of a movie page).
               <br>If not set, your username will be used.
@@ -53,15 +53,15 @@
           <legend class="col-form-label col-lg-2 pt-0">Robots</legend>
           <div class="col-lg-10">
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="robots[]" value="index" id="robots_index" {if="$robots.index"}checked="checked"{/if}>
+              <input class="form-check-input" type="checkbox" name="robots[]" value="index" id="robots_index" {if="$settings_robots.index"}checked="checked"{/if}>
               <label class="form-check-label" for="robots_index">Index</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="robots[]" value="follow" id="robots_follow" {if="$robots.follow"}checked="checked"{/if}>
+              <input class="form-check-input" type="checkbox" name="robots[]" value="follow" id="robots_follow" {if="$settings_robots.follow"}checked="checked"{/if}>
               <label class="form-check-label" for="robots_follow">Follow</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="robots[]" value="archive" id="robots_archive" {if="$robots.archive"}checked="checked"{/if}>
+              <input class="form-check-input" type="checkbox" name="robots[]" value="archive" id="robots_archive" {if="$settings_robots.archive"}checked="checked"{/if}>
               <label class="form-check-label" for="robots_archive">Archive</label>
             </div>
           </div>

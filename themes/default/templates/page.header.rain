@@ -8,8 +8,8 @@
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="navigation">
           <li class="nav-item"><a class="nav-link {if="$menu_current == 'home'"}active{/if}" href="./">Home</a></li>
-          <li class="nav-item"><a class="nav-link {if="$menu_current == 'best'"}active{/if}" href="./?box-office">{if="$menu_current == 'best'"}<i class="bi bi-stars"></i>{/if} Box office</a></li>
-          <li class="nav-item"><a class="nav-link {if="$menu_current == 'soon'"}active{/if}" href="./?watchlist">{if="$menu_current == 'soon'"}<i class="bi bi-hourglass"></i>{/if} Watchlist</a></li>
+          <li class="nav-item"><a class="nav-link {if="$menu_current == 'best'"}active{/if}" href="./?boxoffice">{if="$menu_current == 'best'"}<i class="bi bi-star"></i>{/if} Box office</a></li>
+          <li class="nav-item"><a class="nav-link {if="$menu_current == 'soon'"}active{/if}" href="./?watchlist">{if="$menu_current == 'soon'"}<i class="bi bi-pin"></i>{/if} Watchlist</a></li>
           <li class="nav-item ms-lg-2"><a class="nav-link rss" href="./movies.rss" data-bs-toggle="tooltip" data-bs-container="body" data-bs-placement="bottom" title="RSS feed"><i class="bi bi-rss-fill"></i> <span class="d-lg-none">RSS feed</span></a></li>
         </ul>
         <form class="d-flex" action="./" role="search">
@@ -20,13 +20,13 @@
           <li class="nav-item dropdown">
             <a class="nav-link {if="strpos($menu_current, 'admin') === 0"}active{/if} dropdown-toggle" href="#" id="dp_nav_admin" role="button" data-bs-toggle="dropdown" aria-expanded="false">{if="strpos($menu_current, 'admin') === 0"}<i class="bi bi-gear"></i>{/if} Dashboard</a>
             <ul class="dropdown-menu" aria-labelledby="dp_nav_admin">
-              <li><a class="dropdown-item" href="./?new">New movie</a></li>
+              <li><a class="dropdown-item" href="./?admin/new">New movie</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><span class="dropdown-header">Administration</span></li>
-              <li><a class="dropdown-item" href="./?admin-export">Export</a></li>
-              <li><a class="dropdown-item" href="./?admin-import">Import</a></li>
-              <li><a class="dropdown-item" href="./?admin-logs">Logs</a></li>
-              <li><a class="dropdown-item" href="./?admin-settings">Settings</a></li>
+              <li><a class="dropdown-item" href="./?admin/export">Export</a></li>
+              <li><a class="dropdown-item" href="./?admin/import">Import</a></li>
+              <li><a class="dropdown-item" href="./?admin/logs">Logs</a></li>
+              <li><a class="dropdown-item" href="./?admin/settings">Settings</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item"  href="./?signout"><i class="bi bi-box-arrow-right"></i> Sign out</a></li>
             </ul>

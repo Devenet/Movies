@@ -13,7 +13,7 @@
           <h1>Sign in</h1>
           <p class="lead">Let’s manage <b>{#TITLE#}</b>.</p>
     
-          <form class="mt-4" method="post" action="{""|Path::signin}{if="$target!=NULL"}&amp;target={$target}{/if}">
+          <form class="mt-4" method="post" action="./?signin">
             <div class="mb-3">
               <label for="login" class="form-label">Login</label>
               <input type="text" class="form-control" id="login" name="login" placeholder="Username" autofocus>

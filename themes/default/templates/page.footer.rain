@@ -1,10 +1,11 @@
 <footer class="mt-auto py-3 bg-light">
   <div class="container">
     <div class="row justify-content-between">
-      <div class="col-auto">&copy;{function="date('Y')"}  &mdash; {#AUTHOR#}</div>
+      <div class="col-auto">&copy;{function="date('Y')"} &mdash; {#AUTHOR#}</div>
       <div class="col-auto"><small class="text-muted">Powered by <a href="https://github.com/Devenet/Movies" rel="external" data-version="v{#MOVIES_VERSION#}" title="Light web application to manage movies and track their state">{#MOVIES#}</a> &amp; <a href="https://nicolas.devenet.info" class="link-secondary" rel="external">Nicolas Devenet</a>.</small></div>
     </div>
   </div>
 </footer>
 
 <script src="themes/default/assets/bootstrap.bundle.min.js"></script>
+<script src="themes/default/assets/movies.js"></script>

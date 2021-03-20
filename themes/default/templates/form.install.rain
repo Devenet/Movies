@@ -25,7 +25,7 @@
 
             <div class="mb-3">
               <label for="login" class="form-label">Username</label>
-              <input type="text" class="form-control" id="login" name="login" placeholder="Nicolas" autofocus required>
+              <input type="text" class="form-control" id="login" name="login" placeholder="{#AUTHOR#}" autofocus required>
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Password</label>
@@ -44,7 +44,7 @@
             
             <div class="mb-3">
               <label for="author" class="form-label">Author</label>
-              <input type="text" class="form-control" id="author" name="author" placeholder="Nicolas Devenet" aria-describedby="h_author">
+              <input type="text" class="form-control" id="author" name="author" placeholder="{#AUTHOR#}" aria-describedby="h_author">
               <div id="h_author" class="form-text">
                 Used for copyright notice and for social sharing (when you post the link of a movie page).
                 <br>If not set, your username will be used.

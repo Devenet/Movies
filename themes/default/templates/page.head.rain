@@ -1,12 +1,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="themes/default/assets/bootstrap.min.css">
+<link rel="stylesheet" href="themes/default/assets/movies.css">
 <link rel="stylesheet" href="themes/default/assets/bootstrap-icons.min.css">
 
 <meta name="author" content="Nicolas Devenet">
 <meta name="generator" content="{#MOVIES#} (v{#MOVIES_VERSION#}) by Nicolas Devenet">
 <meta name="copyright" content="{#AUTHOR#}">
-<meta name="robots" content="{#ROBOTS#}">
+<meta name="robots" content="{if="!empty($robots)"}{$robots}{else}{#ROBOTS#}{/if}">
 
 <title>{if="!empty($page_title)"}{$page_title} &middot; {/if}{#TITLE#}</title>
 
@@ -21,5 +22,3 @@
 <meta name="theme-color" content="#ffffff">
 
 <link rel="alternate" type="application/rss+xml" href="{#RSS#}" title="{#TITLE#}">
-<link rel="alternate" type="application/rss+xml" href="{#RSS_BOXOFFICE#}" title="{#TITLE#} &middot; Box office">
-<link rel="alternate" type="application/rss+xml" href="{#RSS_WATCHLIST#}" title="{#TITLE#} &middot; Watchlist">
