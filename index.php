@@ -151,7 +151,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
         1375621920 => ['id' => 1375621920, 'title' => 'Moi, moche et méchant 2', 'original_title' => 'Despicable Me 2', 'release_date' => '2013-06-26', 'country' => 'us', 'genre' => 'Animation, Adventure, Comedy, Crime, Family, Sci-Fi', 'duration' => 98, 'synopsis' => 'While Gru, the ex-supervillain is adjusting to family life and an attempted honest living in the jam business, a secret Arctic laboratory is stolen. The Anti-Villain League decides it needs an insider’s help and recruits Gru in the investigation. Together with the eccentric AVL agent, Lucy Wilde, Gru concludes that his prime suspect is the presumed dead supervillain, El Macho, whose his teenage son is also making the moves on his eldest daughter, Margo. Seemingly blinded by his overprotectiveness of his children and his growing mutual attraction to Lucy, Gru seems on the wrong track even as his minions are being quietly kidnapped en masse for some malevolent purpose.', 'link_image' => 'images/1375621920.jpg', 'link_website' => 'http://www.imdb.com/title/tt1690953/', 'status' => Movie::NOT_SEEN, 'note' => null, 'owned' => null]
         );
       file_put_contents($_CONFIG['file_database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
-      self::RSS();
+      $this->RSS();
     }
   }
 
@@ -167,7 +167,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
     if (!$this->logged) die('You are not authorized to change the database.');
     krsort($this->data);
     file_put_contents($_CONFIG['file_database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
-    self::RSS();
+    $this->RSS();
   }
 
   // Return all movies
@@ -275,11 +275,10 @@ class Movies implements Iterator, Countable, ArrayAccess {
 
   // Write an RSS file with the movies $data given
   private function updateRSS($data) {
-    global $_CONFIG;
     $xml  = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
     $xml .= '<rss version="2.0"  xmlns:atom="http://www.w3.org/2005/Atom">'.PHP_EOL;
     $xml .= '<channel>'.PHP_EOL;
-    $xml .= '<atom:link href="'.BASE_URL.$file.'" rel="self" type="application/rss+xml" />'.PHP_EOL;
+    $xml .= '<atom:link href="'.BASE_URL.RSS.'" rel="self" type="application/rss+xml" />'.PHP_EOL;
     $xml .= '<title>'.TITLE.'</title>'.PHP_EOL;
     $xml .= '<link>'.BASE_URL.'</link>'.PHP_EOL;
     $xml .= '<description>RSS feed of '.TITLE.'</description>'.PHP_EOL;
@@ -316,7 +315,7 @@ class Movies implements Iterator, Countable, ArrayAccess {
 
   public function RSS() {
     global $_CONFIG;
-    self::updateRSS(self::lastMovies(0, $_CONFIG['pagination_rss']));
+    $this->updateRSS($this->lastMovies(0, $_CONFIG['pagination_rss']));
   }
 
   // Export movies datas into json
@@ -636,7 +635,7 @@ function importImage($url, $id) {
 // Be sure pagination exists otherwise display 404 or homepage
 function checkPagination($page, $total) {
   $page = (int) $page+0;
-  if ($page <= 0) { header('Location: ./'); exit(); }
+  if ($page <= 0) { header('Location: ./'); exit; }
   $pages = ceil($total/PAGINATION);
   if ($page <= $pages) { return true; }
   notFound();
@@ -784,7 +783,7 @@ function installPage($tpl) {
     $_CONFIG['author'] = empty($_POST['author']) ? $_CONFIG['login'] : htmlspecialchars(trim($_POST['author']));
     writeSettings();
     header('Location: '.$_SERVER['REQUEST_URI']);
-    exit();
+    exit;
   }
 
   if (!function_exists('imagecreatefromjpeg')) { $tpl->assign('error_img', true); }
@@ -793,18 +792,19 @@ function installPage($tpl) {
   $tpl->assign('menu_current', null);
   $tpl->assign('robots', $_CONFIG['default_norobots']);
   $tpl->draw('form.install');
-  exit();
+  exit;
 }
 
 function errorPage($message, $title) {
   global $tpl;
+  global $_CONFIG;
   $tpl->assign('page_title', 'Error');
   $tpl->assign('menu_current', 'error');
   $tpl->assign('error_title', $title);
   $tpl->assign('error_content', $message.'<br>Please <a href="'.$_SERVER['REQUEST_URI'].'">try again</a>.');
   $tpl->assign('robots', $_CONFIG['default_norobots']);
   $tpl->draw('error');
-  exit();
+  exit;
 }
 
 function moviePage() {
@@ -835,20 +835,20 @@ function moviePage() {
     'url' => $social_url
   ]);
   $tpl->draw('movie');
-  exit();
+  exit;
 }
 
 function randomMovie() {
   $movies = new Movies();
   $movie = $movies->random();
   header('Location: '.str_replace('./', BASE_URL, Path::Movie($movie['id'])));
-  exit();
+  exit;
 }
 
 function logsPage() {
   if (!isLogged()) {
     header('Location: ./?signin');
-    exit();
+    exit;
   }
   global $tpl;
   global $_CONFIG;
@@ -858,7 +858,7 @@ function logsPage() {
       file_put_contents($_CONFIG['file_logs'], null); // in case of deleting file will not work
       unlink($_CONFIG['file_logs']);
       header('Location: ./?admin/logs');
-      exit();
+      exit;
     }
     errorPage('The received token was empty or invalid.', 'Invalid security token');
   }
@@ -874,13 +874,13 @@ function logsPage() {
   $tpl->assign('token', getToken());
   $tpl->assign('robots', $_CONFIG['default_norobots']);
   $tpl->draw('admin.logs');
-  exit();
+  exit;
 }
 
 function settingsPage() {
   if (!isLogged()) {
     header('Location: ./?signin');
-    exit();
+    exit;
   }
   global $tpl;
   global $_CONFIG;
@@ -894,8 +894,9 @@ function settingsPage() {
       else { $_CONFIG['robots'] = $_CONFIG['default_norobots']; }
       $_CONFIG['author'] = empty($_POST['author']) ? $_CONFIG['login'] : htmlspecialchars(trim($_POST['author']));
       writeSettings();
+
       header('Location: ./?admin/settings&updated');
-      exit();
+      exit;
     }
     errorPage('The received token was empty or invalid.', 'Invalid security token');
   }
@@ -909,13 +910,13 @@ function settingsPage() {
   $tpl->assign('token', getToken());
   $tpl->assign('robots', $_CONFIG['default_norobots']);
   $tpl->draw('admin.settings');
-  exit();
+  exit;
 }
 
 function exportPage() {
   if (!isLogged()) {
     header('Location: ./?signin');
-    exit();
+    exit;
   }
   global $tpl;
   global $_CONFIG;
@@ -944,13 +945,13 @@ function exportPage() {
   $tpl->assign('token', getToken());
   $tpl->assign('robots', $_CONFIG['default_norobots']);
   $tpl->draw('admin.export');
-  exit();
+  exit;
 }
 
 function importPage() {
   if (!isLogged()) {
     header('Location: ./?signin');
-    exit();
+    exit;
   }
   global $tpl;
   global $_CONFIG;
@@ -973,7 +974,7 @@ function importPage() {
         if (!$result) { throw new \Exception('An error occured while importing the file.'); }
 
         header('Location: ./?admin/import&imported');
-        exit();
+        exit;
       } catch(\Exception $e) {
           $tpl->assign('error', $e->getMessage());
         }
@@ -987,13 +988,13 @@ function importPage() {
   $tpl->assign('token', getToken());
   $tpl->assign('robots', $_CONFIG['default_norobots']);
   $tpl->draw('admin.import');
-  exit();
+  exit;
 }
 
 function newMovie() {
   if (!isLogged()) {
     header('Location: ./?signin');
-    exit();
+    exit;
   }
   global $tpl;
   global $_CONFIG;
@@ -1039,7 +1040,7 @@ function newMovie() {
         $movies->save();
 
         header('Location: '.Path::Movie($movie['id']));
-        exit();
+        exit;
       } catch(\Exception $e) {
         $tpl->assign('error', $e->getMessage());
       }
@@ -1056,13 +1057,13 @@ function newMovie() {
   $tpl->assign('display_search', true);
   $tpl->assign('robots', $_CONFIG['default_norobots']);
   $tpl->draw('form.movie');
-  exit();
+  exit;
 }
 
 function editMoviePage() {
   if (!isLogged()) {
     header('Location: ./');
-    exit();
+    exit;
   }
 
   $movies = new Movies(isLogged());
@@ -1118,7 +1119,7 @@ function editMoviePage() {
         $movies->save();
 
         header('Location: '.Path::Movie($id));
-        exit();
+        exit;
       } catch(\Exception $e) {
         $tpl->assign('error', $e->getMessage());
       }
@@ -1152,20 +1153,20 @@ function editMoviePage() {
   $tpl->assign('form_action', Path::EditMovie($id));
   $tpl->assign('robots', $_CONFIG['default_norobots']);
   $tpl->draw('form.movie');
-  exit();
+  exit;
 }
 
 function signoutPage() {
   logout();
   session_destroy();
   header('Location: ./');
-  exit();
+  exit;
 }
 
 function signinPage() {
   if (isLogged()) {
     header('Location: ./?admin/settings');
-    exit();
+    exit;
   }
   global $tpl;
   global $_CONFIG;
@@ -1177,7 +1178,7 @@ function signinPage() {
     $tpl->assign('error_title', 'You are in jail');
     $tpl->assign('error_content', 'You have been banned after too many bad attemps.<br>Please try later.');
     $tpl->draw('error');
-    exit();
+    exit;
   }
 
   if (!empty($_POST['login']) && !empty($_POST['password'])) {
@@ -1188,7 +1189,7 @@ function signinPage() {
         session_set_cookie_params(0, $cookiedir, $_SERVER['HTTP_HOST']);
         session_regenerate_id(true);
         header('Location: ./');
-        exit();
+        exit;
       }
       loginFailed();
       errorPage('The given username or password was wrong. <br>If you do not remberer your login informations, just delete the file <code>'.basename($_CONFIG['file_settings']).'</code>.', 'Invalid username or password');
@@ -1202,7 +1203,7 @@ function signinPage() {
   $tpl->assign('token', getToken());
   $tpl->assign('robots', 'noindex,noarchive');
   $tpl->draw('form.signin');
-  exit();
+  exit;
 }
 
 function watchlistPage() {
@@ -1223,7 +1224,7 @@ function watchlistPage() {
   $tpl->assign('robots', 'noindex');
   $tpl->assign('token', getToken());
   $tpl->draw('list');
-  exit();
+  exit;
 }
 
 function bestPage() {
@@ -1245,7 +1246,7 @@ function bestPage() {
   $tpl->assign('robots', 'noindex');
   $tpl->assign('token', getToken());
   $tpl->draw('list');
-  exit();
+  exit;
 }
 
 function searchPage() {
@@ -1271,7 +1272,7 @@ function searchPage() {
   $tpl->assign('search_count', $movies->total_search);
   $tpl->assign('token', getToken());
   $tpl->draw('list');
-  exit();
+  exit;
 }
 
 function genrePage() {
@@ -1300,7 +1301,7 @@ function genrePage() {
   $tpl->assign('robots', 'noindex');
   $tpl->assign('token', getToken());
   $tpl->draw('list');
-  exit();
+  exit;
 }
 
 function homePage() {
@@ -1321,7 +1322,7 @@ function homePage() {
   $tpl->assign('menu_current', 'home');
   $tpl->assign('token', getToken());
   $tpl->draw('list');
-  exit();
+  exit;
 }
 
 /*
@@ -1368,12 +1369,13 @@ if (isset($_GET['admin/import'])) { importPage(); }
 // Nothing to do: 404 error
 function notFound() {
   global $tpl;
+  global $_CONFIG;
   header('HTTP/1.1 404 Not Found', true, 404);
   $tpl->assign('page_title', 'Error 404');
   $tpl->assign('menu_current', 'error');
   $tpl->assign('robots', $_CONFIG['default_norobots']);
   $tpl->draw('404');
-  exit();
+  exit;
 }
 notFound();
 
