@@ -17,6 +17,7 @@ $_CONFIG['default_image'] = $_CONFIG['dir_images'].'/movie.jpg';
 $_CONFIG['default_norobots'] = 'noindex,nofollow,noarchive';
 $_CONFIG['title'] = 'Movies';
 $_CONFIG['robots'] = $_CONFIG['default_norobots'];
+$_CONFIG['theme'] = $_CONFIG['default_theme'];
 $_CONFIG['ban_after'] = 4;
 $_CONFIG['ban_duration'] = 1800;
 $_CONFIG['pagination'] = 10;
@@ -529,6 +530,7 @@ function writeSettings() {
   $file .= '$_CONFIG[\'title\']='.var_export($_CONFIG['title'], true).'; ';
   $file .= '$_CONFIG[\'author\']='.var_export($_CONFIG['author'], true).'; ';
   $file .= '$_CONFIG[\'robots\']='.var_export($_CONFIG['robots'], true).'; ';
+  $file .= '$_CONFIG[\'theme\']='.var_export($_CONFIG['theme'], true).'; ';
   $file .= '$_CONFIG[\'pagination\']='.var_export($_CONFIG['pagination'], true).'; ';
   $file .= PHP_EOL.'?>';
   if (!file_put_contents($_CONFIG['file_settings'], $file)) die('Unable to write the configuration file. Please verify the application has rights to write on the folder.');
@@ -885,14 +887,23 @@ function settingsPage() {
   global $tpl;
   global $_CONFIG;
 
+  $themes_dir = array_diff(scandir($_CONFIG['dir_themes']), array('.', '..', '.htaccess', substr($_CONFIG['dir_cache'], strlen($_CONFIG['dir_themes'].'/'))));
+  $themes = array('default');
+  foreach ($themes_dir as $element) {
+    if (is_dir($_CONFIG['dir_themes'].'/'.$element))
+      $themes[] = $element;
+  }
+  $themes = array_unique($themes);
+
   if (!empty($_POST)) {
     if (!empty($_POST['token']) && acceptToken($_POST['token'])) {
       if (!empty($_POST['title'])) { $_CONFIG['title'] = htmlspecialchars($_POST['title']); }
       if (!empty($_POST['password'])) { $_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']); }
       if (!empty($_POST['pagination'])) { $_CONFIG['pagination'] = max(2, $_POST['pagination']+0); }
-      if (!empty($_POST['robots'])) { $_CONFIG['robots'] = parseRobots(in_array('index', $_POST['robots']), in_array('follow', $_POST['robots']), in_array('archive', $_POST['robots']) ); }
-      else { $_CONFIG['robots'] = $_CONFIG['default_norobots']; }
+      if (!empty($_POST['robots'])) { $_CONFIG['robots'] = parseRobots(in_array('index', $_POST['robots']), in_array('follow', $_POST['robots']), in_array('archive', $_POST['robots']) ); } else { $_CONFIG['robots'] = $_CONFIG['default_norobots']; }
       $_CONFIG['author'] = empty($_POST['author']) ? $_CONFIG['login'] : htmlspecialchars(trim($_POST['author']));
+      if (!empty($_POST['theme']) && in_array($_POST['theme'], $themes)) { $_CONFIG['theme'] = $_POST['theme']; } else { $_CONFIG['theme'] = $_CONFIG['default_theme']; }
+
       writeSettings();
 
       header('Location: ./?admin/settings&updated');
@@ -904,6 +915,8 @@ function settingsPage() {
   $tpl->assign('settings_username', $_CONFIG['login']);
   $tpl->assign('settings_robots', getRobots($_CONFIG['robots']));
   $tpl->assign('settings_file', $_CONFIG['file_settings']);
+  $tpl->assign('settings_themes', $themes);
+  $tpl->assign('settings_theme', empty($_CONFIG['theme']) ? $_CONFIG['default_theme'] : $_CONFIG['theme']);
 
   $tpl->assign('page_title', 'Settings');
   $tpl->assign('menu_current', 'admin-settings');

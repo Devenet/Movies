@@ -67,6 +67,15 @@
           </div>
         </fieldset>
 
+        <div class="row mb-3">
+          <label for="theme" class="col-lg-2 col-form-label">Theme</label>
+          <div class="col-lg-10">
+            <select class="form-select" id="theme" name="theme">
+              {loop="settings_themes"}<option value="{$value}" {if="$settings_theme == $value"}selected{/if}>{$value}</option>{/loop}
+            </select>
+          </div>
+        </div>
+
         <div class="row mb-3 mt-4">
           <label for="pagination" class="col-lg-2 col-form-label">Movies per page</label>
           <div class="col-lg-10">
