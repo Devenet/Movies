@@ -1,0 +1,63 @@
+<!doctype html>
+<html class="h-100">
+<head>
+  {include="page.head"}
+</head>
+<body class="d-flex flex-column h-100">
+  <div class="flex-shrink-0 mb-5">
+    {include="page.header"}
+      
+    <main class="container">
+      <h1>Welcome to {#MOVIES#}</h1>
+      <p class="lead">It’s the first time you run <b>{#MOVIES#}</b>.<br class="d-block d-sm-none"> Let’s configure it.</p>
+        
+      {if="!empty($error_img)"}
+      <div class="alert alert-warning">
+        <b>Damn!</b> It seems that the <i>GD library</i> is disabled or not installed on your server (the PHP function <code>imagecreatefromjpeg()</code> is undefined).
+        <br>You can still use {#MOVIES#} but you will not be able to import images from URL and generate thumbnails until you activate it.
+      </div>
+      {/if}
+      
+      <div class="row mt-4">
+        <form class="col-lg-6" method="post">
+          <fieldset>
+            <legend>Authentification</legend>
+
+            <div class="mb-3">
+              <label for="login" class="form-label">Username</label>
+              <input type="text" class="form-control" id="login" name="login" placeholder="{#AUTHOR#}" autofocus required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" name="password" placeholder="Secret" required>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Settings</legend>
+            
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input type="text" class="form-control" id="title" name="title" placeholder="{#MOVIES#}" value="{#MOVIES#}" aria-describedby="h_title">
+              <div id="h_title" class="form-text">You can still edit it later <i class="bi bi-emoji-smile"></i>.</div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="author" class="form-label">Author</label>
+              <input type="text" class="form-control" id="author" name="author" placeholder="{#AUTHOR#}" aria-describedby="h_author">
+              <div id="h_author" class="form-text">
+                Used for copyright notice and for social sharing (when you post the link of a movie page).
+                <br>If not set, your username will be used.
+              </div>
+            </div>
+          </fieldset>
+
+          <button type="submit" class="mt-3 btn btn-primary">Install</button>
+        </form>
+      </div>
+    </main>
+  </div>
+      
+  {include="page.footer"}
+</body>
+</html>

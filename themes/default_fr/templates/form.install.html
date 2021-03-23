@@ -1,0 +1,63 @@
+<!doctype html>
+<html class="h-100">
+<head>
+  {include="page.head"}
+</head>
+<body class="d-flex flex-column h-100">
+  <div class="flex-shrink-0 mb-5">
+    {include="page.header"}
+      
+    <main class="container">
+      <h1>Bienvenue sur {#MOVIES#}</h1>
+      <p class="lead">C’est la première fois que vous lancez <b>{#MOVIES#}</b>.<br class="d-block d-sm-none"> Configurons-le.</p>
+        
+      {if="!empty($error_img)"}
+      <div class="alert alert-warning">
+        <b>Mince !</b> Il semble que la <i>bibliothèque GD</i> soit désactivée ou non installée sur votre serveur (la fonction PHP <code>imagecreatefromjpeg()</code> est indéfinie).
+        <br>Vous pouvez utiliser {#MOVIES#}, mais vous ne pourrez pas importer les affiches de films pour générer une miniature.
+      </div>
+      {/if}
+      
+      <div class="row mt-4">
+        <form class="col-lg-6" method="post">
+          <fieldset>
+            <legend>Authentification</legend>
+
+            <div class="mb-3">
+              <label for="login" class="form-label">Identifiant</label>
+              <input type="text" class="form-control" id="login" name="login" placeholder="{#AUTHOR#}" autofocus required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Mot de passe</label>
+              <input type="password" class="form-control" id="password" name="password" placeholder="Secret" required>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Paramètres</legend>
+            
+            <div class="mb-3">
+              <label for="title" class="form-label">Titre</label>
+              <input type="text" class="form-control" id="title" name="title" placeholder="{#MOVIES#}" value="{#MOVIES#}" aria-describedby="h_title">
+              <div id="h_title" class="form-text">Vous pourrez toujours le changer plus tard <i class="bi bi-emoji-smile"></i>.</div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="author" class="form-label">Auteur</label>
+              <input type="text" class="form-control" id="author" name="author" placeholder="{#AUTHOR#}" aria-describedby="h_author">
+              <div id="h_author" class="form-text">
+                Utilisé pour le copyright en pied de page et pour le partage d’un film sur les réseaux sociaux.
+                <br>Votre identifiant sera utilisé si vous le laissez vide.
+              </div>
+            </div>
+          </fieldset>
+
+          <button type="submit" class="mt-3 btn btn-primary">Installer</button>
+        </form>
+      </div>
+    </main>
+  </div>
+      
+  {include="page.footer"}
+</body>
+</html>

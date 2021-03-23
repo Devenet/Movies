@@ -1,40 +1,44 @@
-# ![MyMovies](https://raw.githubusercontent.com/Devenet/MyMovies/master/assets/icon/favicon.png) MyMovies
+# Movies
 
-__Light web application to manage movies and track their state__  
-
-
-
-Version 1.3 is now available!  
-[Download the last version](https://github.com/Devenet/MyMovies/releases)
+Movies is a light web application to manage movies and track ther state.  
+It’s written in PHP, does not require a database and can be easily self hosted.
 
 
-Main features:
-- Simple & fast
-- Intuitive
-- Get movies from IMDB (need cURL extension)
-- Script on one file
-- No database (data saved in a file)
+Version 2.0 is now available → [download the last version](https://github.com/Devenet/Movies/releases) 🚀
+
+
+Main features:  
+- Simple & fast, intuitive & mobile first
+- No database (data is saved in a file)
 - Easy installation
-- Sort by rating, genre, state (seen or not), date of addition
-- Display your watchlist
-- Several optional metadata:
-  - Genres
-  - Original title
-  - Country of production
-  - Release date
-  - Duration
-  - Link to external information
-  - Movie poster (link or imported image)
-- RSS feeds for last movies, box office and watchlist
-- Choice of number of movies per page
-- Choice of prefered language for IMDB search
-- Mobile friendly (Bootstrap v3.0 with responsive design)
-- IE < 7 not friendly (not my problem)
-- Export and import movies with JSON file (it's possible to keep data private)
-
-![MyMovies](https://raw.github.com/Devenet/MyMovies/master/MyMovies.jpg)
+- Search, box office and watchlist
+- Several optional metadata (original title, duration, release date, country of production, genres, external information link, movie poster)
+- RSS feed for last movies
+- Export and import feature with JSON file
+- Settings (title, author, robots, pagination)
+- Custom themes supported
 
 
+![Movies](https://raw.github.com/Devenet/Movies/master/Movies.jpg)
 
-Thanks to [contributors](https://github.com/Devenet/MyMovies/graphs/contributors) :)  
-Inspired by [Shaarli](https://github.com/sebsauvage/Shaarli) and [HelloHappy](http://reading.chad.is).
+
+Developed by Nicolas Devenet. Under MIT license.  
+Code hosted on https://github.com/Devenet/Movies.
+
+Thanks to [contributors](https://github.com/Devenet/Movies/graphs/contributors). Inspired by [Shaarli](https://github.com/sebsauvage/Shaarli).
+
+---
+
+## Migration from v1 to v2
+
+Before migrated to v2:  
+
+- If you want to keep your logs, you have to rename the file `/data/area-51.txt` into `/data/logs.txt`.  
+  Otherwise, nothing to do.
+
+
+After migrated to v2:
+
+- You can delete the obsolete files `/boxoffice.rss` and `/watchlist.rss`.  
+  You can also add a redirection on your webserver for the previous deleted files to the `movies.rss` file.
+- You can delete the obsolete folder `/cache`.

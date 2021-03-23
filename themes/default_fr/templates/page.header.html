@@ -1,0 +1,41 @@
+<header class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <nav class="container">
+      <a href="." class="navbar-brand" title="{#TITLE#}">{#TITLE#}</a>
+      {if="!empty($menu_current)"}
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="navigation">
+          <li class="nav-item"><a class="nav-link {if="$menu_current == 'home'"}active{/if}" href="./">Accueil</a></li>
+          <li class="nav-item"><a class="nav-link {if="$menu_current == 'best'"}active{/if}" href="./?boxoffice">{if="$menu_current == 'best'"}<i class="bi bi-star"></i>{/if} Box-office</a></li>
+          <li class="nav-item"><a class="nav-link {if="$menu_current == 'soon'"}active{/if}" href="./?watchlist">{if="$menu_current == 'soon'"}<i class="bi bi-pin"></i>{/if} À voir</a></li>
+          <li class="nav-item ms-lg-2"><a class="nav-link rss" href="./movies.rss" data-bs-toggle="tooltip" data-bs-container="body" data-bs-placement="bottom" title="Flux RSS"><i class="bi bi-rss-fill"></i> <span class="d-lg-none">Flux RSS</span></a></li>
+        </ul>
+        <form class="d-flex" action="./" role="search">
+          <input type="text" class="form-control me-2" placeholder="Recherche" name="search" id="search" {if="!empty($search)"}value="{$search}"{/if}>
+        </form>
+        <ul class="navbar-nav mb-2 mb-lg-0">
+        {if="isLogged()"}
+          <li class="nav-item dropdown">
+            <a class="nav-link {if="strpos($menu_current, 'admin') === 0"}active{/if} dropdown-toggle" href="#" id="dp_nav_admin" role="button" data-bs-toggle="dropdown" aria-expanded="false">{if="strpos($menu_current, 'admin') === 0"}<i class="bi bi-gear"></i>{/if} Tableau de bord</a>
+            <ul class="dropdown-menu" aria-labelledby="dp_nav_admin">
+              <li><a class="dropdown-item" href="./?admin/new">Nouveau film</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><span class="dropdown-header">Administration</span></li>
+              <li><a class="dropdown-item" href="./?admin/export">Export</a></li>
+              <li><a class="dropdown-item" href="./?admin/import">Import</a></li>
+              <li><a class="dropdown-item" href="./?admin/logs">Logs</a></li>
+              <li><a class="dropdown-item" href="./?admin/settings">Paramètres</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item"  href="./?signout"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+            </ul>
+          </li>
+        {else}
+          <li class="nav-item"><a class="nav-link" href="./?signin" data-bs-toggle="tooltip" data-bs-container="body" data-bs-placement="bottom" title="Connexion"><i class="bi bi-lock-fill"></i> <span class="d-lg-none">Connexion</span></a></li>
+        {/if}
+        </ul>
+      </div>
+      {/if}
+  </nav>
+</header>

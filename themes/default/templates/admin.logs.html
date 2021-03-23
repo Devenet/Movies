@@ -1,0 +1,29 @@
+<!doctype html>
+<html class="h-100">
+<head>
+  {include="page.head"}
+</head>
+<body class="d-flex flex-column h-100">
+  <div class="flex-shrink-0">
+    {include="page.header"}
+
+    <main class="container">
+      <h1 class="mb-3">Logs</h1>
+
+      <div class="my-3">
+        <div class="row justify-content-between">
+          <p class="col-auto"><i class="bi bi-file-earmark-text"></i> <code>{$filename}</code></p>
+          <form class="col-auto" method="post" action="./?admin-logs">
+            <input type="hidden" name="token" value="{$token}">
+            <input type="hidden" name="purge-logs" value="true">
+            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Purge</button>
+          </form>
+        </div>
+        <pre class="border rounded py-3 px-3 mb-3">{$logs}</pre>
+      </div>
+    </main>
+  </div>
+
+  {include="page.footer"}
+</body>
+</html>

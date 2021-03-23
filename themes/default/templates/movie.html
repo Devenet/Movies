@@ -1,0 +1,114 @@
+<!doctype html>
+<html class="h-100" itemscope itemtype="http://schema.org/Article">
+<head>
+  {include="page.head"}
+  <link rel="canonical" href="{$social.url}">
+  <meta name="description" content="{$social.description}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@Devenet">
+  <meta name="twitter:title" content="{$social.title}">
+  <meta name="twitter:description" content="{$social.description}">
+  <meta name="twitter:image" content="{$social.image}">
+  <meta property="og:title" content="{$social.title}">
+  <meta itemprop="og:headline" content="{$social.title}">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="{$social.url}">
+  <meta property="og:image" content="{$social.image}">
+  <meta property="og:description" content="{$social.description}">
+  <meta property="og:site_name" content="{#TITLE#}">
+  <meta itemprop="name" content="{$social.title}">
+  <meta itemprop="headline" content="{$social.title}">
+  <meta itemprop="description" content="{$social.description}">
+  <meta itemprop="image" content="{$social.image}">
+</head>
+<body class="d-flex flex-column h-100">
+  <div class="flex-shrink-0">
+    {include="page.header"}
+
+    <main class="container">
+      <article>
+        <header class="mb-5 text-center">
+          <h1 class="mb-0 display-4">{$movie['title']}</h1>
+          {if="!empty($movie['original_title'])"}<h2 class="text-muted h4 fw-normal">{$movie['original_title']}</h2>{/if}
+        </header>
+
+        <div class="row my-4">
+          <div class="col-md-3 col-lg-3 mb-3 text-center fs-5">
+            <img src="{$movie|Movies::FullImageUrl}" alt="{$movie['title']}" class="img-fluid img-thumbnail">
+            {if="$movie['status'] == Movie::SEEN"}<div class="mt-3">{$displayNote}</div>{/if}
+          </div>
+
+          <div class="col-md-9 col-lg-6">
+            <p class="fs-5 fw-light">{$movie['synopsis']}</p>
+
+            {if="isLogged()"}
+            <div class="mt-lg-5 my-4">
+              <form method="post" action="{$id|Path::EditMovie}">
+                <a href="{$id|Path::EditMovie}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+                <input type="hidden" name="token" value="{$token}">
+                <button type="submit" class="ms-2 btn btn-sm btn-outline-danger" name="delete" value="{function="md5($id)"}" id="m-delete-button" data-bs-toggle="modal" data-bs-target="#m-delete"><i class="bi bi-trash"></i> Delete</button>
+
+                <div class="modal fade" id="m-delete" tabindex="-1" aria-labelledby="m-delete-label" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="m-delete-label">Delete movie</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        The movie <b>{$movie['title']}</b> will be deleted.
+                        <br>Are you sure?
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" name="delete" value="{function="md5($id)"}" class="btn btn-danger">Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            {/if}
+
+            <ul class="mt-5 list-inline text-center">
+              <li class="list-inline-item"><a href="{$social.url}" rel="external" title="Permalink" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-container="body" class="btn btn-lg link-primary"><i class="bi bi-link-45deg"></i></a></li>
+              <li class="list-inline-item"><a href="https://twitter.com/share?url={$social.url|urlencode}&amp;text={$social.twitter}" rel="external" title="Share on Twitter" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-container="body" class="btn btn-lg link-primary"><i class="bi bi-twitter"></i></a></li>
+              <li class="list-inline-item"><a href="https://www.facebook.com/sharer/sharer.php?u={$social.url|urlencode}" rel="external" title="Share on Facebook" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-container="body" class="btn btn-lg link-primary"><i class="bi bi-facebook"></i></a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-12 col-lg-2 offset-lg-1">
+            <ul class="list-unstyled list-smd-inline lh-lg">
+              <li><span class="{if="$movie['status'] == Movie::SEEN"}text-success{else}text-muted{/if}">{if="$movie['status'] == Movie::SEEN"}<i class="bi bi-check-circle-fill"></i> Already seen{else}<i class="bi bi-eye-slash"></i> Not seen yet{/if}</span></li>
+              {if="$movie['owned']"}<li><span><i class="bi bi-hdd"></i> I have it</span></li>{/if}
+            </ul>
+            <ul class="list-unstyled list-smd-inline lh-lg mt-3">
+              {if="!empty($movie['duration'])"}<li>{$movie['duration']} min</li>{/if}
+              {if="!empty($movie['release_date'])"}<li><span data-bs-toggle="tooltip" data-bs-placement="left" title="Release date"><i class="bi bi-calendar-event"></i> {$movie['release_date']}</span></li>{/if}
+              {if="!empty($country)"}<li>{$country|displayFlagWithName}</li>{/if}
+            </ul>
+
+            <ul class="list-unstyled list-smd-inline text-muted">
+              {loop="displayGenres"}<li><a href="./?genre={$value}" class="link-secondary text-decoration-none"><i class="bi bi-tag"></i> {function="displayGenre($value)"}</a></li>{/loop}
+            </ul>
+
+            {if="!empty($movie['link_website'])"}<p><a href="{$movie['link_website']}" class="text-decoration-none" rel="external">Other information <i class="bi bi-box-arrow-up-right"></i></a></p>{/if}
+          </div>
+        </div>
+      </article>
+
+      <nav class="mt-5 mb-4 clearfix">
+        <ul class="list-inline">
+          {if="!empty($movie_previous)"}<li class="list-inline-item float-start"><a href="{$movie_previous.id|Path::Movie}"><i class="bi bi-arrow-left-circle me-2"></i>{$movie_previous.title}</a></li>{/if}
+          {if="!empty($movie_next)"}<li class="list-inline-item float-end"><a href="{$movie_next.id|Path::Movie}">{$movie_next.title}<i class="bi bi-arrow-right-circle ms-2"></i></a></li>{/if}
+        </ul>
+      </nav>
+    </main>
+  </div>
+
+  {include="page.footer"}
+  {if="isLogged()"}
+    <script>document.getElementById('m-delete-button').addEventListener('click', function (e) { e.preventDefault(); return; });</script>
+  {/if}
+</body>
+</html>

@@ -1,6 +1,5 @@
-cache
 data
-images
-*.fw.png
+themes/cache
+movies.rss
+
 .DS_Store
-*.rss
