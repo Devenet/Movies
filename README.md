@@ -25,8 +25,7 @@ Main features:
 Developed by Nicolas Devenet. Under MIT license.  
 Code hosted on https://github.com/Devenet/Movies.
 
-Thanks to [contributors](https://github.com/Devenet/Movies/graphs/contributors).  
-Inspired by [Shaarli](https://github.com/sebsauvage/Shaarli).
+Thanks to [contributors](https://github.com/Devenet/Movies/graphs/contributors). Inspired by [Shaarli](https://github.com/sebsauvage/Shaarli).
 
 ---
 
@@ -35,12 +34,11 @@ Inspired by [Shaarli](https://github.com/sebsauvage/Shaarli).
 Before migrated to v2:  
 
 - If you want to keep your logs, you have to rename the file `/data/area-51.txt` into `/data/logs.txt`.  
-  Otherwise, nothong to do.
+  Otherwise, nothing to do.
 
 
 After migrated to v2:
 
-- You can delete obsolete files `/boxoffice.rss` and `/watchlist.rss`.  
-  You also can add a redirection on your webserver to `movies.rss` file for the previous files.
-- You can delete obsolete folder `/cache`.
-
+- You can delete the obsolete files `/boxoffice.rss` and `/watchlist.rss`.  
+  You can also add a redirection on your webserver for the previous deleted files to the `movies.rss` file.
+- You can delete the obsolete folder `/cache`.
