@@ -92,7 +92,7 @@
               {loop="displayGenres"}<li><a href="./?genre={$value}" class="link-secondary text-decoration-none"><i class="bi bi-tag"></i> {function="displayGenre($value)"}</a></li>{/loop}
             </ul>
 
-            {if="!empty($movie['link_website'])"}<p><a href="{$movie['link_website']}" class="text-decoration-none" rel="external" ><i class="bi bi-info-circle"></i> More online</a></p>{/if}
+            {if="!empty($movie['link_website'])"}<p><a href="{$movie['link_website']}" class="text-decoration-none" rel="external">Other information <i class="bi bi-box-arrow-up-right"></i></a></p>{/if}
           </div>
         </div>
       </article>
