@@ -22,40 +22,40 @@
     {include="page.header"}
 
     <main class="container">
-      <h1>Export movies</h1>
+      <h1>Export de films</h1>
 
       <p>
-        This wizard will export your movies into a JSON file.
-        <br>You can use it as a backup or to import your movies elsewhere.
+        Cette page vous permet d’exporter vos films dans un fichier JSON.
+        <br>Vous pouvez l’utiliser comme sauvegarde ou pour les importer ailleurs.
       </p>
 
       <form class="row mb-3 mt-4" method="post">
         <fieldset class="row mb-3">
-          <legend class="col-form-label col-lg-2 pt-0">Privacy</legend>
+          <legend class="col-form-label col-lg-2 pt-0">Vie privée</legend>
           <div class="col-lg-10">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="privacy" id="privacy">
-              <label class="form-check-label" for="privacy">Keep my data private</label>
+              <label class="form-check-label" for="privacy">Garder mes données privées</label>
             </div>
-            <div class="form-text">When checked, it will not export if you have seen or owned the movie and how you rated it.</div>
+            <div class="form-text">Cette option permet de ne pas exporter les informations de visionnage des films, leur note et leur possession.</div>
           </div>
         </fieldset>
         <fieldset class="row mb-3">
-          <legend class="col-form-label col-lg-2 pt-0">Posters</legend>
+          <legend class="col-form-label col-lg-2 pt-0">Affiches</legend>
           <div class="col-lg-10">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="images" id="images">
-              <label class="form-check-label" for="images">Export posters</label>
+              <label class="form-check-label" for="images">Exporter les affiches</label>
             </div>
             <div class="form-text">
-              Images will be integrated in base64 data.
-              <br><span class="text-warning">Note: the file will be a lot bigger!</span>
+              Les images seront exportées sous forme de données en base64.
+              <br><span class="text-warning">Cela peut très fortement alourdir le fichier.</span>
             </div>
           </div>
         </fieldset>
 
         <fieldset class="row mb-3">
-          <legend class="col-form-label col-lg-2 pt-0" id="movies-export">Movies to export</legend>
+          <legend class="col-form-label col-lg-2 pt-0" id="movies-export">Films à exporter</legend>
           <div class="col-lg-10">
             <div class="columns">
             {loop="movies"}
@@ -72,8 +72,8 @@
 
         <div class="row mb-3 mt-4">
           <div class="col-lg-10 offset-lg-2">
-            <button type="submit" class="btn btn-primary">Export</button>
-            <button type="reset" class="btn btn-outline-secondary ms-2">Reset</button>
+            <button type="submit" class="btn btn-primary">Exporter</button>
+            <button type="reset" class="btn btn-outline-secondary ms-2">Remettre à zéro</button>
           </div>
         </div>
       </form>
@@ -92,7 +92,7 @@
       for (var i = 0, l = e.length; i < l; i++)
         e[i].checked = checked;
     });
-    btn.appendChild(document.createTextNode('Toggle all'));
+    btn.appendChild(document.createTextNode('Tout inverser'));
     parent.appendChild(btn);
     document.getElementById('movies-export').appendChild(parent);
   </script>

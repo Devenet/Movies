@@ -8,44 +8,44 @@
     {include="page.header"}
 
     <main class="container">
-      <h1 class="mb-3">Settings</h1>
+      <h1 class="mb-3">Paramètres</h1>
 
       {if="isset($_GET['updated'])"}
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <b>Alright.</b> Settings have been well updated.
+        <b>Parfait.</b> Les paramètres ont bien été mis à jour.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       {/if}
 
       <form class="mb-3" method="post">
         <div class="row mb-3">
-          <label for="login" class="col-lg-2 col-form-label">Username</label>
+          <label for="login" class="col-lg-2 col-form-label">Identifiant</label>
           <div class="col-lg-10">
             <input type="text" class="form-control" id="login" name="login" value="{$settings_username}" aria-describedby="h_login" disabled>
-            <div id="h_login" class="form-text">To change your username, please delete file <code>{$settings_file}</code>.</div>
+            <div id="h_login" class="form-text">Pour changer votre identifiant, supprimez le fichier <code>{$settings_file}</code>.</div>
           </div>
         </div>
         <div class="row mb-3">
-          <label for="password" class="col-lg-2 col-form-label">Password</label>
+          <label for="password" class="col-lg-2 col-form-label">Mot de passe.</label>
           <div class="col-lg-10">
             <input type="password" class="form-control" id="password" name="password" placeholder="Secret" aria-describedby="h_password">
-            <div id="h_password" class="form-text">Leave blank to keep your current password.</div>
+            <div id="h_password" class="form-text">Laissez vide pour conserver votre mot de passe actuel.</div>
           </div>
         </div>
 
         <div class="row mb-3 mt-4">
-          <label for="title" class="col-lg-2 col-form-label">Title</label>
+          <label for="title" class="col-lg-2 col-form-label">Titre</label>
           <div class="col-lg-10">
             <input type="text" class="form-control" id="title" name="title" placeholder="Movies" value="{#TITLE#}">
           </div>
         </div>
         <div class="row mb-3">
-          <label for="author" class="col-lg-2 col-form-label">Author</label>
+          <label for="author" class="col-lg-2 col-form-label">Auteur</label>
           <div class="col-lg-10">
             <input type="text" class="form-control" id="author" name="author" placeholder="Alan Turing" value="{#AUTHOR#}" aria-describedby="h_author">
             <div id="h_author" class="form-text">
-              Used for copyright notice and for social sharing (when you post the link of a movie page).
-              <br>If not set, your username will be used.
+              Utilisé pour le copyright en pied de page et pour le partage d’un film sur les réseaux sociaux.
+              <br>Votre identifiant sera utilisé si vous le laissez vide.
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@
         </fieldset>
 
         <div class="row mb-3">
-          <label for="theme" class="col-lg-2 col-form-label">Theme</label>
+          <label for="theme" class="col-lg-2 col-form-label">Thème</label>
           <div class="col-lg-10">
             <select class="form-select" id="theme" name="theme">
               {loop="settings_themes"}<option value="{$value}" {if="$settings_theme == $value"}selected{/if}>{$value}</option>{/loop}
@@ -77,10 +77,10 @@
         </div>
 
         <div class="row mb-3 mt-4">
-          <label for="pagination" class="col-lg-2 col-form-label">Movies per page</label>
+          <label for="pagination" class="col-lg-2 col-form-label">Films par page</label>
           <div class="col-lg-10">
             <input type="number" class="form-control" id="pagination" name="pagination" placeholder="10" value="{#PAGINATION#}" min="2" step="1" aria-describedby="h_pagination">
-            <div id="h_pagination" class="form-text">Default is 10 per page. Must be greater than or equal to 2.</div>
+            <div id="h_pagination" class="form-text">Par défaut, 10 films par page ; doit être supérieur ou égal à 2.</div>
           </div>
         </div>
 
@@ -88,8 +88,8 @@
 
         <div class="row mb-3 mt-4">
           <div class="col-lg-10 offset-lg-2">
-            <button type="submit" class="btn btn-primary">Update</button>
-            <button type="reset" class="btn btn-outline-secondary ms-2">Reset</button>
+            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            <button type="reset" class="btn btn-outline-secondary ms-2">Remettre à zéro</button>
           </div>
         </div>
       </form>

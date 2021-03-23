@@ -12,12 +12,12 @@
 
       {if="!empty($search)"}
       <div class="card my-4 border-{if="$search_count>0"}success{else}danger{/if} text-{if="$search_count>0"}success{else}danger{/if}">
-        <div class="card-body text-center"><i class="bi bi-search"></i> There {if="$search_count>1"}are {$search_count}{elseif="$search_count == 0"}is no{else}is one{/if} result{if="$search_count>1"}s{/if} for <q>{$search}</q>.</div>
+        <div class="card-body text-center"><i class="bi bi-search"></i> Il {if="$search_count>1"}y a {$search_count}{elseif="$search_count == 0"}n’y a pas de{else}y a un{/if} résultat{if="$search_count>1"}s{/if} pour <q class="fr">{$search}</q>.</div>
       </div>
       {/if}
       {if="!empty($genre)"}
       <div class="card my-4 border-dark">
-        <div class="card-body text-center"><i class="bi bi-tag"></i> You are browsing the <b>{$genre}</b> movies.</div>
+        <div class="card-body text-center"><i class="bi bi-tag"></i> Vous parcourez les films étiquetés <b>{$genre}</b>.</div>
       </div>
       {/if}
 
@@ -28,13 +28,13 @@
           {if="!empty($value.original_title)"}<h3 class="h6 fw-normal text-muted">{$value.original_title}</h3>{/if}
 
           <ul class="mt-3 list-inline text-muted">
-            <li class="list-inline-item me-3"><span class="{if="$value.status == Movie::SEEN"}text-success{else}text-muted{/if}" data-bs-toggle="tooltip" title="{if="$value.status == Movie::SEEN"}Seen{else}Not seen{/if}"><i class="bi bi-{if="$value.status == Movie::SEEN"}check-circle-fill{else}eye-slash{/if}"></i></span></li>
+            <li class="list-inline-item me-3"><span class="{if="$value.status == Movie::SEEN"}text-success{else}text-muted{/if}" data-bs-toggle="tooltip" title="{if="$value.status == Movie::SEEN"}Visionné{else}À voir{/if}"><i class="bi bi-{if="$value.status == Movie::SEEN"}check-circle-fill{else}eye-slash{/if}"></i></span></li>
             {if="!empty($value.duration)"}<li class="list-inline-item ms-2"><span class="font-sm">{$value.duration} min</span></li>{/if}
-            {if="!empty($value.release_date)"}<li class="list-inline-item ms-2"><span class="font-sm" data-bs-toggle="tooltip" data-bs-container="body" title="Release&nbsp;date"><i class="bi bi-calendar-event fs-6"></i> {$value.release_date}</span></li>{/if}
+            {if="!empty($value.release_date)"}<li class="list-inline-item ms-2"><span class="font-sm" data-bs-toggle="tooltip" data-bs-container="body" title="Date de sortie"><i class="bi bi-calendar-event fs-6"></i> {$value.release_date}</span></li>{/if}
             {if="!empty($value.country)"}<li class="list-inline-item ms-2">{$value.country|displayFlag}</li>{/if}
             {if="isLogged()"}<li class="list-inline-item float-end me-2">
               <form method="post" action="{$value.id|Path::EditMovie}">
-                <a href="{$value.id|Path::EditMovie}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+                <a href="{$value.id|Path::EditMovie}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Modifier</a>
                 <input type="hidden" name="token" value="{$token}">
                 <button type="submit" class="ms-2 me-2 text-danger btn btn-sm btn-link m-delete-button" name="delete" value="{function="md5($value.id)"}" data-bs-toggle="modal" data-bs-target="#m-delete-{$value.id}"><i class="bi bi-trash"></i></button>
 
@@ -42,16 +42,16 @@
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="m-delete-label-{$value.id}">Delete movie</h5>
+                        <h5 class="modal-title" id="m-delete-label-{$value.id}">Suppression du film</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
-                        The movie <b>{$value.title}</b> will be deleted.
-                        <br>Are you sure?
+                        Le film <b>{$value.title}</b> va être supprimé.
+                        <br>Êtes-vous sûr·e ?
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" name="delete" value="{function="md5($value.id)"}" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" name="delete" value="{function="md5($value.id)"}" class="btn btn-danger">Supprimer</button>
                       </div>
                     </div>
                   </div>
@@ -67,7 +67,7 @@
             </div>
             <div class="col-md-9">
               <p class="mb-2">{$value.synopsis|displaySynopsis}</p>
-              <p><a href="{$value.id|Path::Movie}" class="link-secondary">Read more</a></p>
+              <p><a href="{$value.id|Path::Movie}" class="link-secondary">Lire la suite</a></p>
               {$genres=displayGenres($value.genre)}
               <ul class="list-inline text-muted font-sm">
               {loop="genres"}<li class="list-inline-item"><a href="./?genre={$value}" class="link-secondary text-decoration-none"><i class="bi bi-tag"></i> {function="displayGenre($value)"}</a></li>{/loop}
@@ -77,8 +77,8 @@
         </article>
       {else}
         <p class="text-center my-5">
-          <b>Damn!</b>
-          <br>No movie to display.
+          <b>Mince !</b>
+          <br>Aucun film à afficher.
         </p>
       {/loop}
       </div>

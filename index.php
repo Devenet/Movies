@@ -713,13 +713,6 @@ function displaySimpleNote($note) {
   return $result;
 }
 
-function displayStatus($status)
-{
-  if ($status == Movie::SEEN)
-    return 'Seen';
-  return 'Not&nbsp;seen';
-}
-
 function displayFlag($country) {
   global $_CONFIG;
   return '<span class="tip" data-title="'.$_CONFIG['countries'][$country].'"><span class="flag flag-'.$country.'" width="16" height="11"></span></span>';
@@ -754,7 +747,7 @@ function displayPagination($page, $total_entries, $prefix = '?') {
   $max_page = intval(min($page + (4) / 2, $pages));
 
   $result = '';
-  $result .= '<li class="page-item'.($page==1 ? ' disabled' : null).'"><a href="./'.$prefix.Path::Page(max(1, $page-1)).'" title="Previous" class="page-link tip">Previous</a></li>';
+  $result .= '<li class="page-item'.($page==1 ? ' disabled' : null).'"><a href="./'.$prefix.Path::Page(max(1, $page-1)).'" title="Previous" class="page-link tip">&larr;</a></li>';
   $result .= '<li class="page-item'.($page==1 ? ' active' : null).'"><a class="page-link" href="./'.str_replace('&amp;', '', $prefix).'">1</a></li>';
   if ($first_jump && $pages != 5) { $result .= '<li class="page-item disabled gap"><span class="page-link">…</span></li>'; }
   else if ($first_jump) { $result .= '<li class="page-item"><a class="page-link" href="./'.$prefix.Path::Page(2).'">2</a></li>'; }
@@ -766,7 +759,7 @@ function displayPagination($page, $total_entries, $prefix = '?') {
   if ($last_jump && $pages != 5) { $result .= '<li class="page-item disabled gap"><span class="page-link">…</span></li>'; }
   else if ($last_jump) { $result .= '<li class="page-item"><a class="page-link" href="./'.$prefix.Path::Page(4).'">4</a></li>'; }
   if ($pages > 2 && $page <= $pages-3) { $result .= '<li class="page-item'.($page==$pages ? ' active' : null).'"><a class="page-link" href="./'.$prefix.Path::Page($pages).'">'.$pages.'</a></li>'; }
-  $result .= '<li class="page-item'.($page==$pages ? ' disabled' : null).'"><a href="./'.$prefix.Path::Page(min($pages, $page+1)).'" title="Next" class="page-link tip">Next</a></li>';
+  $result .= '<li class="page-item'.($page==$pages ? ' disabled' : null).'"><a href="./'.$prefix.Path::Page(min($pages, $page+1)).'" title="Next" class="page-link tip">&rarr;</a></li>';
 
   return $result;
 }
@@ -820,7 +813,6 @@ function moviePage() {
   $tpl->assign('menu_current', 'movie');
   $tpl->assign('movie', $movie);
   $tpl->assign('id', $movie['id']);
-  $tpl->assign('displayStatus', displayStatus($movie['status']));
   $tpl->assign('displayNote', displayNote($movie['note']));
   $tpl->assign('country', $movie['country']);
   $tpl->assign('displayGenres', displayGenres($movie['genre']));
@@ -1246,14 +1238,14 @@ function bestPage() {
   $movies->byNote(); // Used to update $movies->total_seen
 
   $page = isset($_GET['page']) ? (int) $_GET['page'] : -1;
-  if ($page == 0 || $page == 1) { header('Location: ./?box-office'); }
+  if ($page == 0 || $page == 1) { header('Location: ./?boxoffice'); }
   else if ($page == -1) { $page = 0; }
   if (!empty($_GET['page'])) {
     checkPagination($page, $movies->total_seen);
     $tpl->assign('movie', $movies->byNote(($page-1)*PAGINATION));
   }
   else { $tpl->assign('movie', $movies->byNote()); }
-  $tpl->assign('pagination', displayPagination($page, $movies->total_seen, '?box-office&amp;'));
+  $tpl->assign('pagination', displayPagination($page, $movies->total_seen, '?boxoffice&amp;'));
   $tpl->assign('page_title', !empty($page) ?  'Box office &middot; Page '.($page) : 'Box office');
   $tpl->assign('menu_current', 'best');
   $tpl->assign('robots', 'noindex');

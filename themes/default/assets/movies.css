@@ -13,6 +13,8 @@ header.navbar .nav-link.rss:hover i { color: #FF7A4D; }
 
 q::before { content: "“"; }
 q::after { content: "”"; }
+q.fr::before { content: "« "; }
+q.fr::after { content: " »"; }
 
 @media (max-width: 992px) {
     .list-unstyled.list-smd-inline li {
