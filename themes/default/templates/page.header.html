@@ -10,9 +10,10 @@
           <li class="nav-item"><a class="nav-link {if="$menu_current == 'home'"}active{/if}" href="./">Home</a></li>
           <li class="nav-item"><a class="nav-link {if="$menu_current == 'best'"}active{/if}" href="./?boxoffice">{if="$menu_current == 'best'"}<i class="bi bi-star"></i>{/if} Box office</a></li>
           <li class="nav-item"><a class="nav-link {if="$menu_current == 'soon'"}active{/if}" href="./?watchlist">{if="$menu_current == 'soon'"}<i class="bi bi-pin"></i>{/if} Watchlist</a></li>
+          <li class="nav-item"><a class="nav-link" href="./?random"><i class="bi bi-shuffle"></i> Random</a></li>
           <li class="nav-item ms-lg-2"><a class="nav-link rss" href="./movies.rss" data-bs-toggle="tooltip" data-bs-container="body" data-bs-placement="bottom" title="RSS feed"><i class="bi bi-rss-fill"></i> <span class="d-lg-none">RSS feed</span></a></li>
         </ul>
-        <form class="d-flex" action="./" role="search">
+        <form class="d-flex mb-2 mb-lg-0" action="./" role="search">
           <input type="text" class="form-control me-2" placeholder="Search" name="search" id="search" {if="!empty($search)"}value="{$search}"{/if}>
         </form>
         <ul class="navbar-nav mb-2 mb-lg-0">

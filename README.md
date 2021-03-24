@@ -11,7 +11,7 @@ Main features:
 - Simple & fast, intuitive & mobile first
 - No database (data is saved in a file)
 - Easy installation
-- Search, box office and watchlist features
+- Search, box office, watchlist, and random movie features
 - Several optional metadata (original title, duration, release date, country of production, genres, external information link, movie poster)
 - RSS feed for last movies
 - Export and import feature with JSON file
