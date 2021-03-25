@@ -13,7 +13,7 @@
       <div class="my-3">
         <div class="row justify-content-between">
           <p class="col-auto"><i class="bi bi-file-earmark-text"></i> <code>{$filename}</code></p>
-          <form class="col-auto" method="post" action="./?admin-logs">
+          <form class="col-auto" method="post" action="./?admin/logs">
             <input type="hidden" name="token" value="{$token}">
             <input type="hidden" name="purge-logs" value="true">
             <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Vider</button>
