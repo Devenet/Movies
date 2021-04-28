@@ -26,9 +26,16 @@
             <label for="synopsis" class="form-label text-primary">Synopsis <span class="form-text">(requis)</span></label>
             <textarea class="form-control" id="synopsis" name="synopsis" rows="8" placeholder="L’histoire en quelques mots" required>{if="!empty($inputs['synopsis'])"}{$inputs['synopsis']}{/if}</textarea>
           </div>
+          <div class="mb-2">
+            <label for="link_image" class="form-label">URL de l’affiche</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-globe"></i></span>
+              <input type="text" class="form-control" id="link_image" name="link_image" placeholder="https://movies.com/images/despicable-me.jpg" {if="!empty($inputs['link_image'])"}value="{$inputs['link_image']}"{/if}>
+            </div>
+          </div>
           <div class="mb-3">
-            <label for="genre" class="form-label">Genres</label>
-            <input type="text" class="form-control" id="genre" name="genre" placeholder="Action, Comedie" {if="!empty($inputs['genre'])"}value="{$inputs['genre']}"{/if}>
+            <input type="checkbox" class="form-check-input" name="link_image_import" id="link_image_import" {if="!empty($inputs['link_image_import'])"}checked="checked"{/if}>
+            <label for="link_image_import" class="form-check-label">Sauvegarder l’affiche</label>
           </div>
 
           <div class="card bg-light mb-3">
@@ -71,22 +78,15 @@
             </select>
           </div>
           <div class="mb-3">
-            <label for="link_website" class="form-label">Autres informations</label>
-              <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-globe"></i></span>
-                  <input type="text" class="form-control" id="link_website" name="link_website" placeholder="https://movies.com/film/despicable-me.html" {if="!empty($inputs['link_website'])"}value="{$inputs['link_website']}"{/if}>
-              </div>
-          </div>
-          <div class="mb-2">
-              <label for="link_image" class="form-label">URL de l’affiche</label>
-              <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-globe"></i></span>
-                  <input type="text" class="form-control" id="link_image" name="link_image" placeholder="https://movies.com/images/despicable-me.jpg" {if="!empty($inputs['link_image'])"}value="{$inputs['link_image']}"{/if}>
-              </div>
+            <label for="genre" class="form-label">Genres</label>
+            <input type="text" class="form-control" id="genre" name="genre" placeholder="Action, Comedie" {if="!empty($inputs['genre'])"}value="{$inputs['genre']}"{/if}>
           </div>
           <div class="mb-3">
-            <input type="checkbox" class="form-check-input" name="link_image_import" id="link_image_import" {if="!empty($inputs['link_image_import'])"}checked="checked"{/if}>
-            <label for="link_image_import" class="form-check-label">Sauvegarder l’affiche</label>
+            <label for="link_website" class="form-label">Autres informations</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                <input type="text" class="form-control" id="link_website" name="link_website" placeholder="https://movies.com/film/despicable-me.html" {if="!empty($inputs['link_website'])"}value="{$inputs['link_website']}"{/if}>
+              </div>
           </div>
         </div>
         <div class="col-md-12 mt-4 mb-3 clearfix">

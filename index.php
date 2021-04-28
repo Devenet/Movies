@@ -28,7 +28,7 @@ $_CONFIG['countries'] = array('ad'=>'Andorra','ae'=>'United Arab Emirates','af'=
 define('PHPPREFIX','<?php /* ');
 define('PHPSUFFIX',' */ ?>');
 define('MOVIES', 'Movies');
-define('MOVIES_VERSION', '2.0.0');
+define('MOVIES_VERSION', '2.0.1');
 define('INACTIVITY_TIMEOUT', 3600);
 define('RSS', 'movies.rss');
 
@@ -148,9 +148,9 @@ class Movies implements Iterator, Countable, ArrayAccess {
     global $_CONFIG;
     if (!file_exists($_CONFIG['file_database'])) {
       $this->data = array(
-        1375621919 => ['id' => 1375621919, 'title' => 'Moi, moche et méchant', 'original_title' => 'Despicable Me', 'release_date' => '2010-10-06', 'country' => 'us', 'genre' => 'Animation, Comedy, Crime, Family, Fantasy', 'duration' => 95, 'synopsis' => 'In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru, planning the biggest heist in the history of the world. He is going to steal the moon. (Yes, the moon!) Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world’s greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.', 'link_image' => 'images/1375621919.jpg',' link_website' => 'http://www.imdb.com/title/tt1323594/', 'status' => Movie::SEEN, 'note' => 10, 'owned' => true],
-        1375621920 => ['id' => 1375621920, 'title' => 'Moi, moche et méchant 2', 'original_title' => 'Despicable Me 2', 'release_date' => '2013-06-26', 'country' => 'us', 'genre' => 'Animation, Adventure, Comedy, Crime, Family, Sci-Fi', 'duration' => 98, 'synopsis' => 'While Gru, the ex-supervillain is adjusting to family life and an attempted honest living in the jam business, a secret Arctic laboratory is stolen. The Anti-Villain League decides it needs an insider’s help and recruits Gru in the investigation. Together with the eccentric AVL agent, Lucy Wilde, Gru concludes that his prime suspect is the presumed dead supervillain, El Macho, whose his teenage son is also making the moves on his eldest daughter, Margo. Seemingly blinded by his overprotectiveness of his children and his growing mutual attraction to Lucy, Gru seems on the wrong track even as his minions are being quietly kidnapped en masse for some malevolent purpose.', 'link_image' => 'images/1375621920.jpg', 'link_website' => 'http://www.imdb.com/title/tt1690953/', 'status' => Movie::NOT_SEEN, 'note' => null, 'owned' => null]
-        );
+        1375621920 => ['id' => 1375621920, 'title' => 'Moi, moche et méchant 2', 'original_title' => 'Despicable Me 2', 'release_date' => '2013-06-26', 'country' => 'us', 'genre' => 'Animation, Adventure, Comedy, Crime, Family, Sci-Fi', 'duration' => 98, 'synopsis' => 'While Gru, the ex-supervillain is adjusting to family life and an attempted honest living in the jam business, a secret Arctic laboratory is stolen. The Anti-Villain League decides it needs an insider’s help and recruits Gru in the investigation. Together with the eccentric AVL agent, Lucy Wilde, Gru concludes that his prime suspect is the presumed dead supervillain, El Macho, whose his teenage son is also making the moves on his eldest daughter, Margo. Seemingly blinded by his overprotectiveness of his children and his growing mutual attraction to Lucy, Gru seems on the wrong track even as his minions are being quietly kidnapped en masse for some malevolent purpose.', 'link_image' => 'images/1375621920.jpg', 'link_website' => 'http://www.imdb.com/title/tt1690953/', 'status' => Movie::NOT_SEEN, 'note' => null, 'owned' => null],
+        1375621919 => ['id' => 1375621919, 'title' => 'Moi, moche et méchant', 'original_title' => 'Despicable Me', 'release_date' => '2010-10-06', 'country' => 'us', 'genre' => 'Animation, Comedy, Crime, Family, Fantasy', 'duration' => 95, 'synopsis' => 'In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru, planning the biggest heist in the history of the world. He is going to steal the moon. (Yes, the moon!) Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world’s greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.', 'link_image' => 'images/1375621919.jpg',' link_website' => 'http://www.imdb.com/title/tt1323594/', 'status' => Movie::SEEN, 'note' => 10, 'owned' => true]
+      );
       file_put_contents($_CONFIG['file_database'], PHPPREFIX.base64_encode(gzdeflate(serialize($this->data))).PHPSUFFIX);
       $this->RSS();
     }
@@ -267,11 +267,17 @@ class Movies implements Iterator, Countable, ArrayAccess {
   public static function FullImageUrl($movie)
   {
     global $_CONFIG;
-    $img = !empty($movie['link_image']) ? $movie['link_image'] : BASE_URL.$_CONFIG['default_image'];
+    $img = !empty($movie['link_image']) ? $movie['link_image'] : $_CONFIG['default_image'];
     // if img is hosted in local, we have to add server URL
     if (substr($img, 0, strlen($_CONFIG['dir_images'].'/')) === $_CONFIG['dir_images'].'/') { $img = BASE_URL.$img; }
 
     return $img;
+  }
+  // Return if a movie image is self hosted
+  public static function IsSelfHostedImage($movie)
+  {
+    global $_CONFIG;
+    return (substr(substr($image_path, strlen(BASE_URL)), 0, strlen($_CONFIG['dir_images'].'/')) === $_CONFIG['dir_images'].'/');
   }
 
   // Write an RSS file with the movies $data given
@@ -298,7 +304,10 @@ class Movies implements Iterator, Countable, ArrayAccess {
       $xml .= '<title>'. $movie['title'] .'</title>'.PHP_EOL;
       $xml .= '<link>'.BASE_URL.substr(Path::Movie($movie['id']), 2).'</link>'.PHP_EOL;
       $xml .= '<description><![CDATA[<strong>'.($movie['status']==Movie::SEEN ? 'Movie seen &middot; Rated '.$movie['note'].'/10' : 'Movie not seen').'</strong><br>'.htmlspecialchars_decode(htmlentities($movie['synopsis'], ENT_COMPAT, 'UTF-8')).']]></description>'.PHP_EOL;
-      $xml .= '<enclosure url="'.Movies::FullImageUrl($movie).'" length="'.filesize(substr(Movies::FullImageUrl($movie), strlen(BASE_URL))).'" type="image/jpeg" />'.PHP_EOL;
+      $image_path = Movies::FullImageUrl($movie);
+      $xml .= '<enclosure url="'.$image_path.'" ';
+      if (Movies::IsSelfHostedImage($image_path)) { $xml .= 'length="'.filesize(substr($image_path, strlen(BASE_URL))).'" '; }
+      $xml .= 'type="image/jpeg" />'.PHP_EOL;
       $xml .= '<guid isPermaLink="false">'.$movie['id'].'</guid>'.PHP_EOL;
       $xml .= '<pubDate>'.date("D, d M Y H:i:s O", $movie['id']).'</pubDate>'.PHP_EOL;
       if (!empty($movie['genre'])) {
@@ -370,19 +379,19 @@ class Movies implements Iterator, Countable, ArrayAccess {
       $id--;
       }
       $inputs = array(
-      'id' => $id,
-      'title' => (isset($movie['title']) ? trim(self::html_escaped($movie['title'])) : null),
-      'synopsis' => (isset($movie['synopsis']) ? checkSynopsis(preg_replace('#<br( /)?>#', '', $movie['synopsis'])) : null),
-      'genre' => (isset($movie['genre']) ? checkGenre($movie['genre']) : null),
-      'status' => ((isset($movie['status']) && $movie['status'] != null) ? Movie::SEEN : null),
-      'note' => (isset($movie['note']) ? checkRatingNote($movie['note'], ((isset($movie['status']) && $movie['status'] != null) ? Movie::SEEN : null)) : null),
-      'owned' => ((isset($movie['owned']) && $movie['owned']) ? true : null),
-      'original_title' => (isset($movie['original_title']) ? trim(self::html_escaped($movie['original_title'])) : null),
-      'duration' => (isset($movie['duration']) ? checkDuration($movie['duration']) : null),
-      'release_date' => (isset($movie['release_date']) ? checkReleaseDate($movie['release_date']) : null),
-      'country' => (isset($movie['country']) ? checkCountry($movie['country']) : null),
-      'link_website' => (isset($movie['link_website']) ? checkLink($movie['link_website']) : null),
-      'link_image' => null
+        'id' => $id,
+        'title' => (isset($movie['title']) ? trim(self::html_escaped($movie['title'])) : null),
+        'synopsis' => (isset($movie['synopsis']) ? checkSynopsis(preg_replace('#<br( /)?>#', '', $movie['synopsis'])) : null),
+        'genre' => (isset($movie['genre']) ? checkGenre($movie['genre']) : null),
+        'status' => ((isset($movie['status']) && $movie['status'] != null) ? Movie::SEEN : null),
+        'note' => (isset($movie['note']) ? checkRatingNote($movie['note'], ((isset($movie['status']) && $movie['status'] != null) ? Movie::SEEN : null)) : null),
+        'owned' => ((isset($movie['owned']) && $movie['owned']) ? true : null),
+        'original_title' => (isset($movie['original_title']) ? trim(self::html_escaped($movie['original_title'])) : null),
+        'duration' => (isset($movie['duration']) ? checkDuration($movie['duration']) : null),
+        'release_date' => (isset($movie['release_date']) ? checkReleaseDate($movie['release_date']) : null),
+        'country' => (isset($movie['country']) ? checkCountry($movie['country']) : null),
+        'link_website' => (isset($movie['link_website']) ? checkLink($movie['link_website']) : null),
+        'link_image' => null
       );
       if (empty($inputs['title']) && empty($inputs['synopsis'])) { continue; }
       if (function_exists('imagecreatefromjpeg') && !empty($images[$i])) {
@@ -548,7 +557,7 @@ function checkSynopsis($html) {
   return nl2br(htmlspecialchars($html));
 }
 
-// Check if a note give is correct
+// Check if a given note is correct
 function checkRatingNote($note, $status) {
   if ($status != Movie::SEEN) { return null; }
   $note = (int) $note+0;
@@ -769,8 +778,9 @@ function displayPagination($page, $total_entries, $prefix = '?') {
  */
 
 function installPage($tpl) {
+  global $_CONFIG;
+  
   if (!empty($_POST['login']) && !empty($_POST['password'])) {
-    global $_CONFIG;
     $_CONFIG['login'] = htmlspecialchars($_POST['login']);
     $_CONFIG['salt'] = sha1(uniqid('',true).'_'.mt_rand());
     $_CONFIG['hash'] = sha1($_CONFIG['login'].$_POST['password'].$_CONFIG['salt']);
@@ -1059,7 +1069,6 @@ function newMovie() {
   $tpl->assign('countries', displayCountryOptions(isset($inputs['country']) ? $inputs['country'] : null));
   $tpl->assign('token', getToken());
   $tpl->assign('form_action', './?admin/new');
-  $tpl->assign('display_search', true);
   $tpl->assign('robots', $_CONFIG['default_norobots']);
   $tpl->draw('form.movie');
   exit;
@@ -1217,7 +1226,7 @@ function watchlistPage() {
   $movies->byStatus(); // Used to update $movies->total_no_seen
 
   $page = isset($_GET['page']) ? (int) $_GET['page'] : -1;
-  if ($page == 0 || $page == 1) { header('Location: ./?watchlist'); }
+  if ($page == 0 || $page == 1) { header('Location: ./?watchlist'); exit; }
   else if ($page == -1) { $page = 0; }
   if (!empty($_GET['page'])) {
     checkPagination($page, $movies->total_not_seen);
@@ -1238,7 +1247,7 @@ function bestPage() {
   $movies->byNote(); // Used to update $movies->total_seen
 
   $page = isset($_GET['page']) ? (int) $_GET['page'] : -1;
-  if ($page == 0 || $page == 1) { header('Location: ./?boxoffice'); }
+  if ($page == 0 || $page == 1) { header('Location: ./?boxoffice'); exit; }
   else if ($page == -1) { $page = 0; }
   if (!empty($_GET['page'])) {
     checkPagination($page, $movies->total_seen);
@@ -1255,14 +1264,14 @@ function bestPage() {
 }
 
 function searchPage() {
-  if (empty($_GET['search'])) { notFound(); }
+  if (empty($_GET['search'])) { header('Location: ./'); exit; }
 
   global $tpl;
   $movies = new Movies();
   $movies->search(htmlspecialchars($_GET['search'])); // Used to update $movies->total_search
 
   $page = isset($_GET['page']) ? (int) $_GET['page'] : -1;
-  if ($page == 0 || $page == 1) { header('Location: ./?search='.htmlspecialchars($_GET['search'])); }
+  if ($page == 0 || $page == 1) { header('Location: ./?search='.htmlspecialchars($_GET['search'])); exit; }
   else if ($page == -1) { $page = 0; }
   if (!empty($_GET['page'])) {
     checkPagination($page, $movies->total_search);
@@ -1291,7 +1300,7 @@ function genrePage() {
   if ($movies->total_genre == 0) { notFound(); }
 
   $page = isset($_GET['page']) ? (int) $_GET['page'] : -1;
-  if ($page == 0 || $page == 1) { header('Location: ./?genre='.$genre); }
+  if ($page == 0 || $page == 1) { header('Location: ./?genre='.$genre); exit; }
   else if ($page == -1) { $page = 0; }
   if (!empty($_GET['page'])) {
     checkPagination($page, $movies->total_genre);

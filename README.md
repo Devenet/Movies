@@ -31,13 +31,13 @@ Thanks to [contributors](https://github.com/Devenet/Movies/graphs/contributors).
 
 ## Migration from v1 to v2
 
-Before migrated to v2:  
+Before migrating to v2:  
 
 - If you want to keep your logs, you have to rename the file `/data/area-51.txt` into `/data/logs.txt`.  
   Otherwise, nothing to do.
 
 
-After migrated to v2:
+After migrating to v2:
 
 - You can delete the obsolete files `/boxoffice.rss` and `/watchlist.rss`.  
   You can also add a redirection on your webserver for the previous deleted files to the `movies.rss` file.

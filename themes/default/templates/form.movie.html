@@ -26,19 +26,26 @@
             <label for="synopsis" class="form-label text-primary">Synopsis <span class="form-text">(required)</span></label>
             <textarea class="form-control" id="synopsis" name="synopsis" rows="8" placeholder="The awesome story in a nutshell" required>{if="!empty($inputs['synopsis'])"}{$inputs['synopsis']}{/if}</textarea>
           </div>
+          <div class="mb-2">
+            <label for="link_image" class="form-label">URL to movie poster</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-globe"></i></span>
+              <input type="text" class="form-control" id="link_image" name="link_image" placeholder="https://movies.com/images/despicable-me.jpg" {if="!empty($inputs['link_image'])"}value="{$inputs['link_image']}"{/if}>
+            </div>
+          </div>
           <div class="mb-3">
-            <label for="genre" class="form-label">Genres</label>
-            <input type="text" class="form-control" id="genre" name="genre" placeholder="Action, Comedy" {if="!empty($inputs['genre'])"}value="{$inputs['genre']}"{/if}>
+            <input type="checkbox" class="form-check-input" name="link_image_import" id="link_image_import" {if="!empty($inputs['link_image_import'])"}checked="checked"{/if}>
+            <label for="link_image_import" class="form-check-label">Import movie poster</label>
           </div>
 
           <div class="card bg-light mb-3">
             <div class="card-body">
               <div class="mb-2 form-check">
                 <input type="checkbox" class="form-check-input" name="status" id="status" {if="!empty($inputs['status'])"}checked="checked"{/if}>
-                <label for="status" class="form-check-label text-primary">I have already seen it</label>
+                <label for="status" class="form-check-label text-primary">I have seen it</label>
               </div>
               <div class="mb-3">
-                <label for="note" class="form-label">Rating (ouf of 10)</label>
+                <label for="note" class="form-label">Rating (out of 10)</label>
                 <input type="number" class="form-control" id="note" name="note" min="0" max="10" step="1" value="{if="!empty($inputs['note'])"}{$inputs['note']}{else}5{/if}">
               </div>
               <div class="mt-3 form-check">
@@ -71,22 +78,15 @@
             </select>
           </div>
           <div class="mb-3">
-            <label for="link_website" class="form-label">Other information</label>
-              <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-globe"></i></span>
-                  <input type="text" class="form-control" id="link_website" name="link_website" placeholder="https://movies.com/film/despicable-me.html" {if="!empty($inputs['link_website'])"}value="{$inputs['link_website']}"{/if}>
-              </div>
-          </div>
-          <div class="mb-2">
-              <label for="link_image" class="form-label">URL to movie poster</label>
-              <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-globe"></i></span>
-                  <input type="text" class="form-control" id="link_image" name="link_image" placeholder="https://movies.com/images/despicable-me.jpg" {if="!empty($inputs['link_image'])"}value="{$inputs['link_image']}"{/if}>
-              </div>
+            <label for="genre" class="form-label">Genres</label>
+            <input type="text" class="form-control" id="genre" name="genre" placeholder="Action, Comedy" {if="!empty($inputs['genre'])"}value="{$inputs['genre']}"{/if}>
           </div>
           <div class="mb-3">
-            <input type="checkbox" class="form-check-input" name="link_image_import" id="link_image_import" {if="!empty($inputs['link_image_import'])"}checked="checked"{/if}>
-            <label for="link_image_import" class="form-check-label">Import movie poster</label>
+            <label for="link_website" class="form-label">Other information</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                <input type="text" class="form-control" id="link_website" name="link_website" placeholder="https://movies.com/film/despicable-me.html" {if="!empty($inputs['link_website'])"}value="{$inputs['link_website']}"{/if}>
+              </div>
           </div>
         </div>
         <div class="col-md-12 mt-4 mb-3 clearfix">
